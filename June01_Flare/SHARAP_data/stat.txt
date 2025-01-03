@@ -1,0 +1,182 @@
+Total files to download 60
+[ 1 / 60 ]Downloading files for NOAA: 13697 | HARP number: 11297 	 [2024-07-04 15:39:59.535914]
+  0%|          | 0/9 [00:00<?, ?it/s] 11%|█         | 1/9 [00:09<01:16,  9.61s/it] 22%|██▏       | 2/9 [00:18<01:02,  8.94s/it] 33%|███▎      | 3/9 [00:26<00:52,  8.76s/it] 44%|████▍     | 4/9 [00:35<00:43,  8.66s/it] 56%|█████▌    | 5/9 [00:43<00:34,  8.55s/it] 67%|██████▋   | 6/9 [00:51<00:25,  8.51s/it] 78%|███████▊  | 7/9 [01:00<00:16,  8.49s/it] 89%|████████▉ | 8/9 [01:08<00:08,  8.50s/it]100%|██████████| 9/9 [01:17<00:00,  8.47s/it]100%|██████████| 9/9 [01:17<00:00,  8.59s/it]
+   Downloaded all FITS files.  		 2024-07-04 15:41:16.849705
+[ 2 / 60 ]Downloading files for NOAA: 13697 | HARP number: 11297 	 [2024-07-04 15:41:16.849753]
+Files for 13697 at 2024-05-31 19:12:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:41:16.849874
+[ 3 / 60 ]Downloading files for NOAA: 13697 | HARP number: 11297 	 [2024-07-04 15:41:16.849883]
+Files for 13697 at 2024-05-31 19:24:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:41:16.849931
+[ 4 / 60 ]Downloading files for NOAA: 13697 | HARP number: 11297 	 [2024-07-04 15:41:16.849938]
+Files for 13697 at 2024-05-31 19:36:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:41:16.850004
+[ 5 / 60 ]Downloading files for NOAA: 13697 | HARP number: 11297 	 [2024-07-04 15:41:16.850010]
+Files for 13697 at 2024-05-31 19:48:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:41:16.850055
+[ 6 / 60 ]Downloading files for NOAA: 13697 | HARP number: 11297 	 [2024-07-04 15:41:16.850063]
+Files for 13697 at 2024-05-31 20:00:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:41:16.850098
+[ 7 / 60 ]Downloading files for NOAA: 13697 | HARP number: 11297 	 [2024-07-04 15:41:16.850104]
+Files for 13697 at 2024-05-31 20:12:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:41:16.850139
+[ 8 / 60 ]Downloading files for NOAA: 13697 | HARP number: 11297 	 [2024-07-04 15:41:16.850146]
+Files for 13697 at 2024-05-31 20:24:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:41:16.850180
+[ 9 / 60 ]Downloading files for NOAA: 13697 | HARP number: 11297 	 [2024-07-04 15:41:16.850186]
+Files for 13697 at 2024-05-31 20:36:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:41:16.850237
+[ 10 / 60 ]Downloading files for NOAA: 13697 | HARP number: 11297 	 [2024-07-04 15:41:16.850244]
+Files for 13697 at 2024-05-31 20:48:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:41:16.850289
+[ 11 / 60 ]Downloading files for NOAA: 13697 | HARP number: 11297 	 [2024-07-04 15:41:16.850297]
+Files for 13697 at 2024-05-31 21:00:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:41:16.850329
+[ 12 / 60 ]Downloading files for NOAA: 13697 | HARP number: 11297 	 [2024-07-04 15:41:16.850335]
+Files for 13697 at 2024-05-31 21:12:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:41:16.850367
+[ 13 / 60 ]Downloading files for NOAA: 13697 | HARP number: 11297 	 [2024-07-04 15:41:16.850373]
+Files for 13697 at 2024-05-31 21:24:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:41:16.850405
+[ 14 / 60 ]Downloading files for NOAA: 13697 | HARP number: 11297 	 [2024-07-04 15:41:16.850412]
+Files for 13697 at 2024-05-31 21:36:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:41:16.850444
+[ 15 / 60 ]Downloading files for NOAA: 13697 | HARP number: 11297 	 [2024-07-04 15:41:16.850450]
+Files for 13697 at 2024-05-31 21:48:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:41:16.850499
+[ 16 / 60 ]Downloading files for NOAA: 13697 | HARP number: 11297 	 [2024-07-04 15:41:16.850505]
+Files for 13697 at 2024-05-31 22:00:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:41:16.850544
+[ 17 / 60 ]Downloading files for NOAA: 13697 | HARP number: 11297 	 [2024-07-04 15:41:16.850550]
+Files for 13697 at 2024-05-31 22:12:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:41:16.850584
+[ 18 / 60 ]Downloading files for NOAA: 13697 | HARP number: 11297 	 [2024-07-04 15:41:16.850590]
+Files for 13697 at 2024-05-31 22:24:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:41:16.850621
+[ 19 / 60 ]Downloading files for NOAA: 13697 | HARP number: 11297 	 [2024-07-04 15:41:16.850627]
+Files for 13697 at 2024-05-31 22:36:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:41:16.850659
+[ 20 / 60 ]Downloading files for NOAA: 13697 | HARP number: 11297 	 [2024-07-04 15:41:16.850665]
+Files for 13697 at 2024-06-01 07:00:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:41:16.850698
+[ 21 / 60 ]Downloading files for NOAA: 13697 | HARP number: 11297 	 [2024-07-04 15:41:16.850704]
+Files for 13697 at 2024-06-01 07:12:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:41:16.850753
+[ 22 / 60 ]Downloading files for NOAA: 13697 | HARP number: 11297 	 [2024-07-04 15:41:16.850767]
+Files for 13697 at 2024-06-01 07:24:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:41:16.850798
+[ 23 / 60 ]Downloading files for NOAA: 13697 | HARP number: 11297 	 [2024-07-04 15:41:16.850804]
+Files for 13697 at 2024-06-01 07:36:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:41:16.850836
+[ 24 / 60 ]Downloading files for NOAA: 13697 | HARP number: 11297 	 [2024-07-04 15:41:16.850842]
+Files for 13697 at 2024-06-01 07:48:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:41:16.850874
+[ 25 / 60 ]Downloading files for NOAA: 13697 | HARP number: 11297 	 [2024-07-04 15:41:16.850880]
+Files for 13697 at 2024-06-01 08:00:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:41:16.850911
+[ 26 / 60 ]Downloading files for NOAA: 13697 | HARP number: 11297 	 [2024-07-04 15:41:16.850917]
+Files for 13697 at 2024-06-01 08:12:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:41:16.850949
+[ 27 / 60 ]Downloading files for NOAA: 13697 | HARP number: 11297 	 [2024-07-04 15:41:16.850955]
+Files for 13697 at 2024-06-01 08:24:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:41:16.851024
+[ 28 / 60 ]Downloading files for NOAA: 13697 | HARP number: 11297 	 [2024-07-04 15:41:16.851030]
+Files for 13697 at 2024-06-01 08:36:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:41:16.851062
+[ 29 / 60 ]Downloading files for NOAA: 13697 | HARP number: 11297 	 [2024-07-04 15:41:16.851068]
+Files for 13697 at 2024-06-01 08:48:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:41:16.851099
+[ 30 / 60 ]Downloading files for NOAA: 13697 | HARP number: 11297 	 [2024-07-04 15:41:16.851105]
+Files for 13697 at 2024-06-01 09:00:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:41:16.851153
+[ 31 / 60 ]Downloading files for NOAA: 13697 | HARP number: 11297 	 [2024-07-04 15:41:16.851165]
+Files for 13697 at 2024-06-01 09:12:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:41:16.851215
+[ 32 / 60 ]Downloading files for NOAA: 13697 | HARP number: 11297 	 [2024-07-04 15:41:16.851226]
+Files for 13697 at 2024-06-06 13:00:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:41:16.851284
+[ 33 / 60 ]Downloading files for NOAA: 13697 | HARP number: 11297 	 [2024-07-04 15:41:16.851294]
+Files for 13697 at 2024-06-06 13:12:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:41:16.851345
+[ 34 / 60 ]Downloading files for NOAA: 13697 | HARP number: 11297 	 [2024-07-04 15:41:16.851356]
+Files for 13697 at 2024-06-06 13:24:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:41:16.851408
+[ 35 / 60 ]Downloading files for NOAA: 13697 | HARP number: 11297 	 [2024-07-04 15:41:16.851418]
+Files for 13697 at 2024-06-06 13:36:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:41:16.851467
+[ 36 / 60 ]Downloading files for NOAA: 13697 | HARP number: 11297 	 [2024-07-04 15:41:16.851477]
+Files for 13697 at 2024-06-06 13:48:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:41:16.851529
+[ 37 / 60 ]Downloading files for NOAA: 13697 | HARP number: 11297 	 [2024-07-04 15:41:16.851536]
+Files for 13697 at 2024-06-06 14:00:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:41:16.851566
+[ 38 / 60 ]Downloading files for NOAA: 13697 | HARP number: 11297 	 [2024-07-04 15:41:16.851572]
+Files for 13697 at 2024-06-06 14:12:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:41:16.851608
+[ 39 / 60 ]Downloading files for NOAA: 13697 | HARP number: 11297 	 [2024-07-04 15:41:16.851613]
+Files for 13697 at 2024-06-06 14:24:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:41:16.851644
+[ 40 / 60 ]Downloading files for NOAA: 13697 | HARP number: 11297 	 [2024-07-04 15:41:16.851650]
+Files for 13697 at 2024-06-06 14:36:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:41:16.851732
+[ 41 / 60 ]Downloading files for NOAA: 13697 | HARP number: 11297 	 [2024-07-04 15:41:16.851737]
+Files for 13697 at 2024-06-06 14:48:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:41:16.851769
+[ 42 / 60 ]Downloading files for NOAA: 13697 | HARP number: 11297 	 [2024-07-04 15:41:16.851775]
+Files for 13697 at 2024-06-06 15:00:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:41:16.851805
+[ 43 / 60 ]Downloading files for NOAA: 13697 | HARP number: 11297 	 [2024-07-04 15:41:16.851811]
+Files for 13697 at 2024-06-06 15:12:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:41:16.851840
+[ 44 / 60 ]Downloading files for NOAA: 13697 | HARP number: 11297 	 [2024-07-04 15:41:16.851846]
+Files for 13697 at 2024-06-06 15:24:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:41:16.851875
+[ 45 / 60 ]Downloading files for NOAA: 13712 | HARP number: 11297 	 [2024-07-04 15:41:16.851881]
+  0%|          | 0/9 [00:00<?, ?it/s] 11%|█         | 1/9 [00:08<01:07,  8.46s/it] 22%|██▏       | 2/9 [00:16<00:59,  8.45s/it] 33%|███▎      | 3/9 [00:25<00:50,  8.47s/it] 44%|████▍     | 4/9 [00:33<00:42,  8.46s/it] 56%|█████▌    | 5/9 [00:42<00:33,  8.43s/it] 67%|██████▋   | 6/9 [00:51<00:26,  8.83s/it] 78%|███████▊  | 7/9 [01:00<00:17,  8.69s/it] 89%|████████▉ | 8/9 [01:08<00:08,  8.60s/it]100%|██████████| 9/9 [01:19<00:00,  9.19s/it]100%|██████████| 9/9 [01:19<00:00,  8.79s/it]
+   Downloaded all FITS files.  		 2024-07-04 15:42:35.962878
+[ 46 / 60 ]Downloading files for NOAA: 13712 | HARP number: 11297 	 [2024-07-04 15:42:35.962912]
+Files for 13712 at 2024-06-18 09:12:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:42:35.963045
+[ 47 / 60 ]Downloading files for NOAA: 13712 | HARP number: 11297 	 [2024-07-04 15:42:35.963058]
+Files for 13712 at 2024-06-18 09:24:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:42:35.963105
+[ 48 / 60 ]Downloading files for NOAA: 13712 | HARP number: 11297 	 [2024-07-04 15:42:35.963112]
+Files for 13712 at 2024-06-18 09:36:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:42:35.963151
+[ 49 / 60 ]Downloading files for NOAA: 13712 | HARP number: 11297 	 [2024-07-04 15:42:35.963157]
+Files for 13712 at 2024-06-18 09:48:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:42:35.963189
+[ 50 / 60 ]Downloading files for NOAA: 13712 | HARP number: 11297 	 [2024-07-04 15:42:35.963196]
+Files for 13712 at 2024-06-18 10:00:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:42:35.963228
+[ 51 / 60 ]Downloading files for NOAA: 13712 | HARP number: 11297 	 [2024-07-04 15:42:35.963234]
+Files for 13712 at 2024-06-18 10:12:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:42:35.963265
+[ 52 / 60 ]Downloading files for NOAA: 13712 | HARP number: 11297 	 [2024-07-04 15:42:35.963271]
+Files for 13712 at 2024-06-18 10:24:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:42:35.963303
+[ 53 / 60 ]Downloading files for NOAA: 13712 | HARP number: 11297 	 [2024-07-04 15:42:35.963309]
+Files for 13712 at 2024-06-18 10:36:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:42:35.963340
+[ 54 / 60 ]Downloading files for NOAA: 13712 | HARP number: 11297 	 [2024-07-04 15:42:35.963346]
+Files for 13712 at 2024-06-18 10:48:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:42:35.963378
+[ 55 / 60 ]Downloading files for NOAA: 13712 | HARP number: 11297 	 [2024-07-04 15:42:35.963384]
+Files for 13712 at 2024-06-18 11:00:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:42:35.963416
+[ 56 / 60 ]Downloading files for NOAA: 13712 | HARP number: 11297 	 [2024-07-04 15:42:35.963422]
+Files for 13712 at 2024-06-18 11:12:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:42:35.963453
+[ 57 / 60 ]Downloading files for NOAA: 13712 | HARP number: 11297 	 [2024-07-04 15:42:35.963459]
+Files for 13712 at 2024-06-18 11:24:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:42:35.963490
+[ 58 / 60 ]Downloading files for NOAA: 13712 | HARP number: 11297 	 [2024-07-04 15:42:35.963496]
+Files for 13712 at 2024-06-18 11:36:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:42:35.963529
+[ 59 / 60 ]Downloading files for NOAA: 13712 | HARP number: 11297 	 [2024-07-04 15:42:35.963535]
+Files for 13712 at 2024-06-18 11:48:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:42:35.963566
+[ 60 / 60 ]Downloading files for NOAA: 13712 | HARP number: 11297 	 [2024-07-04 15:42:35.963572]
+Files for 13712 at 2024-06-18 12:00:00 already exist 
+   Downloaded all FITS files.  		 2024-07-04 15:42:35.963603
+Task Completed

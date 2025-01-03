@@ -1,0 +1,122 @@
+
+#==========================================
+#Differential rotation implimented
+#==========================================
+
+import os
+import matplotlib.pyplot as plt
+import astropy.units as u
+import sunpy.map
+from sunpy.net import Fido
+import glob
+import datetime
+from sunkit_image.coalignment import mapsequence_coalign_by_match_template as mc_coalign
+from datetime import timedelta
+import timeit
+import pathlib
+from astropy.coordinates import SkyCoord
+#from colormap import filterColor
+import numpy as np
+from sunpy.coordinates import RotatedSunFrame
+from tqdm import tqdm
+
+
+start = timeit.default_timer()
+now = datetime.datetime.now()-timedelta(days=1)
+fol_nm='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/June01_Flare/HMI_Magnetograms'
+fol_nm=fol_nm+'/'+'Imgs'
+pathlib.Path(fol_nm).mkdir(parents=True, exist_ok=True)
+
+search_fold='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/June01_Flare/HMI_Magnetograms/'
+
+fdir =os.listdir(search_fold)
+fdir.sort()
+#print(fdir)
+key=['magnetogram']
+param=key[0]
+
+plot_data=[]
+dates=[]
+
+
+box_pth=fol_nm+'/'+param
+pathlib.Path(box_pth+'/Box').mkdir(parents=True, exist_ok=True)
+#pathlib.Path(box_pth).mkdir(parents=True, exist_ok=True)
+#print(fdir+fltr+'/'+'*3'+fltr+'.fits')
+files = sorted(glob.glob(f'{search_fold}*.fits'))
+print('Total files:',len(files))
+#print(files)
+Sequence = sunpy.map.Map(files, sequence=True)
+fltr_count=[]
+date_array=[]
+for i in tqdm(range (len(Sequence))):
+    
+    hmi_map=Sequence[i]
+    fig = plt.figure(figsize=(5, 5))
+    ax = fig.add_subplot(projection=hmi_map)
+    hmi_map.plot(axes=ax)
+    #hmi_map.peek()diffrot_point2
+    #coords = SkyCoord(Tx=(-520, -390) * u.arcsec,Ty=(-323, -260) * u.arcsec,frame=hmi_map.coordinate_frame,)
+    #coords = SkyCoord(lat=(-21,-16)  * u.deg,lon=(348, 354)* u.deg,frame=hmi_map.coordinate_frame,)
+
+    #point1 = SkyCoord(-650*u.arcsec, -500*u.arcsec, frame=hmi_map.coordinate_frame) #full AR
+    #point1 = SkyCoord(-465*u.arcsec, -323*u.arcsec, frame=hmi_map.coordinate_frame) #Small box
+    
+    point1 = SkyCoord(-500*u.arcsec, -323*u.arcsec, frame=hmi_map.coordinate_frame) #wide box
+    diffrot_point1 = SkyCoord(RotatedSunFrame(base=point1, duration=45*(i+1)*u.second))
+    transformed_diffrot_point1 = diffrot_point1.transform_to(hmi_map.coordinate_frame)
+
+    #point2 = SkyCoord(-190*u.arcsec, -160*u.arcsec, frame=hmi_map.coordinate_frame)
+    #point2 = SkyCoord(-375*u.arcsec, -260*u.arcsec, frame=hmi_map.coordinate_frame) #small box
+    point2 = SkyCoord(-375*u.arcsec, -260*u.arcsec, frame=hmi_map.coordinate_frame) #wide box
+    diffrot_point2 = SkyCoord(RotatedSunFrame(base=point2, duration=45*(i+1)*u.second))
+    transformed_diffrot_point2 = diffrot_point2.transform_to(hmi_map.coordinate_frame)
+
+    #print(transformed_diffrot_point1.Tx.value,transformed_diffrot_point2.Tx.value)
+    coords = SkyCoord(Tx=(transformed_diffrot_point1.Tx.value, transformed_diffrot_point2.Tx.value) * u.arcsec,Ty=(transformed_diffrot_point1.Ty.value, transformed_diffrot_point2.Ty.value) * u.arcsec,frame=hmi_map.coordinate_frame,)
+    hmi_map.draw_quadrangle(coords,axes=ax,edgecolor="blue",linestyle="-",linewidth=2,label='2-element SkyCoord')
+    fnm=(os.path.basename(files[i]))[:-5]
+
+    #print('-------',f'{fol_nm}/{fnm}.jpg')
+    plt.savefig(f'{box_pth}/{fnm}.jpg',dpi=300)
+    plt.close()
+    fig = plt.figure(figsize=(5, 5))
+    suit_box=hmi_map.submap(coords)
+    ax = fig.add_subplot(projection=suit_box)
+    suit_box.plot(axes=ax)
+    plt.savefig(f'{box_pth}/Box/{fnm}.jpg',dpi=300)
+    plt.close()
+    fltr_count.append(np.sum(abs(suit_box.data)))
+    date_array.append(hmi_map.date)
+    #fltr_count=np.array(fltr_count)
+    #print(len(fltr_count))
+    #fltr_count.append(fltr_count)
+
+fltr_count=np.array(fltr_count)
+date_array=np.array(date_array)
+#fltr_count_err=np.array(fltr_count_err)
+#plot_data.append(plot_data)
+#Plot_data_er.append(fltr_count_err)
+#dates.append(date_array)
+
+#plot_data=np.array(plot_data)
+#Plot_data_er=np.array(Plot_data_er)
+
+
+np.savetxt(f'{param}_X1.4_Light_curve_data.csv',np.c_[date_array,fltr_count],delimiter=',',fmt='%s')
+'''
+plot_data=np.array(plot_data)
+dates=np.array(dates)
+#plot_data=plot_data.reshape(8,189)
+#plot_data=np.vstack([plot_data,date_array])
+print(plot_data.shape)
+np.savetxt(f'{param}_Light_curve_data.dat',plot_data)
+np.savetxt(f'{param}_date_data.dat',dates,fmt='%s')'''
+    
+    
+    
+ 
+
+stop = timeit.default_timer()
+
+print('Run Time: ', (stop - start)/60,'Mins') 
