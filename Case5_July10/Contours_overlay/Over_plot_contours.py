@@ -43,8 +43,8 @@ for fltr in Filters:
     tot_count=[]
     dates=[]
 
-    search_fold=f'/Analysis/Projects_Data/Flare_Data/July10_Flare_Data2/' #Custom Folder
-    search_fold2=f'/Analysis/Projects_Data/Flare_Data/July10_Flare_Data2/'
+    search_fold=f'/Analysis/Projects_Data/Flare_Data/July10_Flare_Data2/P_corr_data/' #Custom Folder
+    search_fold2=f'/Analysis/Projects_Data/Flare_Data/July10_Flare_Data2/P_corr_data/'
     base_fold=f'/Analysis/Projects_Data/Flare_Data/July10_Flare_Data2/AIA_Data/171/'
     
     print(f'Searching for {fltr} images in {search_fold} folder')
@@ -81,17 +81,14 @@ for fltr in Filters:
     
     for i in range(len(files)):
         suitMap=sunpy.map.Map(files[i])
+        #suitMap.peek()
         base_time=Time(parse_time(suitMap.date))
         idx=np.argmin(np.abs(base_time_array - base_time))
         idx2=np.argmin(np.abs(mg_map_time_array - base_time))
 
         suit_pos = get_horizons_coord(-21, suitMap.date)
         suitMap.meta.update(get_observer_meta(suit_pos, rsun=suit_pos.rsun))
-        suitMap.meta['CROTA2']= 85 #suitMap.meta.get('P_ANGLE')
         
-        suitMap_=sunpy.map.Map(suitMap.data,suitMap.fits_header)
-        suitMap_.save('test.fits',overwrite=True)
-
         #print('--->',np.argmin(np.abs(base_time_array - base_time)))#,base_time_array[np.argmin(np.abs(base_time_array - base_time))],base_time)
         MgII_Map=sunpy.map.Map(files2[idx2])
         print(MgII_Map.date)
