@@ -37,15 +37,18 @@ nb8Mx=4300
 nb6Mx=95000
 nb7Mx=310000
 Filters=['NB08']
-fltr2='171'
+fltr2='HMI'
 for fltr in Filters:
     plot_data=[]
     tot_count=[]
     dates=[]
 
-    search_fold=f'/Analysis/Projects_Data/Flare_Data/June02_Flare_Data1/' #Custom Folder
-    search_fold2=f'/Analysis/Projects_Data/Flare_Data/June02_Flare_Data1/'
-    base_fold=f'/Analysis/Projects_Data/Flare_Data/June02_Flare_Data1/AIA/171/'
+    search_fold=f'/Analysis/Projects_Data/Flare_Data/June02_Flare_Data1/P_corr_data/' #Custom Folder
+    search_fold2=f'/Analysis/Projects_Data/Flare_Data/June02_Flare_Data1/P_corr_data/'
+    if fltr2=='HMI':
+        base_fold=f'/Analysis/Projects_Data/Flare_Data/June02_Flare_Data1/{fltr2}/{fltr2}_cutouts/'
+    else:
+        base_fold=f'/Analysis/Projects_Data/Flare_Data/June02_Flare_Data1/AIA/{fltr2}/{fltr2}_cutouts/'
     
     print(f'Searching for {fltr} images in {search_fold} folder')
     
@@ -57,12 +60,16 @@ for fltr in Filters:
     b_files=glob.glob(base_fold + '*.fits')
     #b_files=sorted(b_files, key=lambda file_name: datetime.datetime.strptime(os.path.basename(file_name).split('_')[5], "%Y-%m-%dT%H.%M.%S.%f"))
 
-    print('Total files:',len(files))
+    print('Total SUIT NB08 files:',len(files))
     print('Total AIA files:',len(b_files))
     mg_map_time=[]
     base_time_array=[]
     for f in range(len(b_files)):
-        base_time_array.append(datetime.datetime.strptime(os.path.basename(b_files[f])[24:46], "%Y-%m-%dT%H:%M:%S.%f"))
+        if fltr2=='HMI':
+            #hmi.m_45s.20240602_023000_TAI.2.magnetogram
+            base_time_array.append(datetime.datetime.strptime(os.path.basename(b_files[f])[10:25], "%Y%m%d_%H%M%S"))
+        else:
+            base_time_array.append(datetime.datetime.strptime(os.path.basename(b_files[f])[24:46], "%Y-%m-%dT%H:%M:%S.%f"))
     base_time_array=Time(parse_time(base_time_array))
 
     for j in range(len(files2)):
@@ -87,18 +94,13 @@ for fltr in Filters:
 
         suit_pos = get_horizons_coord(-21, suitMap.date)
         suitMap.meta.update(get_observer_meta(suit_pos, rsun=suit_pos.rsun))
-        #suitMap.meta['CROTA2']= 85 #suitMap.meta.get('P_ANGLE')
         
-        #suitMap_=sunpy.map.Map(suitMap.data,suitMap.fits_header)
-        #suitMap_.save('test.fits',overwrite=True)
-
-        #print('--->',np.argmin(np.abs(base_time_array - base_time)))#,base_time_array[np.argmin(np.abs(base_time_array - base_time))],base_time)
         MgII_Map=sunpy.map.Map(files2[idx2])
         print(MgII_Map.date)
         MgII_data=MgII_Map.data*1000/int(MgII_Map.meta.get('CMD_EXPT'))
-        MgII_Map.meta['CROTA2']=suitMap.meta.get('P_ANGLE')
+        #MgII_Map.meta['CROTA2']=suitMap.meta.get('P_ANGLE')
         MgII_Map.meta.update(get_observer_meta(suit_pos, rsun=suit_pos.rsun))
-        Mg_Map=sunpy.map.Map(MgII_data,MgII_Map.fits_header)
+        Mg_Map=sunpy.map.Map(gaussian_filter(MgII_data, sigma=1),MgII_Map.fits_header)
                 
         BaseMap=sunpy.map.Map(b_files[idx])
         base_data=BaseMap.data#/int(BaseMap.meta.get('EXPTIME'))
@@ -124,12 +126,12 @@ for fltr in Filters:
         fig=plt.figure(figsize=(10,10))
         ax = fig.add_subplot(111, projection=suitMap)
 
-        Base_img.plot(cmap='gray',autoalign=True)
+        Base_img.plot(cmap='hmimag',autoalign=True)
 
-        norm_suit_Map.draw_contours(axes=ax, levels=th_lvs,zorder=1,colors=['blue','red'],alpha=0.7)
+        #norm_suit_Map.draw_contours(axes=ax, levels=th_lvs,zorder=1,colors=['skyblue','yellow'],alpha=0.7)
         
-        normsuitMap.draw_contours(axes=ax, levels=th_lvs,zorder=1,colors=['pink','yellow'])
-        #Mg_Map.draw_contours(axes=ax, levels=th_lvs2,zorder=1,colors=['pink','green'],alpha=0.7)
+        normsuitMap.draw_contours(axes=ax, levels=th_lvs,zorder=1,colors=['skyblue','yellow'])
+        Mg_Map.draw_contours(axes=ax, levels=th_lvs2,zorder=2,colors=['pink','green'],alpha=0.5)
         
         #alignedMap.draw_limb(axes=ax)
         #alignedMap.draw_grid(axes=ax)

@@ -19,41 +19,58 @@ import numpy as np
 
 start = timeit.default_timer()
 
-fol_nm=os.getcwd()+'/Light_curve_images/'
-Filters=['171','1600','131','HMI']
+
+Filters=['HMI'] #,'171','1600','131'
 
 
 for fltr in Filters:
     
-    fdir=f'/Analysis/Projects_Data/Flare_Data/June02_Flare_Data2/AIA/{fltr}/'
+    fdir=f'/Analysis/Projects_Data/Flare_Data/Jun02_Flare_Data2/AIA/{fltr}/'
     
     if fltr=='HMI':
-        fdir='/Analysis/Projects_Data/Flare_Data/June02_Flare_Data2/HMI'
+        fdir='/Analysis/Projects_Data/Flare_Data/June02_Flare_Data2/HMI/'
     Cutouts=fdir+f'/{fltr}_cutouts'
     Cutouts_imgs=fdir+f'/{fltr}_cutout_imgs'
 
     pathlib.Path(Cutouts).mkdir(parents=True, exist_ok=True)
     pathlib.Path(Cutouts_imgs).mkdir(parents=True, exist_ok=True)
-    print('Searching in: ',fdir+fltr )
+    print('Searching in: ',fdir, fltr )
     files = sorted(glob.glob(fdir+'*.fits'))
+    print('No. of files found ',len(files))
+    count=0
 
     for i in range(len(files)):
-        suit_map=sunpy.map.Map(files[i])
-        fnm=(os.path.basename(files[i]))
-        print(fnm,fnm[:-5])
-        fig = plt.figure(figsize=(5, 5))
-        ax = fig.add_subplot(projection=suit_map)
-        suit_map.plot(axes=ax, clip_interval=(1, 99.99)*u.percent)
-        
-        coords = SkyCoord(Tx=(-400, -220) * u.arcsec, Ty=(-180, -350) * u.arcsec, frame=suit_map.coordinate_frame)
+        try:
+            suit_map=sunpy.map.Map(files[i],allow_errors=True)
 
-        suit_map.draw_quadrangle(coords,axes=ax,edgecolor="red",linestyle="-",linewidth=2,label='Region of interest')
-        suit_box=suit_map.submap(coords)
-        suit_box.save((f'{Cutouts}/{fnm}'),overwrite=True)
-        plt.savefig((f'{Cutouts_imgs}/{fnm[:-4]}'),dpi=300)
-        plt.show()
+            fnm=(os.path.basename(files[i]))
+            
+            fig = plt.figure(figsize=(5, 5))
+            ax = fig.add_subplot(projection=suit_map)
+            if fltr=='HMI':
+                suit_map.plot(axes=ax)
+            else:
+                suit_map.plot(axes=ax, clip_interval=(1, 99.99)*u.percent)
+            
+            coords = SkyCoord(Tx=(-500, 0) * u.arcsec, Ty=(-600, -100) * u.arcsec, frame=suit_map.coordinate_frame)
+
+            suit_map.draw_quadrangle(coords,axes=ax,edgecolor="red",linestyle="-",linewidth=2,label='Region of interest')
+            suit_box=suit_map.submap(coords)
+            suit_box.save((f'{Cutouts}/{fnm}'),overwrite=True)
+            plt.savefig((f'{Cutouts_imgs}/{fnm[:-4]}'),dpi=300)
+            print('[',i,'/',len(files),']',fnm)
+            if i==0:
+                plt.close()
+            else:
+                plt.close()
+
+        except RuntimeError:
+            print('Could not read image :',os.path.basename(files[i]))
+            count+=1
+            pass
+
         
-    
+    print('Images with issues:',count)    
     
  
 
