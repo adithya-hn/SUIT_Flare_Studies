@@ -36,23 +36,24 @@ nb4Mx=15000
 nb8Mx=4300
 nb6Mx=95000
 nb7Mx=310000
-Filters=['NB08']
-fltr2='HMI'
+Filters=['HMI','171','131']
+
 for fltr in Filters:
+    fltr2=fltr
     c1_data=[]
     c2_data=[]
     dates=[]
 
-    search_fold=f'/Analysis/Projects_Data/Flare_Data/June02_Flare_Data1/P_corr_data/' #Custom Folder
-    search_fold2=f'/Analysis/Projects_Data/Flare_Data/June02_Flare_Data1/P_corr_data/'
+    search_fold=f'/Analysis/Projects_Data/Flare_Data/June02_Flare_Data2/P_corr_data/' #Custom Folder
+    search_fold2=f'/Analysis/Projects_Data/Flare_Data/June02_Flare_Data2/P_corr_data/'
     if fltr2=='HMI':
-        base_fold=f'/Analysis/Projects_Data/Flare_Data/June02_Flare_Data1/{fltr2}/{fltr2}_cutouts/'
+        base_fold=f'/Analysis/Projects_Data/Flare_Data/June02_Flare_Data2/{fltr2}/{fltr2}_cutouts/'
     else:
-        base_fold=f'/Analysis/Projects_Data/Flare_Data/June02_Flare_Data1/AIA/{fltr2}/{fltr2}_cutouts/'
+        base_fold=f'/Analysis/Projects_Data/Flare_Data/June02_Flare_Data2/AIA/{fltr2}/{fltr2}_cutouts/'
     
     print(f'Searching for {fltr} images in {search_fold} folder')
     
-    files = glob.glob(search_fold + '*3'+fltr+'.fits')
+    files = glob.glob(search_fold + '*3'+'NB08.fits')
     files=sorted(files, key=lambda file_name: datetime.datetime.strptime(os.path.basename(file_name).split('_')[5], "%Y-%m-%dT%H.%M.%S.%f"))
     files2 = glob.glob(search_fold2 + '*3'+'NB03'+'.fits')
     files2 =sorted(files2, key=lambda file_name: datetime.datetime.strptime(os.path.basename(file_name).split('_')[5], "%Y-%m-%dT%H.%M.%S.%f"))
