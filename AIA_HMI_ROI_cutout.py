@@ -15,20 +15,22 @@ import pathlib
 from astropy.coordinates import SkyCoord
 #from colormap import filterColor
 import numpy as np
+import warnings
+warnings.simplefilter('ignore')
 
 
 start = timeit.default_timer()
 
 
-Filters=['HMI'] #,'171','1600','131'
+Filters=['171','1600']
 
 
 for fltr in Filters:
     
-    fdir=f'/Analysis/Projects_Data/Flare_Data/Jun02_Flare_Data2/AIA/{fltr}/'
+    fdir=f'/Analysis/Projects_Data/Flare_Data/June01_Flare_Data/AIA/{fltr}/'
     
     if fltr=='HMI':
-        fdir='/Analysis/Projects_Data/Flare_Data/June02_Flare_Data2/HMI/'
+        fdir='/Analysis/Projects_Data/Flare_Data/Oct09_Flare_Data/HMI/'
     Cutouts=fdir+f'/{fltr}_cutouts'
     Cutouts_imgs=fdir+f'/{fltr}_cutout_imgs'
 
@@ -52,7 +54,7 @@ for fltr in Filters:
             else:
                 suit_map.plot(axes=ax, clip_interval=(1, 99.99)*u.percent)
             
-            coords = SkyCoord(Tx=(-500, 0) * u.arcsec, Ty=(-600, -100) * u.arcsec, frame=suit_map.coordinate_frame)
+            coords = SkyCoord(Tx=(-700, -150) * u.arcsec, Ty=(-600, -50) * u.arcsec, frame=suit_map.coordinate_frame)
 
             suit_map.draw_quadrangle(coords,axes=ax,edgecolor="red",linestyle="-",linewidth=2,label='Region of interest')
             suit_box=suit_map.submap(coords)

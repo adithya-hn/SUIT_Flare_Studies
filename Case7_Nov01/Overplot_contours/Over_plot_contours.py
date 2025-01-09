@@ -36,7 +36,7 @@ nb4Mx=15000
 nb8Mx=4300
 nb6Mx=95000
 nb7Mx=310000
-Filters=['171','HMI']
+Filters=['HMI','171','1600'] #'131',
 
 for fltr in Filters:
     fltr2=fltr
@@ -44,12 +44,12 @@ for fltr in Filters:
     c2_data=[]
     dates=[]
 
-    search_fold=f'/Analysis/Projects_Data/Flare_Data/June01_Flare_Data/Flare_data_pCorr/' #Custom Folder
+    search_fold=f'/Analysis/Projects_Data/Flare_Data/Oct09_Flare_Data/P_corr_data/' #Custom Folder
     #search_fold2=f'/Analysis/Projects_Data/Flare_Data/July10_Flare_Data2/P_corr_data/'
     if fltr2=='HMI':
-        base_fold=f'/Analysis/Projects_Data/Flare_Data/June01_Flare_Data/{fltr2}/{fltr2}_cutouts/'
+        base_fold=f'/Analysis/Projects_Data/Flare_Data/Nov01_Flare_Data1/{fltr2}/{fltr2}_cutouts/'
     else:
-        base_fold=f'/Analysis/Projects_Data/Flare_Data/June01_Flare_Data/AIA/{fltr2}/{fltr2}_cutouts/'
+        base_fold=f'/Analysis/Projects_Data/Flare_Data/Nov01_Flare_Data1/AIA/{fltr2}/{fltr2}_cutouts/'
     
     print(f'Searching for {fltr} images in {search_fold} folder')
     
@@ -71,7 +71,7 @@ for fltr in Filters:
             #hmi.m_45s.20240602_023000_TAI.2.magnetogram
             base_time_array.append(datetime.datetime.strptime(os.path.basename(b_files[f])[10:25], "%Y%m%d_%H%M%S"))
         else:
-            base_time_array.append(datetime.datetime.strptime(os.path.basename(b_files[f])[17:33], "%Y-%m-%dT%H%M%S"))
+            base_time_array.append(datetime.datetime.strptime(os.path.basename(b_files[f])[24:46], "%Y-%m-%dT%H:%M:%S.%f"))
     base_time_array=Time(parse_time(base_time_array))
 
     for j in range(len(files2)):

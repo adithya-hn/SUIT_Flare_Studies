@@ -36,7 +36,7 @@ nb4Mx=15000
 nb8Mx=4300
 nb6Mx=95000
 nb7Mx=310000
-Filters=['171','HMI']
+Filters=['1600'] #'131','HMI','171'
 
 for fltr in Filters:
     fltr2=fltr
@@ -44,12 +44,12 @@ for fltr in Filters:
     c2_data=[]
     dates=[]
 
-    search_fold=f'/Analysis/Projects_Data/Flare_Data/June01_Flare_Data/Flare_data_pCorr/' #Custom Folder
+    search_fold=f'/Analysis/Projects_Data/Flare_Data/Oct09_Flare_Data/P_corr_data/' #Custom Folder
     #search_fold2=f'/Analysis/Projects_Data/Flare_Data/July10_Flare_Data2/P_corr_data/'
     if fltr2=='HMI':
-        base_fold=f'/Analysis/Projects_Data/Flare_Data/June01_Flare_Data/{fltr2}/{fltr2}_cutouts/'
+        base_fold=f'/Analysis/Projects_Data/Flare_Data/Oct09_Flare_Data/{fltr2}/{fltr2}_cutouts/'
     else:
-        base_fold=f'/Analysis/Projects_Data/Flare_Data/June01_Flare_Data/AIA/{fltr2}/{fltr2}_cutouts/'
+        base_fold=f'/Analysis/Projects_Data/Flare_Data/Oct09_Flare_Data/AIA/{fltr2}/{fltr2}_cutouts/'
     
     print(f'Searching for {fltr} images in {search_fold} folder')
     
@@ -63,15 +63,21 @@ for fltr in Filters:
 
     print('Total SUIT NB08 files:',len(files))
     print('Total SUIT NB03 files:',len(files2))
-    print('Total AIA files:',len(b_files))
+    print(f'Total {fltr} files:',len(b_files))
     mg_map_time=[]
     base_time_array=[]
     for f in range(len(b_files)):
-        if fltr2=='HMI':
+        if fltr=='HMI':
             #hmi.m_45s.20240602_023000_TAI.2.magnetogram
             base_time_array.append(datetime.datetime.strptime(os.path.basename(b_files[f])[10:25], "%Y%m%d_%H%M%S"))
+        
+        elif fltr=='1600':
+            #aia.lev1.1600.1754244717.2024-06-02T06:37:50.126Z.image_lev1
+            
+            base_time_array.append(datetime.datetime.strptime(os.path.basename(b_files[f])[25:46], "%Y-%m-%dT%H:%M:%S.%f"))
+
         else:
-            base_time_array.append(datetime.datetime.strptime(os.path.basename(b_files[f])[17:33], "%Y-%m-%dT%H%M%S"))
+            base_time_array.append(datetime.datetime.strptime(os.path.basename(b_files[f])[24:46], "%Y-%m-%dT%H:%M:%S.%f"))
     base_time_array=Time(parse_time(base_time_array))
 
     for j in range(len(files2)):
@@ -113,7 +119,6 @@ for fltr in Filters:
         normsuitMap=sunpy.map.Map(gaussian_filter(norm_data, sigma=1),img_head)
 
         
-        
         flt_th_lvs=[500,1000]
         
         Thresh1_data=np.sum(np.where(abs(base_data)>flt_th_lvs[0],abs(base_data),0))
@@ -122,9 +127,15 @@ for fltr in Filters:
         c2_data.append(Thresh2_data)
         dates.append(base_time)
 
-        th_lvs=[3900,4100]
+        #th_lvs=[3900,4100]
+        th_lvs=[4200,4600]
         th_lvs2=[12000,14000]
         #th_lvs2=[10000,12000]
+
+        cs_th=np.sum(np.where(abs(norm_data)>th_lvs[0],abs(norm_data),0))
+        cs_th1=np.sum(np.where(abs(norm_data)>th_lvs[1],abs(norm_data),0))
+        mg_th=np.sum(np.where(abs(MgII_data)>th_lvs2[0],abs(MgII_data),0))
+        mg_th1=np.sum(np.where(abs(MgII_data)>th_lvs2[1],abs(MgII_data),0))
 
 
         fl_nm=jpg_fold+f'/{fltr2}'+'/'+os.path.basename(files[i])[:-4]+'jpg'

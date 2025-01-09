@@ -15,17 +15,17 @@ from sunpy.time import parse_time
 
 start = timeit.default_timer()
 now = datetime.now()-timedelta(days=1)
-fol_nm='/Analysis/Projects_Data/Flare_Data/July10_Flare_Data2/'
+fol_nm='/Analysis/Projects_Data/Flare_Data/Oct09_Flare_Data/'
 jpg_fold=fol_nm+'/'+'P_corr_data'
 
-search_fold='/Analysis/Projects_Data/Flare_Data/July10_Flare_Data2/'
+search_fold='/Analysis/Projects_Data/Flare_Data/Oct09_Flare_Data/'
 fdir =search_fold 
 pathlib.Path(jpg_fold).mkdir(parents=True, exist_ok=True)
 
 files = sorted(glob.glob(fdir + '*.fits'))
 
 
-P_angle=6.27
+P_angle=-3.23
 for i in range (len(files)):
     suitMap=sunpy.map.Map(files[i])
     obsDate=suitMap.date
@@ -34,8 +34,8 @@ for i in range (len(files)):
 
     print(abs(suitMap.meta.get('CRVAL1')/0.698),suitMap.meta.get('CRVAL1'))
 #NAXIS1
-    suitMap.meta['CRPIX1']=abs(suitMap.meta.get('CRVAL1')/0.698)+(suitMap.meta.get('NAXIS1')/2)
-    suitMap.meta['CRPIX2']=abs(suitMap.meta.get('CRVAL2')/0.698)+(suitMap.meta.get('NAXIS1')/2)
+    suitMap.meta['CRPIX1']=-1*(suitMap.meta.get('CRVAL1')/0.698)+(suitMap.meta.get('NAXIS1')/2)
+    suitMap.meta['CRPIX2']=-1*(suitMap.meta.get('CRVAL2')/0.698)+(suitMap.meta.get('NAXIS1')/2)
     suitMap.meta['CRVAL1']=0
     suitMap.meta['CRVAL2']=0
     suitMap.meta['CROTA2']=P_angle
