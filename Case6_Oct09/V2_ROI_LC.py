@@ -98,7 +98,8 @@ for fltr in Filters:
         plt.close()
         fltr_count.append(np.sum(suit_box.data*1000/Sequence[i].meta.get('MEAS_EXP')))
         #fltr_count_err.append(np.sqrt(np.sum(suit_box.data))*1000/Sequence[i].meta.get('MEAS_EXP')) #poisonian error
-        fltr_count_err.append(np.sqrt(er_area)*(np.std(er_box.data))*1000/Sequence[i].meta.get('MEAS_EXP'))
+        #fltr_count_err.append(np.sqrt(er_area)*(np.std(er_box.data))*1000/Sequence[i].meta.get('MEAS_EXP'))
+        fltr_count_err.append(np.sum(er_box.data*1000/Sequence[i].meta.get('MEAS_EXP')))
         date_array.append(Sequence[i].date)
     fltr_count=np.array(fltr_count)
     fltr_count_err=np.array(fltr_count_err)

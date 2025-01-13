@@ -44,7 +44,7 @@ for fltr in Filters:
     c2_data=[]
     dates=[]
 
-    search_fold=f'/Analysis/Projects_Data/Flare_Data/Oct09_Flare_Data/P_corr_data/' #Custom Folder
+    search_fold=f'/Analysis/Projects_Data/Flare_Data/Nov01_Flare_Data1/P_corr_data/' #Custom Folder
     #search_fold2=f'/Analysis/Projects_Data/Flare_Data/July10_Flare_Data2/P_corr_data/'
     if fltr2=='HMI':
         base_fold=f'/Analysis/Projects_Data/Flare_Data/Nov01_Flare_Data1/{fltr2}/{fltr2}_cutouts/'

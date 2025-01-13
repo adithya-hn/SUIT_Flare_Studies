@@ -112,7 +112,7 @@ for fltr in Filters:
 
         
         
-        flt_th_lvs=[500,1000]
+        flt_th_lvs=[100,800]
         
         Thresh1_data=np.sum(np.where(abs(base_data)>flt_th_lvs[0],abs(base_data),0))
         Thresh2_data=np.sum(np.where(abs(base_data)>flt_th_lvs[1],abs(base_data),0))

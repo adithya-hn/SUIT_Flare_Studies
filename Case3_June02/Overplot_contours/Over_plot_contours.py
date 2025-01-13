@@ -36,7 +36,7 @@ nb4Mx=15000
 nb8Mx=4300
 nb6Mx=95000
 nb7Mx=310000
-Filters=['HMI','171','131']
+Filters=['HMI'] #,'171','131']
 
 for fltr in Filters:
     fltr2=fltr
@@ -113,7 +113,7 @@ for fltr in Filters:
 
         
         
-        flt_th_lvs=[500,1000]
+        flt_th_lvs=[100,800]
         
         Thresh1_data=np.sum(np.where(abs(base_data)>flt_th_lvs[0],abs(base_data),0))
         Thresh2_data=np.sum(np.where(abs(base_data)>flt_th_lvs[1],abs(base_data),0))

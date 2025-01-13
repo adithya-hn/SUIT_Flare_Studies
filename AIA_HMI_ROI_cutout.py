@@ -22,15 +22,21 @@ warnings.simplefilter('ignore')
 start = timeit.default_timer()
 
 
-Filters=['171','1600']
+Filters=['131','HMI','171','1600']
+File_Source='/Analysis/Projects_Data/Flare_Data/Nov01_Flare_Data2'
+
+tx1=-600
+tx2=-50
+ty1=-100
+ty2=450
 
 
 for fltr in Filters:
     
-    fdir=f'/Analysis/Projects_Data/Flare_Data/June01_Flare_Data/AIA/{fltr}/'
+    fdir=f'{File_Source}/AIA/{fltr}/'
     
     if fltr=='HMI':
-        fdir='/Analysis/Projects_Data/Flare_Data/Oct09_Flare_Data/HMI/'
+        fdir=f'{File_Source}/HMI/'
     Cutouts=fdir+f'/{fltr}_cutouts'
     Cutouts_imgs=fdir+f'/{fltr}_cutout_imgs'
 
@@ -54,7 +60,7 @@ for fltr in Filters:
             else:
                 suit_map.plot(axes=ax, clip_interval=(1, 99.99)*u.percent)
             
-            coords = SkyCoord(Tx=(-700, -150) * u.arcsec, Ty=(-600, -50) * u.arcsec, frame=suit_map.coordinate_frame)
+            coords = SkyCoord(Tx=(tx1, tx2) * u.arcsec, Ty=(ty1,ty2) * u.arcsec, frame=suit_map.coordinate_frame)
 
             suit_map.draw_quadrangle(coords,axes=ax,edgecolor="red",linestyle="-",linewidth=2,label='Region of interest')
             suit_box=suit_map.submap(coords)

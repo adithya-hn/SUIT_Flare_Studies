@@ -18,7 +18,7 @@ from subprocess import call
 from matplotlib import colors
 import mpld3
 
-Filters=['NB08']
+Filters=['NB04']
 param=Filters[0]
 pathlib.Path("Figures").mkdir(parents=True, exist_ok=True) 
 data=(np.loadtxt(f'{param}_M1.0_Light_curve_data.csv',delimiter=',',dtype='str')).transpose() #'NB03_Light_curve_data.dat'
@@ -59,7 +59,8 @@ axs.minorticks_on()
 
 float_array = [float(string) for string in data[1]]
 float_array_er = [float(string) for string in data[2]]
-axs.errorbar(time_array,list(map(int,float_array)),yerr=float_array_er,fmt='ko-',capsize=2,markersize=2,linewidth=0.5)
+y_er=np.std(float_array_er)
+axs.errorbar(time_array,list(map(int,float_array)),yerr=y_er,fmt='ko-',capsize=2,markersize=2,linewidth=0.5)
 '''
 ax2.plot(g_time_array,g_float_array,'bo--',markersize=0.1,linewidth=0.5)
 ax2.set_ylabel("X-ray flux [1-8 A] (Wm$^{-2}$$s^{-1}$)")

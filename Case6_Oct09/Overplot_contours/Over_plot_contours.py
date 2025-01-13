@@ -100,7 +100,11 @@ for fltr in Filters:
         idx=np.argmin(np.abs(base_time_array - base_time))
         idx2=np.argmin(np.abs(mg_map_time_array - base_time))
 
-        suit_pos = get_horizons_coord(-21, suitMap.date)
+        suit_pos = get_horizons_coord(-21,suitMap.date)
+        print(suitMap.meta.get('hgln_obs'),suitMap.meta.get('hglt_obs'),suitMap.meta.get('dsun_obs'),suitMap.meta.get('rsun_ref'),suitMap.meta.get('rsun_obs'))
+        print(suit_pos)
+        print('____________')
+        print(get_observer_meta(suit_pos, rsun=suit_pos.rsun))
         suitMap.meta.update(get_observer_meta(suit_pos, rsun=suit_pos.rsun))
         
         MgII_Map=sunpy.map.Map(files2[idx2])
