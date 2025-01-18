@@ -36,7 +36,7 @@ nb4Mx=15000
 nb8Mx=4300
 nb6Mx=95000
 nb7Mx=310000
-Filters=['171','HMI']
+Filters=['GONG']
 
 for fltr in Filters:
     fltr2=fltr
@@ -47,6 +47,8 @@ for fltr in Filters:
     search_fold=f'/Analysis/Projects_Data/Flare_Data/June01_Flare_Data/Flare_data_pCorr/' #Custom Folder
     #search_fold2=f'/Analysis/Projects_Data/Flare_Data/July10_Flare_Data2/P_corr_data/'
     if fltr2=='HMI':
+        base_fold=f'/Analysis/Projects_Data/Flare_Data/June01_Flare_Data/{fltr2}/{fltr2}_cutouts/'
+    elif fltr2=='GONG':
         base_fold=f'/Analysis/Projects_Data/Flare_Data/June01_Flare_Data/{fltr2}/{fltr2}_cutouts/'
     else:
         base_fold=f'/Analysis/Projects_Data/Flare_Data/June01_Flare_Data/AIA/{fltr2}/{fltr2}_cutouts/'
@@ -70,6 +72,8 @@ for fltr in Filters:
         if fltr2=='HMI':
             #hmi.m_45s.20240602_023000_TAI.2.magnetogram
             base_time_array.append(datetime.datetime.strptime(os.path.basename(b_files[f])[10:25], "%Y%m%d_%H%M%S"))
+        elif fltr2=='GONG':
+            base_time_array.append(datetime.datetime.strptime(os.path.basename(b_files[f])[:11], "%Y%m%d%H%M%S"))
         else:
             base_time_array.append(datetime.datetime.strptime(os.path.basename(b_files[f])[17:33], "%Y-%m-%dT%H%M%S"))
     base_time_array=Time(parse_time(base_time_array))
@@ -92,6 +96,7 @@ for fltr in Filters:
         suitMap=sunpy.map.Map(files[i]) #ca image
         base_time=Time(parse_time(suitMap.date))
         idx=np.argmin(np.abs(base_time_array - base_time))
+        print(idx)
         idx2=np.argmin(np.abs(mg_map_time_array - base_time))
 
         suit_pos = get_horizons_coord(-21, suitMap.date)

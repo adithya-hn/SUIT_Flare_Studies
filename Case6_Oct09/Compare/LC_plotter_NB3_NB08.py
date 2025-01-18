@@ -54,10 +54,9 @@ fig,axs=plt.subplots(1,1, figsize=(11,5))
 fig.subplots_adjust(right=0.85)
 ax2 = axs.twinx()
 
-
 ax3 = axs.twinx()
 ax3.spines.right.set_position(("axes", 1.12))
-ax3.plot(helio_time_array,cdte1, label="Helios-CdTe1")
+ax3.plot(helio_time_array,cdte1, 'r',label="Helios-CdTe1")
 #ax3.plot(helio_time_array,cdte2, label="Helios")
 ax3.set_ylabel('Helios',fontsize=13)
 ax3.set_yscale('log')
@@ -97,7 +96,7 @@ x_cls_p=datetime.fromisoformat('2024-10-09T01:56:00.000')
 #axs2[0,0].plot(AR_I,AR_M,'ko',markersize=1.5)
 Flt=param
 axis_title='Total count'
-img_nm=Flt+'_light_curve.png'
+img_nm='light_curve.png'
 
 #plt.ylabel(axis_title,fontsize=13)
 plt.xlabel('Time',fontsize=13)
@@ -106,7 +105,7 @@ plt.axvline(x_cls,color='b',linestyle='dotted',label='GOES Flare start time')
 #plt.axvline(m_cls_p,color='r',linestyle='-',label='M class Flare peak time')
 plt.axvline(x_cls_p,color='b',linestyle='-',label='GOES Flare peak time')
 #plt.axhline(2.58e8,color='g',linestyle='dotted')
-plt.title(Flt+' Light Curve')
+plt.title('Light Curve')
 
 plt.figlegend(bbox_to_anchor=(0.001, 0.35, 0.35, 0.5))
 

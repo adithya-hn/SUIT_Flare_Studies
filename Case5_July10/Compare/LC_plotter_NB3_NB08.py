@@ -62,10 +62,11 @@ fig,axs=plt.subplots(1,1, figsize=(11,5))
 fig.subplots_adjust(right=0.83)
 ax2 = axs.twinx()
 
-ax4 = axs.twinx()
-ax5 = axs.twinx()
-ax3 = axs.twinx()
+#ax4 = axs.twinx()
+#ax5 = axs.twinx()
 '''
+ax3 = axs.twinx()
+
 ax3.spines.right.set_position(("axes", 1.1))
 ax3.plot(helio_time_array,cdte1, 'r',label="Helios")
 #ax3.plot(helio_time_array,cdte2, label="Helios")
@@ -80,9 +81,9 @@ ax4.set_yscale('log')'''
 
 #ax5.spines.right.set_position(("axes", 1.48))
 #ax5.errorbar(sl_time,sl_Em,yerr=sl_Em_er, fmt='gray',capsize=2,markersize=2,linewidth=0.5,label="EM-SoLExs",alpha=0.5)
-ax5.plot(sl_time,sl_Em,'gray',linewidth=0.5,label="EM-SoLExs",alpha=0.8)
-ax5.set_ylabel('Emision measure',fontsize=13)
-ax5.set_yscale('log')
+#ax5.plot(sl_time,sl_Em,'gray',linewidth=0.5,label="EM-SoLExs",alpha=0.8)
+#ax5.set_ylabel('Emision measure',fontsize=13)
+#ax5.set_yscale('log')
 
 
 
@@ -97,12 +98,14 @@ axs.minorticks_on()
 
 float_array = [float(string) for string in data[1]]
 float_array_er = [float(string) for string in data[2]]
+float_array_er=np.std(float_array_er)
 
 nb3float_array = [float(string) for string in NB3_data[1]]
 nb3float_array_er = [float(string) for string in NB3_data[2]]
+nb3float_array_er=np.std(nb3float_array_er)
 
 axs.errorbar(time_array,list(map(int,float_array)),yerr=float_array_er,fmt='ko-',capsize=2,markersize=2,linewidth=0.5,label='NB08')
-ax2.errorbar(nb3_time_array,list(map(int,nb3float_array)),yerr=nb3float_array_er,fmt='ro-',capsize=2,markersize=2,linewidth=0.5,label='NB03')
+ax2.errorbar(nb3_time_array,list(map(int,nb3float_array)),yerr=nb3float_array_er,fmt='bo-',capsize=2,markersize=2,linewidth=0.5,label='NB03')
 #ax2.plot(nb3_time_array,hmi_data,'bo--',markersize=2,linewidth=0.5)
 ax2.set_ylabel("NB03 Total count ")
 axs.set_ylabel('NB08 Total count ')

@@ -26,7 +26,7 @@ warnings.simplefilter('ignore')
 start = timeit.default_timer()
 now = datetime.datetime.now()-timedelta(days=1)
 fol_nm='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case2_June02/Mag'
-fol_nm=fol_nm+'/'+'Imgs_fm'
+fol_nm=fol_nm+'/'+'Imgs'
 pathlib.Path(fol_nm).mkdir(parents=True, exist_ok=True)
 
 search_fold='/Analysis/Projects_Data/Flare_Data/June02_Flare_Data1/HMI/HMI_cutouts/'
@@ -36,6 +36,9 @@ ty1=-250
 ty2=-170
 cadence=45
 Thresh_val=900
+th1=100
+th2=500
+th3=1000
 
 key=['magnetogram']
 param=key[0]
@@ -52,6 +55,10 @@ print('Total files:',len(files))
 Sequence = sunpy.map.Map(files, sequence=True)
 fltr_count=[]
 date_array=[]
+fltr_count1=[]
+fltr_count2=[]
+fltr_count3=[]
+
 for i in tqdm(range (len(Sequence))):
     hmi_map_=Sequence[i]
     if hmi_map_.meta.get('CROTA2')>10:
@@ -83,6 +90,10 @@ for i in tqdm(range (len(Sequence))):
     Thresh_data=np.where(Img_data< Thresh_val, 0, Img_data)#
     ThMap=sunpy.map.Map(Thresh_data,hmi_map.fits_header)
 
+    Thresh_data1=np.where(Img_data< th1, 0, Img_data)
+    Thresh_data2=np.where(Img_data< th2, 0, Img_data)
+    Thresh_data3=np.where(Img_data< th3, 0, Img_data)
+
     ax = fig.add_subplot(projection=suit_box)
     ThMap.plot(axes=ax)
     plt.savefig(f'{box_pth}/Box/{fnm}.jpg',dpi=300)
@@ -90,10 +101,13 @@ for i in tqdm(range (len(Sequence))):
     
     fltr_count.append(np.sum(abs(Thresh_data)))
     date_array.append(hmi_map.date)
+    fltr_count1.append(np.sum(abs(Thresh_data1)))
+    fltr_count2.append(np.sum(abs(Thresh_data2)))
+    fltr_count3.append(np.sum(abs(Thresh_data3)))
 
 fltr_count=np.array(fltr_count)
 date_array=np.array(date_array)
-np.savetxt(f'cabox_900th{param}_X1.4_Light_curve_data.csv',np.c_[date_array,fltr_count],delimiter=',',fmt='%s')
+np.savetxt(f'cabox_900th{param}_M1.2_Light_curve_data.csv',np.c_[date_array,fltr_count,fltr_count1,fltr_count2,fltr_count3],delimiter=',',fmt='%s')
 
 stop = timeit.default_timer()
 print('Run Time: ', (stop - start)/60,'Mins') 

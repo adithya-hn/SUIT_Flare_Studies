@@ -26,14 +26,31 @@ warnings.simplefilter('ignore')
 start = timeit.default_timer()
 now = datetime.datetime.now()-timedelta(days=1)
 fol_nm='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case3_June02/Mag'
-fol_nm=fol_nm+'/'+'Imgs_fm'
+fol_nm=fol_nm+'/'+'Imgs'
 pathlib.Path(fol_nm).mkdir(parents=True, exist_ok=True)
 
 search_fold='/Analysis/Projects_Data/Flare_Data/June02_Flare_Data2/HMI/HMI_cutouts/'
-tx1=-325
+
+tx1=-420 #AR
+tx2=-380
+ty1=-225
+ty2=-320
+
+'''
+tx1=-470 #AR
+tx2=-30
+ty1=-500
+ty2=-150
+
+tx1=-325 #ca box
 tx2=-200
 ty1=-250
 ty2=-170
+x1=-320 #core
+tx2=-190
+ty1=-360
+ty2=-250'''
+
 cadence=45
 Thresh_val=900
 th1=100
@@ -106,7 +123,7 @@ for i in tqdm(range (len(Sequence))):
 
 fltr_count=np.array(fltr_count)
 date_array=np.array(date_array)
-np.savetxt(f'cabox_900th{param}_X1.4_Light_curve_data.csv',np.c_[date_array,fltr_count],delimiter=',',fmt='%s')
+np.savetxt(f'secn_cabox_900th{param}_M2.1_Light_curve_data.csv',np.c_[date_array,fltr_count,fltr_count1,fltr_count2,fltr_count3],delimiter=',',fmt='%s')
 
 stop = timeit.default_timer()
 print('Run Time: ', (stop - start)/60,'Mins') 

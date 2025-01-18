@@ -19,7 +19,8 @@ from astropy.coordinates import SkyCoord
 import numpy as np
 from sunpy.coordinates import RotatedSunFrame
 from tqdm import tqdm
-
+import warnings
+warnings.simplefilter('ignore')
 
 start = timeit.default_timer()
 now = datetime.datetime.now()-timedelta(days=1)
@@ -27,10 +28,24 @@ fol_nm='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case1_Jun01/Mag'
 fol_nm=fol_nm+'/'+'Imgs_fm'
 pathlib.Path(fol_nm).mkdir(parents=True, exist_ok=True)
 
-search_fold='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/June01_Flare/HMI_Magnetograms/'
+search_fold='/Analysis/Projects_Data/Flare_Data/June01_Flare_Data/HMI/HMI_cutouts/'
 
-fdir =os.listdir(search_fold)
-fdir.sort()
+tx1=-475
+tx2=-400
+ty1=-260
+ty2=-150
+'''x1=-320
+tx2=-190
+ty1=-360
+ty2=-250'''
+
+cadence=45
+Thresh_val=900
+th1=100
+th2=500
+th3=1000
+
+
 #print(fdir)
 key=['magnetogram']
 param=key[0]
@@ -41,14 +56,17 @@ dates=[]
 
 box_pth=fol_nm+'/'+param
 pathlib.Path(box_pth+'/Box').mkdir(parents=True, exist_ok=True)
-#pathlib.Path(box_pth).mkdir(parents=True, exist_ok=True)
-#print(fdir+fltr+'/'+'*3'+fltr+'.fits')
+
 files = sorted(glob.glob(f'{search_fold}*.fits'))
 print('Total files:',len(files))
 #print(files)
 Sequence = sunpy.map.Map(files, sequence=True)
 fltr_count=[]
 date_array=[]
+fltr_count1=[]
+fltr_count2=[]
+fltr_count3=[]
+
 for i in tqdm(range (len(Sequence))):
     
     hmi_map=Sequence[i]
@@ -60,7 +78,7 @@ for i in tqdm(range (len(Sequence))):
     #coords = SkyCoord(lat=(-21,-16)  * u.deg,lon=(348, 354)* u.deg,frame=hmi_map.coordinate_frame,)
 
     ###point1 = SkyCoord(-345*u.arcsec, -260*u.arcsec, frame=hmi_map.coordinate_frame) # ca second box
-    point1 = SkyCoord(-466*u.arcsec, -255*u.arcsec, frame=hmi_map.coordinate_frame) #ca bright box
+    point1 = SkyCoord(tx1*u.arcsec, ty1*u.arcsec, frame=hmi_map.coordinate_frame) #ca bright box
     #point1 = SkyCoord(-500*u.arcsec, -312*u.arcsec, frame=hmi_map.coordinate_frame) #flare core
     
     #point1 = SkyCoord(-500*u.arcsec, -323*u.arcsec, frame=hmi_map.coordinate_frame) #wide box
@@ -68,7 +86,7 @@ for i in tqdm(range (len(Sequence))):
     transformed_diffrot_point1 = diffrot_point1.transform_to(hmi_map.coordinate_frame)
 
     ###point2 = SkyCoord(-300*u.arcsec, -200*u.arcsec, frame=hmi_map.coordinate_frame) #
-    point2 = SkyCoord(-427*u.arcsec, -191*u.arcsec, frame=hmi_map.coordinate_frame) #
+    point2 = SkyCoord(tx2*u.arcsec, ty2*u.arcsec, frame=hmi_map.coordinate_frame) #
     #point2 = SkyCoord(-400*u.arcsec, -260*u.arcsec, frame=hmi_map.coordinate_frame) #small box
 
     #point2 = SkyCoord(-375*u.arcsec, -260*u.arcsec, frame=hmi_map.coordinate_frame) #wide box
@@ -85,8 +103,14 @@ for i in tqdm(range (len(Sequence))):
     plt.close()
     fig = plt.figure(figsize=(5, 5))
     suit_box=hmi_map.submap(coords)
-    Thresh_data=np.where((suit_box.data > -1000) & (suit_box.data < 1000), 0, suit_box.data)#
+    Img_data=abs(suit_box.data)
+    Thresh_data=np.where(Img_data< Thresh_val, 0, Img_data)#
+    #Thresh_data=np.where((suit_box.data > -1000) & (suit_box.data < 1000), 0, suit_box.data)#
     ThMap=sunpy.map.Map(Thresh_data,hmi_map.fits_header)
+
+    Thresh_data1=np.where(Img_data< th1, 0, Img_data)
+    Thresh_data2=np.where(Img_data< th2, 0, Img_data)
+    Thresh_data3=np.where(Img_data< th3, 0, Img_data)
 
     ax = fig.add_subplot(projection=suit_box)
     ThMap.plot(axes=ax)
@@ -95,34 +119,16 @@ for i in tqdm(range (len(Sequence))):
     
     fltr_count.append(np.sum(abs(Thresh_data)))
     date_array.append(hmi_map.date)
-    #fltr_count=np.array(fltr_count)
-    #print(len(fltr_count))
-    #fltr_count.append(fltr_count)
+    fltr_count1.append(np.sum(abs(Thresh_data1)))
+    fltr_count2.append(np.sum(abs(Thresh_data2)))
+    fltr_count3.append(np.sum(abs(Thresh_data3)))
+
 
 fltr_count=np.array(fltr_count)
 date_array=np.array(date_array)
-#fltr_count_err=np.array(fltr_count_err)
-#plot_data.append(plot_data)
-#Plot_data_er.append(fltr_count_err)
-#dates.append(date_array)
-
-#plot_data=np.array(plot_data)
-#Plot_data_er=np.array(Plot_data_er)
 
 
-np.savetxt(f'cabox_1kth{param}_X1.4_Light_curve_data.csv',np.c_[date_array,fltr_count],delimiter=',',fmt='%s')
-'''
-plot_data=np.array(plot_data)
-dates=np.array(dates)
-#plot_data=plot_data.reshape(8,189)
-#plot_data=np.vstack([plot_data,date_array])
-print(plot_data.shape)
-np.savetxt(f'{param}_Light_curve_data.dat',plot_data)
-np.savetxt(f'{param}_date_data.dat',dates,fmt='%s')'''
-    
-    
-    
- 
+np.savetxt(f'cabox_1kth{param}_X1.4_Light_curve_data.csv',np.c_[date_array,fltr_count,fltr_count1,fltr_count2,fltr_count3],delimiter=',',fmt='%s')
 
 stop = timeit.default_timer()
 

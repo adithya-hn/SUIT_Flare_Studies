@@ -36,7 +36,7 @@ nb4Mx=15000
 nb8Mx=4300
 nb6Mx=95000
 nb7Mx=310000
-Filters=['HMI'] #,'171','131']
+Filters=['GONG']#,'171','131']
 
 for fltr in Filters:
     fltr2=fltr
@@ -47,6 +47,8 @@ for fltr in Filters:
     search_fold=f'/Analysis/Projects_Data/Flare_Data/June02_Flare_Data2/P_corr_data/' #Custom Folder
     search_fold2=f'/Analysis/Projects_Data/Flare_Data/June02_Flare_Data2/P_corr_data/'
     if fltr2=='HMI':
+        base_fold=f'/Analysis/Projects_Data/Flare_Data/June02_Flare_Data2/{fltr2}/{fltr2}_cutouts/'
+    elif fltr2=='GONG':
         base_fold=f'/Analysis/Projects_Data/Flare_Data/June02_Flare_Data2/{fltr2}/{fltr2}_cutouts/'
     else:
         base_fold=f'/Analysis/Projects_Data/Flare_Data/June02_Flare_Data2/AIA/{fltr2}/{fltr2}_cutouts/'
@@ -59,6 +61,7 @@ for fltr in Filters:
     files2 =sorted(files2, key=lambda file_name: datetime.datetime.strptime(os.path.basename(file_name).split('_')[5], "%Y-%m-%dT%H.%M.%S.%f"))
 
     b_files=glob.glob(base_fold + '*.fits')
+   
     #b_files=sorted(b_files, key=lambda file_name: datetime.datetime.strptime(os.path.basename(file_name).split('_')[5], "%Y-%m-%dT%H.%M.%S.%f"))
 
     print('Total SUIT NB08 files:',len(files))
@@ -69,6 +72,8 @@ for fltr in Filters:
         if fltr2=='HMI':
             #hmi.m_45s.20240602_023000_TAI.2.magnetogram
             base_time_array.append(datetime.datetime.strptime(os.path.basename(b_files[f])[10:25], "%Y%m%d_%H%M%S"))
+        elif fltr2=='GONG':
+            base_time_array.append(datetime.datetime.strptime(os.path.basename(b_files[f])[:11], "%Y%m%d%H%M%S"))
         else:
             base_time_array.append(datetime.datetime.strptime(os.path.basename(b_files[f])[24:46], "%Y-%m-%dT%H:%M:%S.%f"))
     base_time_array=Time(parse_time(base_time_array))

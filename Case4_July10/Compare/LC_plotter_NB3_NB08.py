@@ -71,17 +71,17 @@ axs.yaxis.set_ticks_position('both')
 axs.xaxis.set_ticks_position('both')
 axs.minorticks_on()
 
-ax4 = axs.twinx()
-ax5 = axs.twinx()
+#ax4 = axs.twinx()
+#ax5 = axs.twinx()
 ax3 = axs.twinx()
-'''
+
 ax3.spines.right.set_position(("axes", 1.1))
 ax3.plot(helio_time_array,cdte1, 'r',label="Helios")
 #ax3.plot(helio_time_array,cdte2, label="Helios")
 ax3.set_ylabel('Helios',fontsize=13)
 ax3.set_yscale('log')
 
-
+'''
 ax4.spines.right.set_position(("axes", 1.33))
 ax4.errorbar(sl_time,sl_temp,yerr=sl_temp_er, fmt='g',capsize=2,markersize=2,linewidth=0.5,label="Temperature-SoLExs",alpha=0.5)
 ax4.set_ylabel('Temperature',fontsize=13)
@@ -89,9 +89,9 @@ ax4.set_yscale('log')'''
 
 #ax5.spines.right.set_position(("axes", 1.48))
 #ax5.errorbar(sl_time,sl_Em,yerr=sl_Em_er, fmt='gray',capsize=2,markersize=2,linewidth=0.5,label="EM-SoLExs",alpha=0.5)
-ax5.plot(sl_time,sl_Em,'gray',linewidth=0.5,label="EM-SoLExs",alpha=0.8)
-ax5.set_ylabel('Emision measure',fontsize=13)
-ax5.set_yscale('log')
+#ax5.plot(sl_time,sl_Em,'gray',linewidth=0.5,label="EM-SoLExs",alpha=0.8)
+#ax5.set_ylabel('Emision measure',fontsize=13)
+#ax5.set_yscale('log')
 
 
 
