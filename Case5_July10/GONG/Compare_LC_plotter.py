@@ -25,10 +25,10 @@ pathlib.Path("Figures").mkdir(parents=True, exist_ok=True)
 
 data=(np.loadtxt(f'NB08_M2.1_Light_curve_data.csv',delimiter=',',dtype='str')).transpose() #'NB03_Light_curve_data.dat'
 
-NB3_data=(np.loadtxt(f'cabox_900thmagnetogram_M2.1_Light_curve_data.csv',delimiter=',',dtype='str')).transpose()
+NB3_data=(np.loadtxt(f'cabox_900thmagnetogram_X1.4_Light_curve_data.csv',delimiter=',',dtype='str')).transpose()
 
 Helios=(np.load("cdte_data_flare_3.npy", allow_pickle=True)).transpose()
-Helios_er=Helios[2]
+
 date_array=data[0]
 
 NB3_date_array=NB3_data[0]
@@ -70,16 +70,15 @@ float_array = [float(string) for string in data[1]]
 float_array_er = [float(string) for string in data[2]]
 y_err=np.std(float_array_er)
 
-nb3float_array = [float(string) for string in NB3_data[2]]
+nb3float_array = [float(string) for string in NB3_data[4]]
 #nb3float_array_er = [float(string) for string in NB3_data[2]]
 
-ax2.errorbar(time_array,list(map(int,float_array)),yerr=y_err,fmt='ko',capsize=2,markersize=2,linewidth=0.5,label='NB08')
-axs.plot(nb3_time_array,list(map(int,nb3float_array)),'go',markersize=2,linewidth=0.5,label='HMI LOS')
-ax3.errorbar(helio_time_array,cdte1,yerr=Helios_er,fmt='ro',capsize=2,markersize=2,linewidth=0.5,label='Helios-cdte1')
+ax2.errorbar(time_array,list(map(int,float_array)),yerr=y_err,fmt='ko-',capsize=2,markersize=2,linewidth=0.5,label='NB08')
+axs.plot(nb3_time_array,list(map(int,nb3float_array)),'go-',markersize=2,linewidth=0.5,label='NB03')
+ax3.plot(helio_time_array,cdte1,'r',markersize=2,linewidth=0.5,label='Helios-cdte1')
 #ax2.plot(nb3_time_array,hmi_data,'bo--',markersize=2,linewidth=0.5)
-ax2.set_ylabel('Ca II h Total count ')
-axs.set_ylabel("Magnetic flux (Mx)")
-ax3.set_ylabel("HEL1OS count ")
+ax2.set_ylabel("NB03 Total count ")
+axs.set_ylabel('NB08 Total count ')
 ax3.set_yscale('log')
 #axs.legend(loc='upper right')
 #ax2.legend()
@@ -89,12 +88,12 @@ m_cls_p=datetime.fromisoformat('2024-06-02T08:56:00.000')
 
 Flt=param
 axis_title='Total count'
-img_nm='Comb_cabox_900G_Light_curve.png'
-plt.title('100G and above Light Curve')
+img_nm='1000G_Light_curve.png'
+plt.title('1000G and above Light Curve')
 #
 plt.xlabel('Time',fontsize=13)
-plt.axvline(m_cls,color='orange',linestyle='dotted',label='GOES Flare start time')
-plt.axvline(m_cls_p,color='orange',linestyle='-',label='GOES Flare peak time')
+plt.axvline(m_cls,color='b',linestyle='dotted',label='GOES Flare start time')
+plt.axvline(m_cls_p,color='b',linestyle='-',label='GOES Flare peak time')
 plt.figlegend(bbox_to_anchor=(0.001, 0.35, 0.35, 0.5))
 
 plt.savefig(img_nm,dpi=300)

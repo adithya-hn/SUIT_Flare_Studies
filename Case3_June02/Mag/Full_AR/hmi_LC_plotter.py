@@ -21,7 +21,7 @@ import matplotlib.dates as mdates
 Filters=['magnetogram']
 param=Filters[0]
 
-data=(np.loadtxt(f'full_ar_900thmagnetogram_M2.1_Light_curve_data.csv',delimiter=',',dtype='str')).transpose()
+data=(np.loadtxt(f'fullar_900thmagnetogram_M2.1_Light_curve_data.csv',delimiter=',',dtype='str')).transpose()
 date_array=data[0]
 print(date_array.shape)
 
@@ -50,7 +50,7 @@ x_cls_p=datetime.fromisoformat('2024-06-02T08:50:00.000')
 
 #axs2[0,0].plot(AR_I,AR_M,'ko',markersize=1.5)
 Flt=param
-axis_title='Total count'
+axis_title='Magnetic flux (Mx)'
 img_nm='fullAR_1000th_Mag_light_curve.png'
 plt.ylabel(axis_title,fontsize=13)
 plt.xlabel('Time',fontsize=13)

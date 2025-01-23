@@ -17,7 +17,7 @@ import pandas as pd
 from subprocess import call
 import matplotlib.dates as mdates
 
-Filters=['NB04']
+Filters=['NB08']
 param=Filters[0]
 pathlib.Path("Figures").mkdir(parents=True, exist_ok=True) 
 data=(np.loadtxt(f'{param}_M2.1_Light_curve_data.csv',delimiter=',',dtype='str')).transpose() #'NB03_Light_curve_data.dat'
@@ -31,7 +31,7 @@ date_array=data[0] #np.loadtxt(f'{param}_date_data.dat',dtype='str')
 #g_data=list(map(int,g_float_array))
 #date_array=np.array(date_array)
 #print(date_array.shape)
-
+    
 time_array=[]
 print(len(date_array))
 for i in range(len(date_array)):
@@ -59,7 +59,7 @@ axs.minorticks_on()
 
 float_array = [float(string) for string in data[1]]
 float_array_er = [float(string) for string in data[2]]
-y_er=np.std(float_array_er)
+y_er=np.std(float_array_er)*3*np.sqrt(63455)
 axs.errorbar(time_array,list(map(int,float_array)),yerr=y_er,fmt='ko',capsize=2,markersize=2,linewidth=0.5,label=Filters[0])
 '''
 ax2.plot(g_time_array,g_float_array,'bo--',markersize=0.1,linewidth=0.5)
@@ -87,7 +87,7 @@ plt.xlabel('Time',fontsize=13)
 plt.axvline(m_cls_p,color='orange',linestyle='-',label='GOES Flare peak time')
 plt.axvline(m_cls,color='orange',linestyle='--',label='GOES Flare start time')
 #plt.axhline(2.58e8,color='g',linestyle='dotted')
-plt.title('Mg II h Light Curve')
+plt.title('Ca II h Light Curve')
 #plt.ylim(57e4,68e4)#(66e4,700000)
 plt.legend(loc='best')
 time_formatter = mdates.DateFormatter('%H:%M')  # Format as HH:MM

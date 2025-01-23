@@ -15,6 +15,7 @@ import pathlib
 from astropy.coordinates import SkyCoord
 #from colormap import filterColor
 import numpy as np
+import tqdm
 
 
 start = timeit.default_timer()
@@ -22,7 +23,7 @@ start = timeit.default_timer()
 fol_nm=os.getcwd()+'/Light_curve_images/'
 Filters=['NB03','NB04','NB08']
 
-fdir='/Analysis/Projects_Data/Flare_Data/June02_Flare_Data2/Processed/Aligned_images/'
+fdir='/Analysis/Projects_Data/Flare_Data/Oct09_Flare_Data/Processed/Aligned_images/'
 #dat_file='Flare_files_Jun2_M1.2.dat'
 #Filters=['NB08']
 
@@ -74,10 +75,11 @@ for fltr in Filters:
         fig = plt.figure(figsize=(6, 5))
         ax = fig.add_subplot(projection=suit_map)
         suit_map.plot(axes=ax, clip_interval=(1, 99.99)*u.percent)
-        coords = SkyCoord(Tx=(-400, -220) * u.arcsec, Ty=(-180, -350) * u.arcsec, frame=suit_map.coordinate_frame)
+        coords = SkyCoord(Tx=(-100, 250) * u.arcsec, Ty=(300, -100) * u.arcsec, frame=suit_map.coordinate_frame)
         #coords = SkyCoord(Tx=(-580, -390) * u.arcsec, Ty=(-320, -160) * u.arcsec, frame=suit_map.coordinate_frame)
         suit_map.draw_quadrangle(coords,axes=ax,edgecolor="red",linestyle="-",linewidth=2,label='Region of interest')
-        er_coords = SkyCoord(Tx=(-260, -80) * u.arcsec, Ty=(-440, -580) * u.arcsec, frame=suit_map.coordinate_frame)
+        er_coords = SkyCoord(Tx=(-50, 50) * u.arcsec, Ty=(0, -100) * u.arcsec, frame=suit_map.coordinate_frame)
+        er_coords2 = SkyCoord(Tx=(190, 270) * u.arcsec, Ty=(0, -100) * u.arcsec, frame=suit_map.coordinate_frame)
         suit_map.draw_quadrangle(er_coords,axes=ax,edgecolor="blue",linestyle="-",linewidth=2,label='Background')
 
         #er_coords = SkyCoord(Tx=(-290, -390) * u.arcsec, Ty=(-380, -400) * u.arcsec, frame=suit_map.coordinate_frame)
@@ -110,7 +112,7 @@ for fltr in Filters:
     Plot_data_er=np.array(Plot_data_er)
     dates=np.array(dates)
     print(plot_data.shape)
-    np.savetxt(f'{fltr}_M2.1_Light_curve_data.csv',np.c_[date_array,fltr_count,fltr_count_err],delimiter=',',fmt='%s')
+    np.savetxt(f'{fltr}_X1.8_Light_curve_data.csv',np.c_[date_array,fltr_count,fltr_count_err],delimiter=',',fmt='%s')
     #np.savetxt(f'{fltr}_X1.4_date_data.dat',dates,fmt='%s')
     
     

@@ -25,16 +25,15 @@ warnings.simplefilter('ignore')
 
 start = timeit.default_timer()
 now = datetime.datetime.now()-timedelta(days=1)
-fol_nm='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case3_June02/Mag'
+fol_nm='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case3_June02/Mag/Full_AR'
 fol_nm=fol_nm+'/'+'Imgs'
 pathlib.Path(fol_nm).mkdir(parents=True, exist_ok=True)
 
 search_fold='/Analysis/Projects_Data/Flare_Data/June02_Flare_Data2/HMI/HMI_cutouts/'
-tx1=-325 #ca box
-tx2=-200
-ty1=-250
-ty2=-170
-
+tx1=-470 #AR
+tx2=-30
+ty1=-500
+ty2=-150
 
 '''
 tx1=-420 #AR
@@ -126,7 +125,7 @@ for i in tqdm(range (len(Sequence))):
     plt.savefig(f'{box_pth}/Box/{fnm}.jpg',dpi=300)
     plt.close()
     
-    fltr_count.append(np.sum(abs(Thresh_data)))
+    fltr_count.append(np.sum(abs(Thresh_data))*area*1.33e15)
     date_array.append(hmi_map.date)
     fltr_count1.append(np.sum(abs(Thresh_data1))*area*1.33e15)
     fltr_count2.append(np.sum(abs(Thresh_data2))*area*1.33e15)
@@ -137,7 +136,7 @@ for i in tqdm(range (len(Sequence))):
 print(area)
 fltr_count=np.array(fltr_count)
 date_array=np.array(date_array)
-np.savetxt(f'cabox_900th{param}_M2.1_Light_curve_data.csv',np.c_[date_array,fltr_count,fltr_count1,fltr_count2,fltr_count3],delimiter=',',fmt='%s')
+np.savetxt(f'fullar_900th{param}_M2.1_Light_curve_data.csv',np.c_[date_array,fltr_count,fltr_count1,fltr_count2,fltr_count3],delimiter=',',fmt='%s')
 
 stop = timeit.default_timer()
 print('Run Time: ', (stop - start)/60,'Mins') 

@@ -17,7 +17,7 @@ import pandas as pd
 from subprocess import call
 import matplotlib.dates as mdates
 
-Filters=['NB04']
+Filters=['NB08']
 param=Filters[0]
 pathlib.Path("Figures").mkdir(parents=True, exist_ok=True) 
 data=(np.loadtxt(f'{param}_M2.1_Light_curve_data.csv',delimiter=',',dtype='str')).transpose() #'NB03_Light_curve_data.dat'
@@ -84,10 +84,10 @@ plt.ylabel(axis_title,fontsize=13)
 plt.xlabel('Time',fontsize=13)
 #plt.axvline(m_cls,color='r',label='M class Flare start time',linestyle='dotted')
 #plt.axvline(x_cls,color='b',linestyle='dotted',label='GOES Flare start time')
-plt.axvline(m_cls_p,color='orange',linestyle='-',label='GOES Flare peak time')
-plt.axvline(m_cls,color='orange',linestyle='--',label='GOES Flare start time')
+plt.axvline(m_cls_p,color='b',linestyle='-',label='GOES Flare peak time')
+plt.axvline(m_cls,color='b',linestyle='--',label='GOES Flare start time')
 #plt.axhline(2.58e8,color='g',linestyle='dotted')
-plt.title('Mg II h Light Curve')
+plt.title(Flt+' Light Curve')
 #plt.ylim(57e4,68e4)#(66e4,700000)
 plt.legend(loc='best')
 time_formatter = mdates.DateFormatter('%H:%M')  # Format as HH:MM

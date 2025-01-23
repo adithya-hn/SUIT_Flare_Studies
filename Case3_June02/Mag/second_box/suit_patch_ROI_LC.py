@@ -26,7 +26,7 @@ warnings.simplefilter('ignore')
 start = timeit.default_timer()
 now = datetime.datetime.now()-timedelta(days=1)
 
-fol_nm=str(os.getcwd)+'/'+'Imgs'
+fol_nm='Imgs'
 pathlib.Path(fol_nm).mkdir(parents=True, exist_ok=True)
 
 search_fold='/Analysis/Projects_Data/Flare_Data/June02_Flare_Data2/P_corr_data/'
@@ -52,12 +52,12 @@ ty1=-360
 ty2=-250'''
 
 cadence=45
-Thresh_val=900
-th1=100
-th2=500
-th3=1000
+Thresh_val=0
+th1=3600
+th2=4100
+th3=4300
 
-key=['magnetogram']
+key=['Ca II h']
 param=key[0]
 
 plot_data=[]
@@ -102,7 +102,8 @@ for i in tqdm(range (len(Sequence))):
     plt.close()
     fig = plt.figure(figsize=(5, 5))
     suit_box=hmi_map.submap(coords)
-    Img_data=abs(suit_box.data)
+    Img_data_=abs(suit_box.data)
+    Img_data=Img_data_*1000/hmi_map.meta.get('MEAS_EXP')
     Thresh_data=np.where(Img_data< Thresh_val, 0, Img_data)#
     ThMap=sunpy.map.Map(Thresh_data,hmi_map.fits_header)
 

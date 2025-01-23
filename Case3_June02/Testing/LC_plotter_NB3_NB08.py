@@ -67,7 +67,7 @@ fig.subplots_adjust(right=0.85)
 ax2 = axs.twinx()
 #ax4 = axs.twinx()
 #ax5 = axs.twinx()
-'''
+#
 
 ax3 = axs.twinx()
 
@@ -76,7 +76,7 @@ ax3.errorbar(helio_time_array,cdte1,yerr=cdte1_er, fmt='ro',capsize=2,markersize
 #ax3.plot(helio_time_array,cdte2, label="Helios")
 ax3.set_ylabel('Helios',fontsize=13)
 ax3.set_yscale('log')
-
+'''
 ax4.spines.right.set_position(("axes", 1.33))
 ax4.errorbar(sl_time,sl_temp,yerr=sl_temp_er, fmt='g',capsize=2,markersize=2,linewidth=0.5,label="Temperature-SoLExs",alpha=0.5)
 ax4.set_ylabel('Temperature',fontsize=13)
@@ -103,8 +103,8 @@ float_array_er = [float(string) for string in data[2]]
 nb3float_array = [float(string) for string in NB3_data[1]]
 nb3float_array_er = [float(string) for string in NB3_data[2]]
 
-y_er=np.std(float_array_er)
-nb3_y_er=np.std(float_array_er)
+y_er=np.std(float_array_er)*3*np.sqrt(63455)
+nb3_y_er=np.std(float_array_er)*3*np.sqrt(63455)
 
 axs.errorbar(time_array,list(map(int,float_array)),yerr=y_er,fmt='ko',capsize=2,markersize=2,linewidth=0.5,label='NB08')
 ax2.errorbar(nb3_time_array,list(map(int,nb3float_array)),yerr=nb3_y_er,fmt='bo',capsize=2,markersize=2,linewidth=0.5,label='NB03')

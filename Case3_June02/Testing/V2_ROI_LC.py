@@ -90,7 +90,10 @@ for fltr in Filters:
         suit_box=suit_map.submap(coords)
         er_box=suit_map.submap(er_coords)
         l,h=np.shape(er_box.data)
+        L,H=np.shape(suit_box.data)
         er_area=l*h
+        area=L*H
+        print(area)
         ax = fig.add_subplot(projection=suit_box)
         suit_box.plot(axes=ax, clip_interval=(1, 99.99)*u.percent)
         plt.savefig(Box_fnm,dpi=300)
@@ -98,7 +101,7 @@ for fltr in Filters:
         fltr_count.append(np.sum(suit_box.data*1000/Sequence[i].meta.get('MEAS_EXP')))
         #fltr_count_err.append(np.sqrt(np.sum(suit_box.data))*1000/Sequence[i].meta.get('MEAS_EXP')) #poisonian error
         #fltr_count_err.append(np.sqrt(er_area)*(np.std(er_box.data))*1000/Sequence[i].meta.get('MEAS_EXP'))
-        fltr_count_err.append(np.sum(er_box.data*1000/Sequence[i].meta.get('MEAS_EXP')))
+        fltr_count_err.append((np.sum(er_box.data*1000/Sequence[i].meta.get('MEAS_EXP')))/er_area)
         date_array.append(Sequence[i].date)
     fltr_count=np.array(fltr_count)
     fltr_count_err=np.array(fltr_count_err)
