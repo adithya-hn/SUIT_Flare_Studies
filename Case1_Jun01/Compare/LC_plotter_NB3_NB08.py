@@ -16,6 +16,7 @@ import pathlib
 import pandas as pd
 from subprocess import call
 import pandas as pd
+import matplotlib.dates as mdates
 
 
 Filters=['NB08']
@@ -32,6 +33,7 @@ Helios=(np.load("/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case1_Jun
 
 cdte1=Helios[1]
 cdte2=Helios[2]
+cdte1_er=Helios[3]
 datetime_objects = pd.to_datetime(Helios[0])
 helio_time_array=[datetime.strptime(str(ts)[:26], "%Y-%m-%d %H:%M:%S.%f") for ts in datetime_objects]
 
@@ -62,12 +64,12 @@ plt.rcParams["xtick.major.size"] = 10
 fig,axs=plt.subplots(1,1, figsize=(11,5))
 fig.subplots_adjust(right=0.85)
 ax2 = axs.twinx()
-#'''
+'''
 
 ax3 = axs.twinx()
 
 ax3.spines.right.set_position(("axes", 1.1))
-ax3.plot(helio_time_array,cdte1,'r', label="Helios-CdTe1")
+ax3.errorbar(helio_time_array,cdte1,yerr=cdte1_er, fmt='ro',capsize=2,markersize=2,label="Helios-CdTe1")
 #ax3.plot(helio_time_array,cdte2, label="Helios")
 ax3.set_ylabel('Helios',fontsize=13)
 ax3.set_yscale('log')#'''
@@ -88,11 +90,12 @@ nb3float_array_er = [float(string) for string in NB3_data[2]]
 y_er=np.std(float_array_er)
 nb3_yer=np.std(nb3float_array_er)
 
-axs.errorbar(time_array,list(map(int,float_array)),yerr=y_er,fmt='ko-',capsize=2,markersize=2,linewidth=0.5,label='NB08')
-ax2.errorbar(nb3_time_array,list(map(int,nb3float_array)),yerr=nb3_yer,fmt='bo-',capsize=2,markersize=2,linewidth=0.5,label='NB03')
+axs.errorbar(time_array,list(map(int,float_array)),yerr=y_er,fmt='ko',capsize=2,markersize=2,linewidth=0.5,label='Ca II h')
+ax2.errorbar(nb3_time_array,list(map(int,nb3float_array)),yerr=nb3_yer,fmt='bo',capsize=2,markersize=2,linewidth=0.5,label='Mg II k')
 #ax2.plot(nb3_time_array,hmi_data,'bo--',markersize=2,linewidth=0.5)
-ax2.set_ylabel("NB03 Total count ")
-axs.set_ylabel('NB08 Total count ')
+ax2.set_ylabel("Magnesium II k Total count ")
+axs.set_ylabel('Calcium II h Total count ')
+axs.set_xlabel("Time")
 ax2.set_yscale('log')
 #axs.legend(loc='best')
 #ax2.legend()
@@ -108,18 +111,17 @@ x_cls=datetime.fromisoformat('2024-06-01T08:25:00.000')
 #axs2[0,0].plot(AR_I,AR_M,'ko',markersize=1.5)
 Flt=param
 axis_title='Total count'
-img_nm='NB03vsNB08_light_curve.png'
+img_nm='light_curve.png'
 
-#plt.ylabel(axis_title,fontsize=13)
-plt.xlabel('Time',fontsize=13)
 #plt.axvline(m_cls,color='r',label='M class Flare start time',linestyle='dotted')
-plt.axvline(x_cls,color='b',linestyle='dotted',label='GOES Flare start time')
+plt.axvline(x_cls,color='orange',linestyle='dotted',label='GOES Flare start time')
 #plt.axvline(m_cls_p,color='r',linestyle='-',label='M class Flare peak time')
-plt.axvline(x_cls_p,color='b',linestyle='-',label='GOES Flare peak time')
-plt.title('NB03 vs NB08 Light Curve')
+plt.axvline(x_cls_p,color='orange',linestyle='-',label='GOES Flare peak time')
+plt.title('Light Curve')
 #plt.legend(loc='best')
 plt.figlegend(bbox_to_anchor=(0.001, 0.35, 0.35, 0.5))
-
+time_formatter = mdates.DateFormatter('%H:%M')  # Format as HH:MM
+plt.gca().xaxis.set_major_formatter(time_formatter)
 #mpld3.save_html(fig, '12th_June_ROI_CRval.html')
 plt.savefig(img_nm,dpi=300)
 plt.show() #close()#

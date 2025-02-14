@@ -377,11 +377,13 @@ if OPTS.noplot:
         print("Matplotlib not installed, try - pip install matplotlib")
         import sys
         sys.exit()
-
+    idx=DCF.tolist().index(max(DCF))
+    print('Max DCF val',max(DCF),'+-',DCFERR[idx],T[idx])
     plt.figure(0)
     plt.errorbar(T, DCF, DCFERR, color='k', ls='-', capsize=0)
     plt.xlabel("Lag")
     plt.ylabel("Correlation Coefficient")
     plt.xlim(OPTS.lgl[0], OPTS.lgh[0])
+    plt.savefig('Plot.png')
     plt.show()
 

@@ -17,8 +17,10 @@ import pandas as pd
 from subprocess import call
 from matplotlib import colors
 import mpld3
+import matplotlib.dates as mdates
 
-Filters=['NB03']
+
+Filters=['NB08']
 param=Filters[0]
 pathlib.Path("Figures").mkdir(parents=True, exist_ok=True) 
 data=(np.loadtxt(f'{param}_X1.4_Light_curve_data.csv',delimiter=',',dtype='str')).transpose() #'NB03_Light_curve_data.dat'
@@ -84,8 +86,9 @@ plt.axvline(m_cls,color='b',linestyle='--',label='GOES Flare start time')
 plt.axvline(m_cls_p,color='b',linestyle='-',label='GOES Flare peak time')
 #plt.axhline(2.58e8,color='g',linestyle='dotted')
 plt.title(Flt+' Light Curve')
-#plt.ylim(57e4,68e4)#(66e4,700000)
-#plt.legend(loc='best')
+plt.figlegend(bbox_to_anchor=(0.001, 0.35, 0.35, 0.5))
+time_formatter = mdates.DateFormatter('%H:%M')  # Format as HH:MM
+plt.gca().xaxis.set_major_formatter(time_formatter)
 
 #mpld3.save_html(fig, '12th_June_ROI_CRval.html')
 plt.savefig(img_nm,dpi=300)

@@ -65,7 +65,7 @@ fig.subplots_adjust(right=0.85)
 ax2 = axs.twinx()
 #ax4 = axs.twinx()
 #ax5 = axs.twinx()
-'''
+
 ax3 = axs.twinx()
 
 ax3.spines.right.set_position(("axes", 1.1))
@@ -74,7 +74,7 @@ ax3.plot(helio_time_array,cdte1, 'r',label="Helios")
 ax3.set_ylabel('Helios',fontsize=13)
 ax3.set_yscale('log')
 
-
+'''
 ax4.spines.right.set_position(("axes", 1.33))
 ax4.errorbar(sl_time,sl_temp,yerr=sl_temp_er, fmt='g',capsize=2,markersize=2,linewidth=0.5,label="Temperature-SoLExs",alpha=0.5)
 ax4.set_ylabel('Temperature',fontsize=13)

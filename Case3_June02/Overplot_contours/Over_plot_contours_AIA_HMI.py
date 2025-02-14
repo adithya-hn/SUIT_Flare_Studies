@@ -37,7 +37,7 @@ nb8Mx=4300
 nb6Mx=95000
 nb7Mx=310000
 
-Filters=['GONG']#,'171','131']
+Filters=['HMI','171','131']
 
 for fltr in Filters:
     fltr2=fltr
@@ -78,7 +78,7 @@ for fltr in Filters:
             base_time_array.append(datetime.datetime.strptime(os.path.basename(b_files[f])[:11], "%Y%m%d%H%M%S"))
         else:
             base_time_array.append(datetime.datetime.strptime(os.path.basename(b_files[f])[24:46], "%Y-%m-%dT%H:%M:%S.%f"))
-    base_time_array=Time(parse_time(base_time_array))
+    base_time_array=Time(parse_time(base_time_array)) # like AIA or HMI
 
     for j in range(len(files2)):
         mg_map_time.append(datetime.datetime.strptime(os.path.basename(files2[j]).split('_')[5], "%Y-%m-%dT%H.%M.%S.%f"))
@@ -96,12 +96,12 @@ for fltr in Filters:
     
     for i in range(len(files)):
         suitMap=sunpy.map.Map(files[i]) #ca image
-        base_time=Time(parse_time(suitMap.date))
-        idx=np.argmin(np.abs(base_time_array - base_time))
+        base_time=Time(parse_time(suitMap.date)) # ca image time
+        idx=np.argmin(np.abs(base_time_array - base_time)) # finding the closes time image
         idx2=np.argmin(np.abs(mg_map_time_array - base_time))
 
         suit_pos = get_horizons_coord(-21, suitMap.date)
-        suitMap.meta.update(get_observer_meta(suit_pos, rsun=suit_pos.rsun))
+        suitMap.meta.update(get_observer_meta(suit_pos, rsun=suit_pos.rsun)) # plate scale correction
         
         MgII_Map=sunpy.map.Map(files2[idx2])
         MgII_data=MgII_Map.data*1000/int(MgII_Map.meta.get('CMD_EXPT'))
@@ -113,23 +113,14 @@ for fltr in Filters:
         Base_img=sunpy.map.Map(base_data,BaseMap.fits_header)
 
         img_head=suitMap.fits_header
-        norm_data=suitMap.data*1000/int(suitMap.meta.get('MEAS_EXP'))
+        norm_data=suitMap.data*1000/int(suitMap.meta.get('MEAS_EXP')) #Exposure normalization - counts per sec
         
         norm_suit_Map=sunpy.map.Map(norm_data,img_head)
-        normsuitMap=sunpy.map.Map(gaussian_filter(norm_data, sigma=1),img_head)
+        normsuitMap=sunpy.map.Map(gaussian_filter(norm_data, sigma=1),img_head) # smoothening the image for better contours
 
-        
-        
-        flt_th_lvs=[100,800]
-        
-        Thresh1_data=np.sum(np.where(abs(base_data)>flt_th_lvs[0],abs(base_data),0))
-        Thresh2_data=np.sum(np.where(abs(base_data)>flt_th_lvs[1],abs(base_data),0))
-        c1_data.append(Thresh1_data)
-        c2_data.append(Thresh2_data)
-        dates.append(base_time)
 
-        th_lvs=[3900,4100]
-        th_lvs2=[12000,14000]
+        th_lvs=[3900,4100] # NB8 threshold levels
+        th_lvs2=[12000,14000] #NB3 threshold levels
 
 
         fl_nm=jpg_fold+f'/{fltr2}'+'/'+os.path.basename(files[i])[:-4]+'jpg'
@@ -137,10 +128,9 @@ for fltr in Filters:
         ax = fig.add_subplot(111, projection=suitMap)
         Base_img.plot(cmap='gray',autoalign=True)
 
-        #norm_suit_Map.draw_contours(axes=ax, levels=th_lvs,zorder=1,colors=['skyblue','yellow'],alpha=0.7)
         
-        normsuitMap.draw_contours(axes=ax, levels=th_lvs,zorder=1,colors=['skyblue','yellow'])
-        Mg_Map.draw_contours(axes=ax, levels=th_lvs2,zorder=2,colors=['pink','green'],alpha=0.5)
+        normsuitMap.draw_contours(axes=ax, levels=th_lvs,zorder=1,colors=['skyblue','yellow']) # NB08
+        Mg_Map.draw_contours(axes=ax, levels=th_lvs2,zorder=2,colors=['pink','green'],alpha=0.5) # NB03
         
         plot_str='Ca II h: '+str(suitMap.date)
         ax.text(50,50, plot_str, color='white', fontsize=10)
@@ -149,9 +139,6 @@ for fltr in Filters:
         plt.savefig(fl_nm)
         plt.close()    
         print(i,' / ',len(files))
-    c1_data=np.array(c1_data)
-    c2_data=np.array(c2_data)
-    np.savetxt(f'{fltr2}_threshold_count.csv',np.c_[dates,c1_data,c2_data],delimiter=',',fmt='%s')
-
+    
 
 

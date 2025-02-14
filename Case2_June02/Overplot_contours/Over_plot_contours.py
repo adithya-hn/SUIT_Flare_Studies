@@ -36,6 +36,7 @@ nb4Mx=15000
 nb8Mx=4300
 nb6Mx=95000
 nb7Mx=310000
+
 Filters=['NB08']
 fltr2='HMI'
 for fltr in Filters:

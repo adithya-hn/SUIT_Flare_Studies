@@ -26,31 +26,23 @@ files = sorted(glob.glob(fdir + '*.fits'))
 print('No. of images found: ',len(files))
 
 P_angle=-5.479
+
 for i in range (len(files)):
     suitMap=sunpy.map.Map(files[i])
     obsDate=suitMap.date
     ref_time=Time(datetime.fromisoformat(suitMap.meta.get('CRTIME')))
-    cord_dif=obsDate-ref_time
+    cord_dif=obsDate-ref_time # to see coordinates assigned from are correct ref img or not
 
-    print(abs(suitMap.meta.get('CRVAL1')/0.698),suitMap.meta.get('CRVAL1'))
+    #print(abs(suitMap.meta.get('CRVAL1')/0.698),suitMap.meta.get('CRVAL1'))
 
-    #suitMap.meta['CRPIX1']=-1*(suitMap.meta.get('CRVAL1')/0.698)+(suitMap.meta.get('NAXIS1')/2)
-    #suitMap.meta['CRPIX2']=-1*(suitMap.meta.get('CRVAL2')/0.698)+(suitMap.meta.get('NAXIS1')/2)
-    #suitMap.meta['CRVAL1']=0
-    #suitMap.meta['CRVAL2']=0
+    suitMap.meta['CRPIX1']=-1*(suitMap.meta.get('CRVAL1')/0.698)+(suitMap.meta.get('NAXIS1')/2)
+    suitMap.meta['CRPIX2']=-1*(suitMap.meta.get('CRVAL2')/0.698)+(suitMap.meta.get('NAXIS1')/2)
+    suitMap.meta['CRVAL1']=0
+    suitMap.meta['CRVAL2']=0
     suitMap.meta['CROTA2']=P_angle
     #print(crpix1,crpix2)
     suitMap.save((jpg_fold+'/'+os.path.basename(files[i])),overwrite=True)
 
-
-    '''
-    idx2=np.where(ref_time==Pdate)[0]
-    if len(idx2)==0:
-        print('not found finding the closest')
-        idx2=np.argmin(np.abs(Pdate - ref_time))
-    else:
-         idx2=idx2[0]
-    print(ref_time,obsDate,Pdate[idx2])'''
 
 
 

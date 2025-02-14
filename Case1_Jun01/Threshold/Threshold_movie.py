@@ -93,8 +93,8 @@ for fltr in Filters:
         suit_map.draw_quadrangle(er_coords,axes=ax,edgecolor="blue",linestyle="-",linewidth=2,label='Background')
 
         er_box=suit_map.submap(er_coords)
-        print('Test thresh val: ', np.mean(er_box.data),np.std(er_box.data))
-        Thresh_val= np.mean(er_box.data)+12*np.std(er_box.data)
+        print('Test thresh val: ', np.mean(er_box.data)*3)
+        Thresh_val= np.mean(er_box.data)*3
         
 
 

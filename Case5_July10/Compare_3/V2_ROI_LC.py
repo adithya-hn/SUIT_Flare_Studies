@@ -1,5 +1,5 @@
 
-
+#ER coordinate shifted slightly to get proper noise counts
 
 import os
 import matplotlib.pyplot as plt
@@ -90,7 +90,7 @@ for fltr in Filters:
         coords = SkyCoord(Tx=(-175, 25) * u.arcsec, Ty=(-150, -300) * u.arcsec, frame=suit_map.coordinate_frame)
         #coords = SkyCoord(Tx=(-580, -390) * u.arcsec, Ty=(-320, -160) * u.arcsec, frame=suit_map.coordinate_frame)
         suit_map.draw_quadrangle(coords,axes=ax,edgecolor="red",linestyle="-",linewidth=2,label='Region of interest')
-        er_coords = SkyCoord(Tx=(-240, -100) * u.arcsec, Ty=(-300, -400) * u.arcsec, frame=suit_map.coordinate_frame)
+        er_coords = SkyCoord(Tx=(-240, -90) * u.arcsec, Ty=(-300, -400) * u.arcsec, frame=suit_map.coordinate_frame)
         suit_map.draw_quadrangle(er_coords,axes=ax,edgecolor="blue",linestyle="-",linewidth=2,label='Background')
 
         #er_coords = SkyCoord(Tx=(-290, -390) * u.arcsec, Ty=(-380, -400) * u.arcsec, frame=suit_map.coordinate_frame)
@@ -104,7 +104,10 @@ for fltr in Filters:
         suit_box=suit_map.submap(coords)
         er_box=suit_map.submap(er_coords)
         l,h=np.shape(er_box.data)
+        L,H=np.shape(suit_box.data)
         er_area=l*h
+        box_area=L*H
+        print(er_area,box_area)
         ax = fig.add_subplot(projection=suit_box)
         suit_box.plot(axes=ax,  vmin=0,vmax=Tmax)
         plt.colorbar()

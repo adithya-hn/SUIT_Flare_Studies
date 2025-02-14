@@ -36,7 +36,7 @@ nb4Mx=15000
 nb8Mx=4300
 nb6Mx=95000
 nb7Mx=310000
-Filters=['1600'] #'131','HMI','171'
+Filters=['171'] #,'1600','HMI','171'
 
 for fltr in Filters:
     fltr2=fltr
@@ -101,10 +101,10 @@ for fltr in Filters:
         idx2=np.argmin(np.abs(mg_map_time_array - base_time))
 
         suit_pos = get_horizons_coord(-21,suitMap.date)
-        print(suitMap.meta.get('hgln_obs'),suitMap.meta.get('hglt_obs'),suitMap.meta.get('dsun_obs'),suitMap.meta.get('rsun_ref'),suitMap.meta.get('rsun_obs'))
-        print(suit_pos)
-        print('____________')
-        print(get_observer_meta(suit_pos, rsun=suit_pos.rsun))
+        #print(suitMap.meta.get('hgln_obs'),suitMap.meta.get('hglt_obs'),suitMap.meta.get('dsun_obs'),suitMap.meta.get('rsun_ref'),suitMap.meta.get('rsun_obs'))
+        #print(suit_pos)
+        #print('____________')
+        #print(get_observer_meta(suit_pos, rsun=suit_pos.rsun))
         suitMap.meta.update(get_observer_meta(suit_pos, rsun=suit_pos.rsun))
         
         MgII_Map=sunpy.map.Map(files2[idx2])
@@ -132,8 +132,8 @@ for fltr in Filters:
         dates.append(base_time)
 
         #th_lvs=[3900,4100]
-        th_lvs=[4200,4600]
-        th_lvs2=[12000,14000]
+        th_lvs=[4400,4600] #ca
+        th_lvs2=[12000,14000] #mg
         #th_lvs2=[10000,12000]
 
         cs_th=np.sum(np.where(abs(norm_data)>th_lvs[0],abs(norm_data),0))

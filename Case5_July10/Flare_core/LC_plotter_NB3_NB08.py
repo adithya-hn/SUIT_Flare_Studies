@@ -14,6 +14,7 @@ from scipy import stats as S
 import scipy as sp
 import pathlib
 import pandas as pd
+import matplotlib.dates as mdates
 
 
 Filters=['NB08']
@@ -31,6 +32,7 @@ Helios=(np.load("cdte_data_flare_5.npy", allow_pickle=True)).transpose()
 
 cdte1=Helios[1]
 cdte2=Helios[2]
+cdte1_er=Helios[3]
 datetime_objects = pd.to_datetime(Helios[0])
 helio_time_array=[datetime.strptime(str(ts)[:26], "%Y-%m-%d %H:%M:%S.%f") for ts in datetime_objects]
 
@@ -50,15 +52,17 @@ for i in range(len(NB3_date_array)):
 rc('axes', linewidth=1.2)
 plt.rcParams["xtick.major.size"] = 10
 fig,axs=plt.subplots(1,1, figsize=(11,5))
+
 fig.subplots_adjust(right=0.83)
 ax2 = axs.twinx()
-
+#''' 
 ax3 = axs.twinx()
 ax3.spines.right.set_position(("axes", 1.13))
-ax3.plot(helio_time_array,cdte1, label="Helios-CdTe1")
+#ax3.plot(helio_time_array,cdte1, label="Helios-CdTe1")
+ax3.errorbar(helio_time_array,cdte1,yerr=cdte1_er,fmt='ro',capsize=2,markersize=2,linewidth=0.5,label='Hard X-ray')
 #ax3.plot(helio_time_array,cdte2, label="Helios")
 ax3.set_ylabel('Helios',fontsize=13)
-ax3.set_yscale('log')
+ax3.set_yscale('log')#'''
 
 
 axs.xaxis.set_tick_params(size=0.5)
@@ -70,16 +74,19 @@ axs.xaxis.set_ticks_position('both')
 axs.minorticks_on()
 
 float_array = [float(string) for string in data[1]]
-float_array_er = [float(string) for string in data[2]]
+float_array_er = [float(string)/20880 for string in data[2]]
+float_array_er=np.std(float_array_er)*3*np.sqrt(20736)
 
 nb3float_array = [float(string) for string in NB3_data[1]]
-nb3float_array_er = [float(string) for string in NB3_data[2]]
+nb3float_array_er = [float(string)/20880 for string in NB3_data[2]]
+nb3float_array_er=np.std(nb3float_array_er)*3*np.sqrt(20736)
 
-axs.errorbar(time_array,list(map(int,float_array)),yerr=float_array_er,fmt='ko-',capsize=2,markersize=2,linewidth=0.5,label='NB08')
-ax2.errorbar(nb3_time_array,list(map(int,nb3float_array)),yerr=nb3float_array_er,fmt='ro-',capsize=2,markersize=2,linewidth=0.5,label='NB03')
+
+axs.errorbar(time_array,list(map(int,float_array)),yerr=float_array_er,fmt='ko',capsize=2,markersize=2,linewidth=0.5,label='Ca II h')
+ax2.errorbar(nb3_time_array,list(map(int,nb3float_array)),yerr=nb3float_array_er,fmt='bo',capsize=2,markersize=2,linewidth=0.5,label='Mg II k')
 #ax2.plot(nb3_time_array,hmi_data,'bo--',markersize=2,linewidth=0.5)
-ax2.set_ylabel("NB03 Total count ")
-axs.set_ylabel('NB08 Total count ')
+ax2.set_ylabel("Mg II k Total count ")
+axs.set_ylabel('Ca II h Total count ')
 ax2.set_yscale('log')
 #axs.legend(loc='best')
 #ax2.legend()
@@ -100,16 +107,16 @@ img_nm='NB08_NB03_light_curve.png'
 #plt.ylabel(axis_title,fontsize=13)
 plt.xlabel('Time',fontsize=13)
 #plt.axvline(m_cls,color='r',label='M class Flare start time',linestyle='dotted')
-plt.axvline(x_cls,color='b',linestyle='dotted',label='GOES Flare start time')
+plt.axvline(x_cls,color='orange',linestyle='dotted',label='GOES Flare start time')
 #plt.axvline(m_cls_p,color='r',linestyle='-',label='M class Flare peak time')
-plt.axvline(x_cls_p,color='b',linestyle='-',label='GOES Flare peak time')
+plt.axvline(x_cls_p,color='orange',linestyle='-',label='GOES Flare peak time')
 #plt.axhline(2.58e8,color='g',linestyle='dotted')
-plt.title('Filter Light Curves')
+plt.title('Light Curves')
 #plt.ylim(57e4,68e4)#(66e4,700000)
 #plt.legend(loc='best')
 plt.figlegend(bbox_to_anchor=(0.001, 0.35, 0.35, 0.5))
-
-
-#mpld3.save_html(fig, '12th_June_ROI_CRval.html')
+plt.figlegend(bbox_to_anchor=(0.001, 0.35, 0.35, 0.5))
+time_formatter = mdates.DateFormatter('%H:%M')  # Format as HH:MM
+plt.gca().xaxis.set_major_formatter(time_formatter)
 plt.savefig(img_nm,dpi=300)
 plt.show() #close()
