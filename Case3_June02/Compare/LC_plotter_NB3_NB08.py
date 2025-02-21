@@ -72,7 +72,7 @@ ax2 = axs.twinx()
 ax3 = axs.twinx()
 
 ax3.spines.right.set_position(("axes", 1.1))
-ax3.errorbar(helio_time_array,cdte1,yerr=cdte1_er, fmt='ro',capsize=2,markersize=2,label="Helios-CdTe1")
+ax3.errorbar(helio_time_array,cdte1,yerr=cdte1_er, fmt='ro-',capsize=2,markersize=2,label="Helios-CdTe1")
 #ax3.plot(helio_time_array,cdte2, label="Helios")
 ax3.set_ylabel('Helios',fontsize=13)
 ax3.set_yscale('log')

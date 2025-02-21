@@ -51,11 +51,12 @@ axs.yaxis.set_ticks_position('both')
 axs.xaxis.set_ticks_position('both')
 axs.minorticks_on()
 
+
 float_array = [float(string) for string in data[2]]
 nb3float_array = [float(string) for string in NB3_data[2]]
 
-axs.plot(nb3_time_array,list(map(int,nb3float_array)),'go',markersize=2,linewidth=0.5,label='Mg II k')
-ax2.plot(time_array,list(map(int,float_array)),'ko',markersize=2,linewidth=0.5,label='Ca II h')
+axs.plot(nb3_time_array,list(map(int,nb3float_array)),'go-',markersize=2,linewidth=0.5,label='Mg II k')
+ax2.plot(time_array,list(map(int,float_array)),'ko-',markersize=2,linewidth=0.5,label='Ca II h')
 
 #ax2.plot(nb3_time_array,hmi_data,'bo--',markersize=2,linewidth=0.5)
 ax2.set_ylabel("Mg II k Total count ")

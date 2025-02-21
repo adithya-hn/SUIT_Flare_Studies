@@ -16,16 +16,16 @@ from sunpy.time import parse_time
 start = timeit.default_timer()
 now = datetime.now()-timedelta(days=1)
 fol_nm='/Analysis/Projects_Data/Flare_Data/Nov01_Flare_Data2/'
-jpg_fold=fol_nm+'/'+'P_corr_data'
+save_fold=fol_nm+'/'+'P_corr_data'
 
 search_fold=fol_nm
 fdir =search_fold 
-pathlib.Path(jpg_fold).mkdir(parents=True, exist_ok=True)
+pathlib.Path(save_fold).mkdir(parents=True, exist_ok=True)
 
 files = sorted(glob.glob(fdir + '*.fits'))
 print('No. of images found: ',len(files))
 
-P_angle=-5.479
+P_angle=6.27
 
 for i in range (len(files)):
     suitMap=sunpy.map.Map(files[i])
@@ -41,7 +41,7 @@ for i in range (len(files)):
     suitMap.meta['CRVAL2']=0
     suitMap.meta['CROTA2']=P_angle
     #print(crpix1,crpix2)
-    suitMap.save((jpg_fold+'/'+os.path.basename(files[i])),overwrite=True)
+    suitMap.save((save_fold+'/'+os.path.basename(files[i])),overwrite=True)
 
 
 
