@@ -18,7 +18,7 @@ from subprocess import call
 from matplotlib import colors
 import mpld3
 
-Filters=['NB04']
+Filters=['NB08']
 param=Filters[0]
 pathlib.Path("Figures").mkdir(parents=True, exist_ok=True) 
 data=(np.loadtxt(f'{param}_M1.0_Light_curve_data.csv',delimiter=',',dtype='str')).transpose() #'NB03_Light_curve_data.dat'

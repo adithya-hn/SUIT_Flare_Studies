@@ -17,7 +17,7 @@ import pandas as pd
 from subprocess import call
 import matplotlib.dates as mdates
 
-Filters=['NB04']
+Filters=['NB08']
 param=Filters[0]
 pathlib.Path("Figures").mkdir(parents=True, exist_ok=True) 
 data=(np.loadtxt(f'{param}_M2.1_Light_curve_data.csv',delimiter=',',dtype='str')).transpose() #'NB03_Light_curve_data.dat'
@@ -34,7 +34,7 @@ date_array=data[0] #np.loadtxt(f'{param}_date_data.dat',dtype='str')
 
 time_date=[]
 time_array=[]
-print(len(date_array))
+#print(len(date_array))
 for i in range(len(date_array)):
 
     parsed_time = datetime.fromisoformat(date_array[i])
@@ -63,6 +63,6 @@ ax2.set_yscale('log')'''
 Flt=param
 axis_title='Total count'
 img_nm=Flt+'_light_curve.png'
-print(np.diff(time_array))
+#print(np.diff(time_array))
 
-np.savetxt('f{param}_time_series.csv',np.c_[time_date,time_array,float_array,er_bars],delimiter=',',fmt='%s')
+np.savetxt(f'{param}_time_series.csv',np.c_[time_date,time_array,float_array,er_bars],delimiter=',',fmt='%s')

@@ -44,6 +44,7 @@ for fltr in Filters:
     fltr_count=[]
     date_array=[]
     fltr_count_err=[]
+    bx_area=[]
     Sequence = sunpy.map.Map(files, sequence=True)
 
     Align_LC=''#True
@@ -91,6 +92,8 @@ for fltr in Filters:
         er_box=suit_map.submap(er_coords)
         l,h=np.shape(er_box.data)
         er_area=l*h
+        L,H=np.shape(suit_box.data)
+        #print('box_area;=',L*H)
         ax = fig.add_subplot(projection=suit_box)
         suit_box.plot(axes=ax, clip_interval=(1, 99.99)*u.percent)
         plt.savefig(Box_fnm,dpi=300)
@@ -98,19 +101,15 @@ for fltr in Filters:
         fltr_count.append(np.sum(suit_box.data*1000/Sequence[i].meta.get('MEAS_EXP')))
         #fltr_count_err.append(np.sqrt(np.sum(suit_box.data))*1000/Sequence[i].meta.get('MEAS_EXP')) #poisonian error
         #fltr_count_err.append(np.sqrt(er_area)*(np.std(er_box.data))*1000/Sequence[i].meta.get('MEAS_EXP'))
-        fltr_count_err.append(np.sum(er_box.data*1000/Sequence[i].meta.get('MEAS_EXP')))
+        fltr_count_err.append(np.sum(er_box.data*1000/Sequence[i].meta.get('MEAS_EXP'))/er_area )
         date_array.append(Sequence[i].date)
+        bx_area.append(L*H)
     fltr_count=np.array(fltr_count)
     fltr_count_err=np.array(fltr_count_err)
-    plot_data.append(fltr_count)
-    Plot_data_er.append(fltr_count_err)
-    dates.append(date_array)
-
-    plot_data=np.array(plot_data)
-    Plot_data_er=np.array(Plot_data_er)
     dates=np.array(dates)
-    print(plot_data.shape)
-    np.savetxt(f'{fltr}_M2.1_Light_curve_data.csv',np.c_[date_array,fltr_count,fltr_count_err],delimiter=',',fmt='%s')
+    bx_area=np.array(bx_area)
+    
+    np.savetxt(f'{fltr}_M2.1_Light_curve_data.csv',np.c_[date_array,fltr_count,fltr_count_err,bx_area],delimiter=',',fmt='%s')
     #np.savetxt(f'{fltr}_X1.4_date_data.dat',dates,fmt='%s')
     
     

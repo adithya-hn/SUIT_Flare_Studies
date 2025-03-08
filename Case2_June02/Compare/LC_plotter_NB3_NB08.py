@@ -62,15 +62,15 @@ fig,axs=plt.subplots(1,1, figsize=(11,5))
 #fig.subplots_adjust(right=0.65)
 ax2 = axs.twinx()
 #'''
-#ax3 = axs.twinx()
+ax3 = axs.twinx()
 
 #ax4 = axs.twinx()
-#ax5 = axs.twinx()
+ax5 = axs.twinx()
 
-#ax3.spines.right.set_position(("axes", 1.20))
-#ax3.plot(helio_time_array,cdte1, 'r',label="Helios",alpha=0.5)
-#ax3.set_ylabel('Helios',fontsize=13)
-#ax3.set_yscale('log')
+ax3.spines.right.set_position(("axes", 1.20))
+ax3.plot(helio_time_array,cdte1, 'r',label="Helios",alpha=0.5)
+ax3.set_ylabel('Helios',fontsize=13)
+ax3.set_yscale('log')
 
 
 #ax4.spines.right.set_position(("axes", 1.33))
@@ -79,12 +79,12 @@ ax2 = axs.twinx()
 #ax4.set_ylabel('Temperature',fontsize=13)
 #ax4.set_yscale('log')#
 
-#ax5.spines.right.set_position(("axes", 1.48))
-#ax5.errorbar(sl_time,sl_Em,yerr=sl_Em_er, fmt='gray',capsize=2,markersize=2,linewidth=0.5,label="EM-SoLExs",alpha=0.5)
-#ax5.plot(sl_time,sl_Em, 'gray',markersize=2,linewidth=0.5,label="EM-SoLExs",alpha=0.5)
-#ax5.plot(sl_time,sl_Em,'gray',linewidth=0.5,label="EM-SoLExs",alpha=0.8)
-#ax5.set_ylabel('Emision measure',fontsize=13)
-#ax5.set_yscale('log')#'''
+ax5.spines.right.set_position(("axes", 1.48))
+ax5.errorbar(sl_time,sl_Em,yerr=sl_Em_er, fmt='gray',capsize=2,markersize=2,linewidth=0.5,label="EM-SoLExs",alpha=0.5)
+ax5.plot(sl_time,sl_Em, 'gray',markersize=2,linewidth=0.5,label="EM-SoLExs",alpha=0.5)
+ax5.plot(sl_time,sl_Em,'gray',linewidth=0.5,label="EM-SoLExs",alpha=0.8)
+ax5.set_ylabel('Emision measure',fontsize=13)
+ax5.set_yscale('log')#'''
 
 axs.xaxis.set_tick_params(size=0.5)
 axs.yaxis.set_tick_params(size=0.5)
@@ -103,7 +103,7 @@ y_er_NB3=np.std(float_array_er)
 y_er=np.std(float_array_er)
 
 axs.errorbar(time_array,list(map(int,float_array)),yerr=y_er,fmt='ko-',capsize=2,markersize=2,linewidth=0.5,label='NB08')
-ax2.errorbar(nb3_time_array,list(map(int,nb3float_array)),yerr=y_er_NB3,fmt='bo-',capsize=2,markersize=2,linewidth=0.5,label='NB03')
+#ax2.errorbar(nb3_time_array,list(map(int,nb3float_array)),yerr=y_er_NB3,fmt='bo-',capsize=2,markersize=2,linewidth=0.5,label='NB03')
 #ax2.plot(nb3_time_array,hmi_data,'bo--',markersize=2,linewidth=0.5)
 ax2.set_ylabel("NB03 Total count ")
 axs.set_ylabel('NB08 Total count ')

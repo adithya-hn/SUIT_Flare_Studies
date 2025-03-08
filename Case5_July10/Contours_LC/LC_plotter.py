@@ -62,7 +62,7 @@ axs.minorticks_on()
 float_array = [float(string) for string in data[1]]
 #float_array_er = [float(string) for string in data[2]]
 #y_er=np.std(float_array_er)
-f
+
 contour_area=2816 #ca_ii_h
 float_array=np.array(float_array)
 plt.plot(time_array,float_array/contour_area,'ko-',markersize=2,linewidth=0.5,label='Total count of peak time contour')

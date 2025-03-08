@@ -93,7 +93,7 @@ for fltr in Filters:
         L,H=np.shape(suit_box.data)
         er_area=l*h
         area=L*H
-        print(area)
+        print(area,L,H,er_area,l,h)
         ax = fig.add_subplot(projection=suit_box)
         suit_box.plot(axes=ax, clip_interval=(1, 99.99)*u.percent)
         plt.savefig(Box_fnm,dpi=300)

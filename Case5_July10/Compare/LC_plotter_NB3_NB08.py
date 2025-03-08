@@ -138,8 +138,7 @@ plt.figlegend(bbox_to_anchor=(0.001, 0.35, 0.35, 0.5))
 time_formatter = mdates.DateFormatter('%H:%M')  # Format as HH:MM
 plt.gca().xaxis.set_major_formatter(time_formatter)
 plt.figlegend(bbox_to_anchor=(0.001, 0.35, 0.35, 0.5))
-
-
-#mpld3.save_html(fig, '12th_June_ROI_CRval.html')
+time_formatter = mdates.DateFormatter('%H:%M')  # Format as HH:MM
+plt.gca().xaxis.set_major_formatter(time_formatter)
 plt.savefig(img_nm,dpi=300)
 plt.show() #close()
