@@ -21,7 +21,7 @@ import mpld3
 Filters=['NB08']
 param=Filters[0]
 pathlib.Path("Figures").mkdir(parents=True, exist_ok=True) 
-data=(np.loadtxt(f'{param}_M1.0_Light_curve_data.csv',delimiter=',',dtype='str')).transpose() #'NB03_Light_curve_data.dat'
+data=(np.loadtxt(f'results.csv',delimiter=',',skiprows=1,dtype='str')).transpose() #'NB03_Light_curve_data.dat'
 #print(data[0])
 #goes_data=(np.loadtxt(f'/Analysis/Research_Projects/Flare_studies/SUIT_Flares/June01_Flare/Goes_data.csv',delimiter=',',dtype='str')).transpose()
 #print(goes_data)
@@ -58,18 +58,17 @@ axs.minorticks_on()
 
 
 float_array = [float(string) for string in data[1]]
-float_array_er = [float(string) for string in data[2]]
-y_er=np.std(float_array_er)*3*np.sqrt(int(data[3,0]))
-#axs.errorbar(time_array,list(map(int,float_array)),yerr=y_er,fmt='ko',capsize=2,markersize=2,linewidth=0.5)
-axs.plot(time_array,list(map(int,float_array)),'ko-',markersize=2,linewidth=0.5,label=f'Total count {param}')
+#float_array_er = [float(string) for string in data[2]]
+#y_er=np.std(float_array_er)*3*np.sqrt(int(data[3,0]))
+axs.plot(time_array,list(map(int,float_array)),'ko-',markersize=2,linewidth=0.5)
 '''
 ax2.plot(g_time_array,g_float_array,'bo--',markersize=0.1,linewidth=0.5)
 ax2.set_ylabel("X-ray flux [1-8 A] (Wm$^{-2}$$s^{-1}$)")
 axs.set_ylabel('Total count (NUV)')
 ax2.set_yscale('log')'''
 
-m_cls=datetime.fromisoformat('2025-02-06T10:47:00.000')
-m_cls_p=datetime.fromisoformat('2025-02-06T11:04:00.000')
+m_cls=datetime.fromisoformat('2024-07-10T15:25:00.000')
+m_cls_p=datetime.fromisoformat('2024-07-10T15:37:00.000')
 #m_cls=datetime.fromisoformat('2024-06-01T08:29:00.000')
 
 
@@ -86,7 +85,7 @@ plt.axvline(m_cls_p,color='b',linestyle='-',label='GOES Flare peak time')
 #plt.axhline(2.58e8,color='g',linestyle='dotted')
 plt.title(Flt+' Light Curve')
 #plt.ylim(57e4,68e4)#(66e4,700000)
-plt.legend(loc='best')
+#plt.legend(loc='best')
 
 #mpld3.save_html(fig, '12th_June_ROI_CRval.html')
 plt.savefig(img_nm,dpi=300)

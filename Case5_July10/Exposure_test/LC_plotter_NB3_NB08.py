@@ -15,8 +15,7 @@ import scipy as sp
 import pathlib
 import pandas as pd
 from subprocess import call
-from matplotlib import colors
-import mpld3
+import matplotlib.dates as mdates
 
 Filters=['NB08']
 param1='magnetogram'
@@ -41,7 +40,7 @@ for i in range(len(NB3_date_array)):
 
 rc('axes', linewidth=1.2)
 plt.rcParams["xtick.major.size"] = 10
-fig,axs=plt.subplots(1,1, figsize=(10,5))
+fig,axs=plt.subplots(1,1, figsize=(10,6))
 ax2 = axs.twinx()
 axs.xaxis.set_tick_params(size=0.5)
 axs.yaxis.set_tick_params(size=0.5)
@@ -51,18 +50,24 @@ axs.yaxis.set_ticks_position('both')
 axs.xaxis.set_ticks_position('both')
 axs.minorticks_on()
 
-float_array = [float(string) for string in data[2]]
-#float_array_er = [float(string) for string in data[2]]
+float_array = [float(string) for string in data[1]]
+float_array_er = [float(string) for string in data[2]]
 
-nb3float_array = [float(string) for string in NB3_data[2]]
-#nb3float_array_er = [float(string) for string in NB3_data[2]]
-
-axs.plot(time_array,list(map(int,float_array)),'ko-',markersize=2,linewidth=0.5,label='NB08')
-ax2.plot(nb3_time_array,list(map(int,nb3float_array)),'bo-',markersize=2,linewidth=0.5,label='NB03')
+nb3float_array = [float(string) for string in NB3_data[1]]
+nb3float_array_er = [float(string) for string in NB3_data[2]]
+nb3y_er=np.std(nb3float_array_er)*np.sqrt(61922)/30960
+y_er=np.std(float_array_er)*np.sqrt(61922)/30960
+axs.errorbar(time_array,list(map(int,float_array)),yerr=y_er,fmt='ko',capsize=2,markersize=2,linewidth=0.5,label='Ca II h')
+ax2.errorbar(nb3_time_array,list(map(int,nb3float_array)),yerr=nb3y_er,fmt='bo',capsize=2,markersize=2,linewidth=0.5,label='Mg II k')
+#axs.plot(time_array,list(map(int,float_array_er)),'ko-',markersize=2,linewidth=0.5,label='NB08')
+#ax2.plot(nb3_time_array,list(map(int,nb3float_array_er)),'bo-',markersize=2,linewidth=0.5,label='NB03')
 #ax2.plot(nb3_time_array,hmi_data,'bo--',markersize=2,linewidth=0.5)
-ax2.set_ylabel("NB04 Total count ")
-axs.set_ylabel('NB08 Total count ')
+ax2.set_ylabel("Mg II k Total count ")
+axs.set_ylabel('Ca II h Total count ')
+ax2.set_yscale('log')
+axs.legend(loc='best')
 
+#ax2.set_ylim(7.2e6,7.3e6)
 #axs.set_ylim(2.1e8,2.25e8) #NB08
 #axs.set_ylim(5.5e8,6.5e8) #NB03
 #m_cls_p=datetime.fromisoformat('2024-06-01T08:46:00.000')
@@ -74,17 +79,20 @@ x_cls_p=datetime.fromisoformat('2024-07-10T15:37:00.000')
 #axs2[0,0].plot(AR_I,AR_M,'ko',markersize=1.5)
 Flt=param
 axis_title='Total count'
-img_nm='Quiet_NB04_NB08_light_curve.png'
+img_nm='NB8_NB03_light_curve.png'
 
 #plt.ylabel(axis_title,fontsize=13)
 plt.xlabel('Time',fontsize=13)
 #plt.axvline(m_cls,color='r',label='M class Flare start time',linestyle='dotted')
-plt.axvline(x_cls,color='b',linestyle='dotted',label='GOES Flare start time')
+plt.axvline(x_cls,color='orange',linestyle='dotted',label='GOES Flare start time')
 #plt.axvline(m_cls_p,color='r',linestyle='-',label='M class Flare peak time')
-plt.axvline(x_cls_p,color='b',linestyle='-',label='GOES Flare peak time')
+plt.axvline(x_cls_p,color='orange',linestyle='-',label='GOES Flare peak time')
 #plt.axhline(2.58e8,color='g',linestyle='dotted')
-plt.title('Total count')
+plt.title('Total count Light Curve')
+#plt.ylim(57e4,68e4)#(66e4,700000)
 plt.figlegend(bbox_to_anchor=(0.001, 0.35, 0.35, 0.5))
+time_formatter = mdates.DateFormatter('%H:%M')  # Format as HH:MM
+plt.gca().xaxis.set_major_formatter(time_formatter)
 
 #mpld3.save_html(fig, '12th_June_ROI_CRval.html')
 plt.savefig(img_nm,dpi=300)

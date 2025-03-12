@@ -78,7 +78,7 @@ for fltr in Filters:
         coords = SkyCoord(Tx=(-175, -75) * u.arcsec, Ty=(-250, -150) * u.arcsec, frame=suit_map.coordinate_frame)
         #coords = SkyCoord(Tx=(-580, -390) * u.arcsec, Ty=(-320, -160) * u.arcsec, frame=suit_map.coordinate_frame)
         suit_map.draw_quadrangle(coords,axes=ax,edgecolor="red",linestyle="-",linewidth=2,label='Region of interest')
-        er_coords = SkyCoord(Tx=(-10, 90) * u.arcsec, Ty=(0, -100) * u.arcsec, frame=suit_map.coordinate_frame)
+        er_coords = SkyCoord(Tx=(0, 100) * u.arcsec, Ty=(-50, -150) * u.arcsec, frame=suit_map.coordinate_frame)
         suit_map.draw_quadrangle(er_coords,axes=ax,edgecolor="blue",linestyle="-",linewidth=2,label='Background')
 
         #er_coords = SkyCoord(Tx=(-290, -390) * u.arcsec, Ty=(-380, -400) * u.arcsec, frame=suit_map.coordinate_frame)

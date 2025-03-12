@@ -1,5 +1,5 @@
 
-
+#ER coordinate shifted slightly to get proper noise counts
 
 import os
 import matplotlib.pyplot as plt
@@ -19,10 +19,14 @@ import numpy as np
 
 start = timeit.default_timer()
 
+nb3Mx=30000
+nb4Mx=32000
+nb8Mx=10000
+
 fol_nm=os.getcwd()+'/Light_curve_images/'
 Filters=['NB03','NB04','NB08']
 
-fdir='/Analysis/Projects_Data/Flare_Data/July10_Flare_Data2/Processed_2/Aligned_images/'
+fdir='/Analysis/Projects_Data/Flare_Data/July10_Flare_Data2/Processed/Aligned_images/'
 #dat_file='Flare_files_Jun2_M1.2.dat'
 #Filters=['NB08']
 
@@ -49,6 +53,14 @@ for fltr in Filters:
     Align_LC=''#True
     temp_lyr=0
 
+    if fltr=='NB03':
+        Tmax=nb3Mx
+    
+    if fltr=='NB04':
+        Tmax=nb4Mx
+
+    if fltr=='NB08':        
+        Tmax=nb8Mx
 
     if Align_LC==True:
         print('Aligning image')
@@ -74,17 +86,18 @@ for fltr in Filters:
         
         fig = plt.figure(figsize=(6, 5))
         ax = fig.add_subplot(projection=suit_map)
-        suit_map.plot(axes=ax, clip_interval=(1, 99.99)*u.percent)
-        coords = SkyCoord(Tx=(-175, -75) * u.arcsec, Ty=(-250, -150) * u.arcsec, frame=suit_map.coordinate_frame)
+        suit_map.plot(axes=ax, vmin=0,vmax=Tmax)
+        coords = SkyCoord(Tx=(-175, 25) * u.arcsec, Ty=(-150, -300) * u.arcsec, frame=suit_map.coordinate_frame)
         #coords = SkyCoord(Tx=(-580, -390) * u.arcsec, Ty=(-320, -160) * u.arcsec, frame=suit_map.coordinate_frame)
         suit_map.draw_quadrangle(coords,axes=ax,edgecolor="red",linestyle="-",linewidth=2,label='Region of interest')
-        er_coords = SkyCoord(Tx=(-10, 90) * u.arcsec, Ty=(0, -100) * u.arcsec, frame=suit_map.coordinate_frame)
+        er_coords = SkyCoord(Tx=(-240, -90) * u.arcsec, Ty=(-300, -400) * u.arcsec, frame=suit_map.coordinate_frame)
         suit_map.draw_quadrangle(er_coords,axes=ax,edgecolor="blue",linestyle="-",linewidth=2,label='Background')
 
         #er_coords = SkyCoord(Tx=(-290, -390) * u.arcsec, Ty=(-380, -400) * u.arcsec, frame=suit_map.coordinate_frame)
         #suit_map.draw_quadrangle(er_coords,axes=ax,edgecolor="blue",linestyle="-",linewidth=2,label='Background')
         
         #print(fnm)
+        plt.colorbar()
         plt.savefig(F_name,dpi=300)
         plt.close()
         fig = plt.figure(figsize=(5, 5))
@@ -93,15 +106,16 @@ for fltr in Filters:
         l,h=np.shape(er_box.data)
         L,H=np.shape(suit_box.data)
         er_area=l*h
-        area=L*H
-        print(area,er_area)
+        box_area=L*H
+        print(er_area,box_area)
         ax = fig.add_subplot(projection=suit_box)
-        suit_box.plot(axes=ax, clip_interval=(1, 99.99)*u.percent)
+        suit_box.plot(axes=ax,  vmin=0,vmax=Tmax)
+        plt.colorbar()
         plt.savefig(Box_fnm,dpi=300)
         plt.close()
-        fltr_count.append(np.sum(suit_box.data*1000/Sequence[i].meta.get('MEAS_EXP')))
-        #fltr_count_err.append(np.sqrt(np.sum(suit_box.data))*1000/Sequence[i].meta.get('MEAS_EXP')) #poisonian error
-        fltr_count_err.append(np.sum(er_box.data*1000/Sequence[i].meta.get('MEAS_EXP'))) 
+        fltr_count.append(np.sum(suit_box.data))
+        fltr_count_err.append(np.sum(er_box.data))
+        #fltr_count_err.append(np.sqrt(er_area)*(np.std(er_box.data))*1000/Sequence[i].meta.get('MEAS_EXP'))
         date_array.append(Sequence[i].date)
     fltr_count=np.array(fltr_count)
     fltr_count_err=np.array(fltr_count_err)
@@ -113,7 +127,7 @@ for fltr in Filters:
     Plot_data_er=np.array(Plot_data_er)
     dates=np.array(dates)
     print(plot_data.shape)
-    np.savetxt(f'{fltr}_M1.0_flare_core_Light_curve_data.csv',np.c_[date_array,fltr_count,fltr_count_err],delimiter=',',fmt='%s')
+    np.savetxt(f'{fltr}_M1.0_Light_curve_data.csv',np.c_[date_array,fltr_count,fltr_count_err],delimiter=',',fmt='%s')
     #np.savetxt(f'{fltr}_X1.4_date_data.dat',dates,fmt='%s')
     
     

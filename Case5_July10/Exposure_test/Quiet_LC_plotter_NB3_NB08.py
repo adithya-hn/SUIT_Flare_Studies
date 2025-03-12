@@ -18,7 +18,7 @@ from subprocess import call
 from matplotlib import colors
 import mpld3
 
-Filters=['NB08']
+Filters=['NB03']
 param1='magnetogram'
 param=Filters[0]
 pathlib.Path("Figures").mkdir(parents=True, exist_ok=True) 
@@ -57,8 +57,8 @@ float_array = [float(string) for string in data[2]]
 nb3float_array = [float(string) for string in NB3_data[2]]
 #nb3float_array_er = [float(string) for string in NB3_data[2]]
 
-axs.plot(time_array,list(map(int,float_array)),'ko-',markersize=2,linewidth=0.5,label='NB08')
-ax2.plot(nb3_time_array,list(map(int,nb3float_array)),'bo-',markersize=2,linewidth=0.5,label='NB03')
+#axs.plot(time_array,list(map(int,float_array)),'ko-',markersize=2,linewidth=0.5,label='NB08')
+axs.plot(nb3_time_array,list(map(int,nb3float_array)),'bo-',markersize=2,linewidth=0.5,label='NB03')
 #ax2.plot(nb3_time_array,hmi_data,'bo--',markersize=2,linewidth=0.5)
 ax2.set_ylabel("NB04 Total count ")
 axs.set_ylabel('NB08 Total count ')

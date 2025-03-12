@@ -18,7 +18,7 @@ from subprocess import call
 from matplotlib import colors
 import mpld3
 
-Filters=['NB08']
+Filters=['NB03']
 param1='magnetogram'
 param=Filters[0]
 pathlib.Path("Figures").mkdir(parents=True, exist_ok=True) 
@@ -43,13 +43,7 @@ rc('axes', linewidth=1.2)
 plt.rcParams["xtick.major.size"] = 10
 fig,axs=plt.subplots(1,1, figsize=(10,5))
 ax2 = axs.twinx()
-axs.xaxis.set_tick_params(size=0.5)
-axs.yaxis.set_tick_params(size=0.5)
-axs.tick_params(axis='both', direction='in', length=6, width=1)
-axs.tick_params(which='minor', direction='in', length=3, width=1)
-axs.yaxis.set_ticks_position('both')
-axs.xaxis.set_ticks_position('both')
-axs.minorticks_on()
+
 
 float_array = [float(string) for string in data[2]]
 #float_array_er = [float(string) for string in data[2]]
@@ -62,10 +56,6 @@ ax2.plot(nb3_time_array,list(map(int,nb3float_array)),'bo-',markersize=2,linewid
 #ax2.plot(nb3_time_array,hmi_data,'bo--',markersize=2,linewidth=0.5)
 ax2.set_ylabel("NB04 Total count ")
 axs.set_ylabel('NB08 Total count ')
-
-#axs.set_ylim(2.1e8,2.25e8) #NB08
-#axs.set_ylim(5.5e8,6.5e8) #NB03
-#m_cls_p=datetime.fromisoformat('2024-06-01T08:46:00.000')
 
 
 x_cls=datetime.fromisoformat('2024-07-10T15:25:00.000')

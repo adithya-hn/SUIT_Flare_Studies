@@ -15,10 +15,9 @@ import scipy as sp
 import pathlib
 import pandas as pd
 from subprocess import call
-from matplotlib import colors
-import mpld3
 
-Filters=['NB08']
+
+Filters=['NB03']
 param1='magnetogram'
 param=Filters[0]
 pathlib.Path("Figures").mkdir(parents=True, exist_ok=True) 
@@ -57,9 +56,9 @@ float_array = [float(string) for string in data[2]]
 nb3float_array = [float(string) for string in NB3_data[2]]
 #nb3float_array_er = [float(string) for string in NB3_data[2]]
 
-axs.plot(time_array,list(map(int,float_array)),'ko-',markersize=2,linewidth=0.5,label='NB08')
+#axs.plot(time_array,list(map(int,float_array)),'ko-',markersize=2,linewidth=0.5,label='NB08')
 ax2.plot(nb3_time_array,list(map(int,nb3float_array)),'bo-',markersize=2,linewidth=0.5,label='NB03')
-#ax2.plot(nb3_time_array,hmi_data,'bo--',markersize=2,linewidth=0.5)
+
 ax2.set_ylabel("NB04 Total count ")
 axs.set_ylabel('NB08 Total count ')
 
@@ -84,7 +83,7 @@ plt.axvline(x_cls,color='b',linestyle='dotted',label='GOES Flare start time')
 plt.axvline(x_cls_p,color='b',linestyle='-',label='GOES Flare peak time')
 #plt.axhline(2.58e8,color='g',linestyle='dotted')
 plt.title('Total count')
-plt.figlegend(bbox_to_anchor=(0.001, 0.35, 0.35, 0.5))
+plt.figlegend(loc='upper right',fontsize=10)
 
 #mpld3.save_html(fig, '12th_June_ROI_CRval.html')
 plt.savefig(img_nm,dpi=300)

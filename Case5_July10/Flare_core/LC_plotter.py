@@ -57,9 +57,11 @@ axs.xaxis.set_ticks_position('both')
 axs.minorticks_on()
 
 
-float_array = [float(string) for string in data[1]]
-float_array_er = [float(string) for string in data[2]]
-axs.errorbar(time_array,list(map(int,float_array)),yerr=float_array_er,fmt='ko-',capsize=2,markersize=2,linewidth=0.5)
+float_array = [float(string)  for string in data[1]]
+float_array_er = [float(string)/20736  for string in data[2]]
+float_array_er_=np.std(float_array_er)*3*np.sqrt(20736)
+#axs.errorbar(time_array,list(map(int,float_array)),yerr=float_array_er,fmt='ko-',capsize=2,markersize=2,linewidth=0.5)
+axs.plot(time_array,list(map(int,float_array_er)),'ko-',markersize=2,linewidth=0.5)
 '''
 ax2.plot(g_time_array,g_float_array,'bo--',markersize=0.1,linewidth=0.5)
 ax2.set_ylabel("X-ray flux [1-8 A] (Wm$^{-2}$$s^{-1}$)")
