@@ -15,6 +15,8 @@ import scipy as sp
 import pathlib
 import pandas as pd
 import matplotlib.dates as mdates
+from plots_styl import set_pub_style
+set_pub_style()
 
 Filters=['NB08']
 param1='magnetogram'
@@ -39,19 +41,10 @@ for i in range(len(NB3_date_array)):
     nb3_time_array.append(parsed_time)
 
 rc('axes', linewidth=1.2)
-plt.rcParams["xtick.major.size"] = 10
+
 fig,axs=plt.subplots(1,1, figsize=(11,5))
 #fig.subplots_adjust(right=0.83)
 ax2 = axs.twinx()
-
-axs.xaxis.set_tick_params(size=0.5)
-axs.yaxis.set_tick_params(size=0.5)
-axs.tick_params(axis='both', direction='in', length=6, width=1)
-axs.tick_params(which='minor', direction='in', length=3, width=1)
-axs.yaxis.set_ticks_position('both')
-axs.xaxis.set_ticks_position('both')
-axs.minorticks_on()
-
 float_array = [float(string) for string in data[1]]
 
 nb3float_array = [float(string) for string in NB3_data[1]]
@@ -79,11 +72,10 @@ plt.axvline(x_cls,color='orange',linestyle='dotted',label='GOES Flare start time
 plt.axvline(x_cls_p,color='orange',linestyle='-',label='GOES Flare peak time')
 #plt.axhline(2.58e8,color='g',linestyle='dotted')
 plt.title('Light Curves')
-plt.figlegend(bbox_to_anchor=(0.001, 0.35, 0.35, 0.5))
+plt.figlegend(bbox_to_anchor=(0.0001, 0.35, 0.34, 0.5))
 time_formatter = mdates.DateFormatter('%H:%M')  # Format as HH:MM
 plt.gca().xaxis.set_major_formatter(time_formatter)
-plt.figlegend(bbox_to_anchor=(0.001, 0.35, 0.35, 0.5))
-time_formatter = mdates.DateFormatter('%H:%M')  # Format as HH:MM
+
 plt.gca().xaxis.set_major_formatter(time_formatter)
 plt.savefig(img_nm,dpi=300)
 plt.show() #close()

@@ -16,12 +16,12 @@ import pathlib
 import pandas as pd
 from subprocess import call
 from matplotlib import colors
-import mpld3
+import matplotlib.dates as mdates
 
-Filters=['NB08']
+Filters=['NB03']
 param=Filters[0]
 pathlib.Path("Figures").mkdir(parents=True, exist_ok=True) 
-data=(np.loadtxt(f'{param}_M1.0_Light_curve_data.csv',delimiter=',',dtype='str')).transpose() #'NB03_Light_curve_data.dat'
+data=(np.loadtxt(f'{param}_M1.0_flare_core_Light_curve_data.csv',delimiter=',',dtype='str')).transpose() #'NB03_Light_curve_data.dat'
 #print(data[0])
 #goes_data=(np.loadtxt(f'/Analysis/Research_Projects/Flare_studies/SUIT_Flares/June01_Flare/Goes_data.csv',delimiter=',',dtype='str')).transpose()
 #print(goes_data)
@@ -57,36 +57,29 @@ axs.xaxis.set_ticks_position('both')
 axs.minorticks_on()
 
 
-float_array = [float(string) for string in data[2]]
-float_array_er = [float(string) for string in data[2]]
-y_er=np.std(float_array_er)*3*np.sqrt(int(data[3,0]))
-axs.plot(time_array,list(map(int,float_array)),'ko-',markersize=2,linewidth=0.5)
-'''
-ax2.plot(g_time_array,g_float_array,'bo--',markersize=0.1,linewidth=0.5)
-ax2.set_ylabel("X-ray flux [1-8 A] (Wm$^{-2}$$s^{-1}$)")
-axs.set_ylabel('Total count (NUV)')
-ax2.set_yscale('log')'''
+float_array = [float(string)  for string in data[1]]
+float_array_er = [float(string)  for string in data[2]]
+float_array_er_=np.std(float_array_er)*3*np.sqrt(20736)
+axs.errorbar(time_array,list(map(int,float_array)),yerr=float_array_er_,fmt='bo',capsize=2,markersize=2,linewidth=0.5, label='Mg II k light curve')
 
 m_cls=datetime.fromisoformat('2024-07-10T15:25:00.000')
 m_cls_p=datetime.fromisoformat('2024-07-10T15:37:00.000')
-#m_cls=datetime.fromisoformat('2024-06-01T08:29:00.000')
-
 
 Flt=param
-axis_title='Total count'
-img_nm=Flt+'Sc_light_curve.png'
 
-#plt.ylabel(axis_title,fontsize=13)
+img_nm=Flt+'_light_curve.png'
+
+plt.ylabel('Total counts',fontsize=13)
 plt.xlabel('Time',fontsize=13)
 #plt.axvline(m_cls,color='r',label='M class Flare start time',linestyle='dotted')
 #plt.axvline(x_cls,color='b',linestyle='dotted',label='GOES Flare start time')
-plt.axvline(m_cls,color='b',linestyle='--',label='GOES Flare start time')
-plt.axvline(m_cls_p,color='b',linestyle='-',label='GOES Flare peak time')
+plt.axvline(m_cls,color='orange',linestyle='--',label='GOES Flare start time')
+plt.axvline(m_cls_p,color='orange',linestyle='-',label='GOES Flare peak time')
 #plt.axhline(2.58e8,color='g',linestyle='dotted')
-plt.title(Flt+' Scatter corrected Light Curve')
-#plt.ylim(57e4,68e4)#(66e4,700000)
-#plt.legend(loc='best')
-
-#mpld3.save_html(fig, '12th_June_ROI_CRval.html')
+plt.title('Mg II k Light Curve')
+plt.figlegend(bbox_to_anchor=(0.001, 0.35, 0.35, 0.5))
+plt.figlegend(bbox_to_anchor=(0.001, 0.35, 0.35, 0.5))
+time_formatter = mdates.DateFormatter('%H:%M')  # Format as HH:MM
+plt.gca().xaxis.set_major_formatter(time_formatter)
 plt.savefig(img_nm,dpi=300)
 plt.show() #close()

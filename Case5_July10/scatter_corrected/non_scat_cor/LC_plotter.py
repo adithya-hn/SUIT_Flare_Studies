@@ -18,7 +18,7 @@ from subprocess import call
 from matplotlib import colors
 import mpld3
 
-Filters=['NB08']
+Filters=['NB03']
 param=Filters[0]
 pathlib.Path("Figures").mkdir(parents=True, exist_ok=True) 
 data=(np.loadtxt(f'{param}_M1.0_Light_curve_data.csv',delimiter=',',dtype='str')).transpose() #'NB03_Light_curve_data.dat'
@@ -74,7 +74,7 @@ m_cls_p=datetime.fromisoformat('2024-07-10T15:37:00.000')
 
 Flt=param
 axis_title='Total count'
-img_nm=Flt+'Sc_light_curve.png'
+img_nm=Flt+'_light_curve.png'
 
 #plt.ylabel(axis_title,fontsize=13)
 plt.xlabel('Time',fontsize=13)
@@ -83,7 +83,7 @@ plt.xlabel('Time',fontsize=13)
 plt.axvline(m_cls,color='b',linestyle='--',label='GOES Flare start time')
 plt.axvline(m_cls_p,color='b',linestyle='-',label='GOES Flare peak time')
 #plt.axhline(2.58e8,color='g',linestyle='dotted')
-plt.title(Flt+' Scatter corrected Light Curve')
+plt.title(Flt+' Light Curve')
 #plt.ylim(57e4,68e4)#(66e4,700000)
 #plt.legend(loc='best')
 

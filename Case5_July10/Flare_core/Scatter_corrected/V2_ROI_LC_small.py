@@ -19,6 +19,7 @@ import numpy as np
 
 start = timeit.default_timer()
 
+
 fol_nm=os.getcwd()+'/Light_curve_images/'
 Filters=['NB03','NB04','NB08']
 
@@ -115,10 +116,6 @@ for fltr in Filters:
     np.savetxt(f'{fltr}_M1.0_Light_curve_data.csv',np.c_[date_array,fltr_count,fltr_count_err,bx_area],delimiter=',',fmt='%s')
     #np.savetxt(f'{fltr}_X1.4_date_data.dat',dates,fmt='%s')
     
-    
-    
- 
-
 stop = timeit.default_timer()
 
 print('Run Time: ', (stop - start)/60,'Mins') 
