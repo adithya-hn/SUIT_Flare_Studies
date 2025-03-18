@@ -16,14 +16,14 @@ import pathlib
 import pandas as pd
 import matplotlib.dates as mdates
 
-Filters=['NB08']
+Filters='NB04'
 param1='magnetogram'
 param=Filters[0]
 pathlib.Path("Figures").mkdir(parents=True, exist_ok=True) 
-data=(np.loadtxt(f'NB08_M1.0_Light_curve_data.csv',delimiter=',',skiprows=1,dtype='str')).transpose() #'NB08_Light_curve_data.dat'
+data=(np.loadtxt(f'{Filters}_M1.0_Light_curve_data.csv',delimiter=',',skiprows=1,dtype='str')).transpose() #'NB08_Light_curve_data.dat'
 date_array=data[0]
 
-NB3_data=(np.loadtxt(f'NB08_M1.0_Light_curve_data_sc.csv',delimiter=',',skiprows=1,dtype='str')).transpose()
+NB3_data=(np.loadtxt(f'{Filters}_M1.0_Light_curve_data_sc.csv',delimiter=',',skiprows=1,dtype='str')).transpose()
 NB3_date_array=NB3_data[0]
 
 
@@ -66,24 +66,33 @@ axs.set_xlabel('Time')
 x_cls=datetime.fromisoformat('2024-07-10T15:25:00.000')
 x_cls_p=datetime.fromisoformat('2024-07-10T15:37:00.000')
 
+m2_cls=datetime.fromisoformat('2024-07-10T12:51:00.000')
+m2_cls_p=datetime.fromisoformat('2024-07-10T13:04:00.000')
+
+m1_cls=datetime.fromisoformat('2024-07-10T11:44:00.000')
+m1_cls_p=datetime.fromisoformat('2024-07-10T12:04:00.000')
+
+
 #axs2[0,0].plot(AR_I,AR_M,'ko',markersize=1.5)
 Flt=param
 axis_title='Total count'
-img_nm='Qbox_light_curve.png'
+img_nm=f'{Filters}_Qbox_light_curve.png'
 
-#plt.ylabel(axis_title,fontsize=13)
+
 plt.xlabel('Time',fontsize=13)
-#plt.axvline(m_cls,color='r',label='M class Flare start time',linestyle='dotted')
-plt.axvline(x_cls,color='orange',linestyle='dotted',label='GOES Flare start time')
-#plt.axvline(m_cls_p,color='r',linestyle='-',label='M class Flare peak time')
-plt.axvline(x_cls_p,color='orange',linestyle='-',label='GOES Flare peak time')
-#plt.axhline(2.58e8,color='g',linestyle='dotted')
-plt.title('Light Curves')
+plt.axvline(x_cls,color='orange',linestyle='dotted')
+plt.axvline(x_cls_p,color='orange',linestyle='-')
+
+plt.axvline(m1_cls,color='orange',linestyle='dotted')
+plt.axvline(m1_cls_p,color='orange',linestyle='-')
+
+plt.axvline(m2_cls,color='orange',linestyle='dotted')
+plt.axvline(m2_cls_p,color='orange',linestyle='-')
+
+plt.title(f'{Filters}Light Curves')
 plt.figlegend(bbox_to_anchor=(0.001, 0.35, 0.35, 0.5))
 time_formatter = mdates.DateFormatter('%H:%M')  # Format as HH:MM
 plt.gca().xaxis.set_major_formatter(time_formatter)
 plt.figlegend(bbox_to_anchor=(0.001, 0.35, 0.35, 0.5))
-time_formatter = mdates.DateFormatter('%H:%M')  # Format as HH:MM
-plt.gca().xaxis.set_major_formatter(time_formatter)
 plt.savefig(img_nm,dpi=300)
 plt.show() #close()

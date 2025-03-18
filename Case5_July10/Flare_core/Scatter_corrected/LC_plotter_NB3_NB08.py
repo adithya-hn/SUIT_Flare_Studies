@@ -15,7 +15,10 @@ import scipy as sp
 import pathlib
 import pandas as pd
 import matplotlib.dates as mdates
-
+from sys import path as sys_path
+sys_path.append('/home/adithya/Adithya_repos')
+from plots_styl import set_pub_style
+set_pub_style()
 
 Filters=['NB08']
 param1='magnetogram'
@@ -27,7 +30,7 @@ date_array=data[0]
 NB3_data=(np.loadtxt(f'NB03_M1.0_flare_core_Light_curve_data.csv',delimiter=',',dtype='str')).transpose()
 NB3_date_array=NB3_data[0]
 
-
+'''
 Helios=(np.load("cdte_data_flare_5.npy", allow_pickle=True)).transpose()
 
 cdte1=Helios[1]
@@ -36,7 +39,7 @@ cdte1_er=Helios[3]
 datetime_objects = pd.to_datetime(Helios[0])
 helio_time_array=[datetime.strptime(str(ts)[:26], "%Y-%m-%d %H:%M:%S.%f") for ts in datetime_objects]
 
-
+'''
 
 time_array=[]
 #print(len(data[1]))
@@ -55,14 +58,14 @@ fig,axs=plt.subplots(1,1, figsize=(11,5))
 
 fig.subplots_adjust(right=0.83)
 ax2 = axs.twinx()
-#''' 
+''' 
 ax3 = axs.twinx()
 ax3.spines.right.set_position(("axes", 1.13))
 #ax3.plot(helio_time_array,cdte1, label="Helios-CdTe1")
 ax3.errorbar(helio_time_array,cdte1,yerr=cdte1_er,fmt='ro',capsize=2,markersize=2,linewidth=0.5,label='Hard X-ray')
 #ax3.plot(helio_time_array,cdte2, label="Helios")
 ax3.set_ylabel('Helios',fontsize=13)
-ax3.set_yscale('log')#'''
+ax3.set_yscale('log')'''
 
 
 axs.xaxis.set_tick_params(size=0.5)
@@ -90,9 +93,6 @@ axs.set_ylabel('Ca II h Total count ')
 ax2.set_yscale('log')
 #axs.legend(loc='best')
 #ax2.legend()
-#ax2.set_ylim(7.2e6,7.3e6)
-#axs.set_ylim(2.1e8,2.25e8) #NB08
-#axs.set_ylim(5.5e8,6.5e8) #NB03
 #m_cls_p=datetime.fromisoformat('2024-06-01T08:46:00.000')
 
 
@@ -105,17 +105,16 @@ axis_title='Total count'
 img_nm='NB08_NB03_light_curve.png'
 
 #plt.ylabel(axis_title,fontsize=13)
-plt.xlabel('Time',fontsize=13)
+axs.set_xlabel('Time',fontsize=13)
 #plt.axvline(m_cls,color='r',label='M class Flare start time',linestyle='dotted')
 plt.axvline(x_cls,color='orange',linestyle='dotted',label='GOES Flare start time')
 #plt.axvline(m_cls_p,color='r',linestyle='-',label='M class Flare peak time')
 plt.axvline(x_cls_p,color='orange',linestyle='-',label='GOES Flare peak time')
 #plt.axhline(2.58e8,color='g',linestyle='dotted')
-plt.title('Light Curves')
+plt.title('Ca II h and Mg II k light curves')
 #plt.ylim(57e4,68e4)#(66e4,700000)
 #plt.legend(loc='best')
-plt.figlegend(bbox_to_anchor=(0.001, 0.35, 0.35, 0.5))
-plt.figlegend(bbox_to_anchor=(0.001, 0.35, 0.35, 0.5))
+plt.figlegend(bbox_to_anchor=(0.00001, 0.38, 0.34, 0.5))
 time_formatter = mdates.DateFormatter('%H:%M')  # Format as HH:MM
 plt.gca().xaxis.set_major_formatter(time_formatter)
 plt.savefig(img_nm,dpi=300)

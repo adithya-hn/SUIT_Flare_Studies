@@ -55,13 +55,16 @@ print('-------->',len(data[0]),len(data[1]))
 interp_func = interp1d(t2_stamps,NB3_data[1] , kind='linear', fill_value="extrapolate")
 counts_2_interp = interp_func(t1_stamps)
 
+interp_func_qs = interp1d(t2_stamps,NB3_data[2] , kind='linear')
+qs_intrep_counts=interp_func_qs(t1_stamps)
+
 fig,axs=plt.subplots(1,1, figsize=(11,5))
 #fig.subplots_adjust(right=0.83)
 ax2 = axs.twinx()
 
 float_array = [float(string) for string in data[1]]
 float_array_er = [float(string) for string in data[2]]
-float_array_er=np.std(float_array_er)
+#float_array_er=np.std(float_array_er)
 
 nb3float_array = [float(string) for string in NB3_data[1]]
 nb3float_array_er = [float(string) for string in NB3_data[2]]
@@ -69,8 +72,10 @@ nb3float_array_er=np.std(nb3float_array_er)
 
 counts_2_interp=np.array(counts_2_interp)
 float_array=np.array(float_array)
-
-ax2.plot(time_array,list(map(int,float_array)),color=colors_list[1],marker='^',markersize=2,linewidth=0.5,label='Ca II h Total count')
+#float_array_er=np.array(float_array_er)
+print(float_array_er[0],qs_intrep_counts[0])
+axs.plot(time_array,float_array_er/qs_intrep_counts,color=colors_list[1],marker='^',markersize=2,linewidth=0.5,label='Ca II h/QS ratio')
+#ax2.plot(time_array,list(map(int,float_array)),color=colors_list[1],marker='^',markersize=2,linewidth=0.5,label='Ca II h Total count')
 axs.plot(time_array,(float_array/counts_2_interp),color=colors_list[2],marker='s',markersize=2,linewidth=0.5,label='Ca II h/Mg II k ')
 
 axs.set_ylabel("count Ratio ")
