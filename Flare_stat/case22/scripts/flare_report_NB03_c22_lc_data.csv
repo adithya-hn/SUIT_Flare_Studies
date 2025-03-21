@@ -1,0 +1,2 @@
+Flare_ID,NOAA_Region,GOES_Class,Start_Time_UTC,Peak_Time_UTC,End_Time_UTC,Preflare_Intensity,Flare_Peak_Intensity,Quiet_Sun_Intensity,Intensity_Ratio,Peak_Ratio,Flare_Contrast,Enhancement_QS,Fluence,FWHM,Box_Area,Preflare_level
+20250206_104700.000,13981,M7.6,2025-02-06T10:47:00,2025-02-06T11:04:00,2025-02-06T11:16:00,,154046440.0,2896.182248079361,,2.83314606509299,,1.8331460650929898,,1393.736999988556,18774,
