@@ -75,7 +75,7 @@ for fltr in Filters:
         fig = plt.figure(figsize=(6, 5))
         ax = fig.add_subplot(projection=suit_map)
         suit_map.plot(axes=ax, clip_interval=(1, 99.99)*u.percent)
-        coords = SkyCoord(Tx=(-270, 50) * u.arcsec, Ty=(-350, -100) * u.arcsec, frame=suit_map.coordinate_frame)
+        coords = SkyCoord(Tx=(-200, 50) * u.arcsec, Ty=(-350, -100) * u.arcsec, frame=suit_map.coordinate_frame)
         #coords = SkyCoord(Tx=(-580, -390) * u.arcsec, Ty=(-320, -160) * u.arcsec, frame=suit_map.coordinate_frame)
         suit_map.draw_quadrangle(coords,axes=ax,edgecolor="red",linestyle="-",linewidth=2,label='Region of interest')
         er_coords = SkyCoord(Tx=(-10, 90) * u.arcsec, Ty=(-20, -120) * u.arcsec, frame=suit_map.coordinate_frame)

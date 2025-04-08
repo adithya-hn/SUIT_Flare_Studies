@@ -26,12 +26,12 @@ set_pub_style()
 #palette = sns.color_palette("deep")
 
 pathlib.Path("Figures").mkdir(parents=True, exist_ok=True) 
-data1=(np.loadtxt(f'NB03_c22_lc_data.csv',delimiter=',',dtype='str')).transpose() #'NB03_Light_curve_data.dat'
-data2=(np.loadtxt(f'NB08_c22_lc_data.csv',delimiter=',',dtype='str')).transpose() #'NB08_Light_curve_data.dat'
-data3=(np.loadtxt(f'NB04_c22_lc_data.csv',delimiter=',',dtype='str')).transpose() #'NB04_Light_curve_data.dat'
+data1=(np.loadtxt(f'NB03_c23_lc_data.csv',delimiter=',',dtype='str')).transpose() #'NB03_Light_curve_data.dat'
+data2=(np.loadtxt(f'NB08_c23_lc_data.csv',delimiter=',',dtype='str')).transpose() #'NB08_Light_curve_data.dat'
+data3=(np.loadtxt(f'NB04_c23_lc_data.csv',delimiter=',',dtype='str')).transpose() #'NB04_Light_curve_data.dat'
 
-m_cls=datetime.fromisoformat('2025-02-06T10:47:00')
-m_cls_p=datetime.fromisoformat('2025-02-06T11:04:00')
+m_cls=datetime.fromisoformat('2024-06-03T11:49:00')
+m_cls_p=datetime.fromisoformat('2024-06-03T11:55:00')
 
 date_array3=data3[0] #np.loadtxt(f'{param}_date_data.dat',dtype='str')
 date_array2=data2[0] #np.loadtxt(f'{param}_date_data.dat',dtype='str')

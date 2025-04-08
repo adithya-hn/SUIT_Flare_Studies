@@ -28,6 +28,10 @@ def average_intensity(df, start_time, end_time, column):
     subset = df[(df['time'] >= start_time) & (df['time'] <= end_time)]
     return subset[column].mean()
 
+def peak_intensity(df, start_time, end_time, column):
+    subset = df[(df['time'] >= start_time) & (df['time'] <= end_time)]
+    return subset[column].max()
+
 # Compute FWHM
 def compute_fwhm(df, peak_intensity):
     half_max = peak_intensity / 2
@@ -52,13 +56,13 @@ def timestamp_to_datetime(timestamp):
 #----------------------------------------------------------------
 # User-defined parameters
 #flare_light_curve_file = 'NB08_X1.4_Light_curve_data.csv'
-flare_light_curve_files = ['NB03_c22_lc_data.csv', 'NB04_c22_lc_data.csv', 'NB08_c22_lc_data.csv']
+flare_light_curve_files = ['NB03_c23_lc_data.csv', 'NB04_c23_lc_data.csv', 'NB08_c23_lc_data.csv']
 
-start_time_isot = '2025-02-06T10:47:00'
-peak_time_isot = '2025-02-06T11:04:00'
-end_time_isot = '2025-02-06T11:16:00'
-noaa_region = 13981
-goes_class = 'M7.6'
+start_time_isot = '2024-06-03T11:49:00'
+peak_time_isot = '2024-06-03T11:55:00'
+end_time_isot = '2024-06-03T12:00:00'
+noaa_region = 13697
+goes_class = 'M3.2'
 
 #----------------------------------------------------------------
 
@@ -76,7 +80,7 @@ for file in flare_light_curve_files:
 
     # Compute intensities
     preflare_intensity  = average_intensity(df, start_time - 120, start_time, 'total_count')
-    flare_peak_intensity= average_intensity(df, peak_time - 120, peak_time, 'total_count')
+    flare_peak_intensity= peak_intensity(df, peak_time - 120, peak_time+60, 'total_count')
     quiet_sun_intensity = average_intensity(df, start_time, end_time, 'qs_mean')
     preflare_level      = average_intensity(df, start_time - 3200, start_time-1200, 'total_count')
 
@@ -147,6 +151,7 @@ for file in flare_light_curve_files:
     plt.title(f'Flare Light Curve - NOAA {noaa_region} - {goes_class} ({file})')
     #plt.legend()
     plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
+    
     plt.xticks(rotation=45)
     plot_filename = f"flare_report_{file.split('.')[0]}.png"
     plt.savefig(plot_filename)
