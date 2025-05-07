@@ -5,7 +5,7 @@ import numpy as np
 
 client = drms.Client()  
 client = drms.Client(email='adithyabhattsringeri@gmail.com') 
-query_time_range='aia.lev1_euv_12s[2024.06.02_07:58:00_TAI-2024.06.02_08:15:00_TAI][131]' #time range and wavelength
+query_time_range='aia.lev1_euv_12s[2024.06.02_08:14:00_TAI-2024.06.02_09:10:00_TAI][131]' #time range and wavelength
 keywords = "T_REC,CRPIX1,CRPIX2,CRVAL1,CRVAL2,CDELT1,CDELT2,CUNIT1,CUNIT2,CTYPE1,CTYPE2,DATE-OBS,TIMESYS,TELESCOP,INSTRUME,BUNIT,RSUN_OBS,DSUN_OBS,CRLN_OBS,CRLT_OBS,CAR_ROT,CROTA2" #required headers for sunpy map
 query = client.query(query_time_range,key=keywords) # just for query
 print(query)
@@ -20,5 +20,5 @@ query.to_csv(csv_file, index=False)
 print(f"Query results saved to {csv_file}")'''
 
 out_dir='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case3_June02/AIA_Images' # output path
-export_request.download(out_dir,verbose=True)
+export_request.download(out_dir)
 

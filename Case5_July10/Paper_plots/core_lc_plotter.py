@@ -34,16 +34,16 @@ for i in range(len(date_array1)):
     time_array1.append(parsed_time)
 
 fig,axs=plt.subplots(1,1, figsize=(10,5))
-float_array1 = [float(string)  for string in data1[1]]
+float_array1 = np.array([float(string)/20736   for string in data1[1]])
 float_array_er1 = [float(string)  for string in data1[2]]
-float_array_er1_=np.std(float_array_er1)*3*np.sqrt(20736)
-axs.errorbar(time_array1,list(map(int,float_array1)),yerr=float_array_er1_,fmt='bo',capsize=2,markersize=2,linewidth=0.5, label='Mg II k light curve')
+float_array_er1_=np.std(float_array_er1)*3
+axs.errorbar(time_array1,float_array1,yerr=np.sqrt(float_array1/20736),fmt='bo-',capsize=2,markersize=2,linewidth=0.5, label='Mg II k light curve')
 
 m_cls=datetime.fromisoformat('2024-07-10T15:25:00.000')
 m_cls_p=datetime.fromisoformat('2024-07-10T15:37:00.000')
 
 img_nm='nb3_core_lc_sc.png'
-plt.ylabel('Total counts',fontsize=13)
+plt.ylabel('Mean counts',fontsize=13)
 plt.xlabel('Time',fontsize=13)
 plt.axvline(m_cls,color='orange',linestyle='--',label='GOES Flare start time')
 plt.axvline(m_cls_p,color='orange',linestyle='-',label='GOES Flare peak time')
@@ -68,13 +68,13 @@ for i in range(len(date_array2)):
     time_array2.append(parsed_time)
 
 fig,axs=plt.subplots(1,1, figsize=(10,5))
-float_array2 = [float(string)  for string in data2[1]]
+float_array2 = np.array([float(string)/20736  for string in data2[1]])
 float_array_er2 = [float(string)  for string in data2[2]]
-float_array_er2_=np.std(float_array_er2)*3*np.sqrt(20736)
-axs.errorbar(time_array2,list(map(int,float_array2)),yerr=float_array_er2_,fmt='ko',capsize=2,markersize=2,linewidth=0.5, label='Ca II h light curve')
+float_array_er2_=np.std(float_array_er2)*3
+axs.errorbar(time_array2,float_array2,yerr=np.sqrt(float_array2/20736),fmt='ko-',capsize=2,markersize=2,linewidth=0.5, label='Ca II h light curve')
 
 img_nm='nb8_core_lc_sc.png'
-plt.ylabel('Total counts',fontsize=13)
+plt.ylabel('Mean counts',fontsize=13)
 plt.xlabel('Time',fontsize=13)
 plt.axvline(m_cls,color='orange',linestyle='--',label='GOES Flare start time')
 plt.axvline(m_cls_p,color='orange',linestyle='-',label='GOES Flare peak time')

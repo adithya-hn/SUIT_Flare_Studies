@@ -46,21 +46,21 @@ fig.subplots_adjust(right=0.83)
 ax2 = axs.twinx()
 
 
-float_array = [float(string) for string in data[1]]
+float_array = [float(string)/20736 for string in data[1]]
 float_array_er = [float(string)/20736 for string in data[2]]
 float_array_er=np.std(float_array_er)*3*np.sqrt(20736)
 
-nb3float_array = [float(string) for string in NB3_data[1]]
+nb3float_array = [float(string)/20736 for string in NB3_data[1]]
 nb3float_array_er = [float(string)/20736 for string in NB3_data[2]]
 nb3float_array_er=np.std(nb3float_array_er)*3*np.sqrt(20736)
 
 
-axs.errorbar(time_array,list(map(int,float_array)),yerr=float_array_er,fmt='ko-',capsize=2,markersize=2,linewidth=0.5,label='Ca II h')
-ax2.errorbar(nb3_time_array,list(map(int,nb3float_array)),yerr=nb3float_array_er,fmt='bo-',capsize=2,markersize=2,linewidth=0.5,label='Mg II k')
+axs.errorbar(time_array,list(map(int,float_array)),yerr=np.sqrt(list(map(int,float_array))),fmt='ko-',capsize=2,markersize=2,linewidth=0.5,label='Ca II h')
+ax2.errorbar(nb3_time_array,list(map(int,nb3float_array)),yerr=np.sqrt(list(map(int,nb3float_array))),fmt='bo-',capsize=2,markersize=2,linewidth=0.5,label='Mg II k')
 #ax2.plot(nb3_time_array,hmi_data,'bo--',markersize=2,linewidth=0.5)
-ax2.set_ylabel("Mg II k Total count ")
-axs.set_ylabel('Ca II h Total count ')
-ax2.set_yscale('log')
+ax2.set_ylabel("Mg II k Mean count ")
+axs.set_ylabel('Ca II h Mean count ')
+#ax2.set_yscale('log')
 
 x_cls=datetime.fromisoformat('2024-06-01T08:25:00.000')
 x_cls_p=datetime.fromisoformat('2024-06-01T08:49:00.000')

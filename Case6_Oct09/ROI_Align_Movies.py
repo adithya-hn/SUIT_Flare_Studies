@@ -15,8 +15,8 @@ from colormap import filterColor
 #---------------------------------------
 #Input params
 
-Ref_index=0
-Ref_index_NB3=0
+Ref_index=1
+Ref_index_NB3=1
 make_movie='yes'
 Rf_tx=1
 Rf_ty=1
@@ -27,17 +27,19 @@ rf_hight=1
 
 start = timeit.default_timer()
 now = datetime.datetime.now()-timedelta(days=1)
-fol_nm='/Analysis/Projects_Data/Flare_Data/Oct09_Flare_Data/Processed/'
+fol_nm='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case6_Oct09/data'
 
-jpg_fold=fol_nm+'/'+'Coloured_ROI_imgs'
-algn_dir=fol_nm+'/'+'Aligned_images'
+jpg_fold=fol_nm+'/processed/'+'coloured_rois'
+algn_dir=fol_nm+'/processed/'+'aligned_fits'
 
 #Filter='NB03'
 Filters=['NB03','NB04','NB08'] #,'BB01','BB02','BB03']
 pathlib.Path(algn_dir).mkdir(parents=True, exist_ok=True)
 pathlib.Path(jpg_fold).mkdir(parents=True, exist_ok=True)
-search_fold='/Analysis/Projects_Data/Flare_Data/Oct09_Flare_Data/' #'/scratch/suit_data/level1fits/2024/'+str(now.month).zfill(2)+'/'+str(now.day).zfill(2)+'/'+'normal_2k'+'/'
-fdir =search_fold 
+
+fdir =fol_nm+'/raw/'
+
+
 for fltr in Filters:
     if fltr=='NB03':
         Ref_idx=Ref_index_NB3
@@ -50,6 +52,7 @@ for fltr in Filters:
    
     aln_imgs=[]
     Sequence = sunpy.map.Map(files, sequence=True)    
+    
     aligned_maps=mc_coalign(Sequence,layer_index=Ref_idx,clip=False)
     if make_movie== 'yes':
         mv_nm=fltr+'.mp4'
@@ -68,7 +71,7 @@ for fltr in Filters:
         aligned_img.meta['CRVAL2']=(aligned_maps[Ref_idx].meta['CRVAL2'])
         aligned_img.save(algn_dir+'/'+fltr+'/'+os.path.basename(files[j]),overwrite=True) #need this for alignement refference
         aln_imgs.append(algn_dir+'/'+fltr+'/'+os.path.basename(files[j]))
-        fl_nm=jpg_fold+'/'+fltr+'/'+os.path.basename(files[j])[:-4]+'jpg'
+        fl_nm=jpg_fold+'/'+fltr+'/'+os.path.basename(files[j])[:-4]+'png'
         #Title_=aligned_img.meta.get('FTR_NAME') +' Filter: '+aligned_img.date
         fig=plt.figure(figsize=(10,10))
         ax = fig.add_subplot(111, projection=aligned_img)
