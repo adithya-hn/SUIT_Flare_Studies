@@ -18,16 +18,7 @@ from sunpy.coordinates import frames, get_horizons_coord
 
 
 
-# Define the specific timestamp for which contours will be drawn
-specific_timestamp = "2024-07-10T15.35.28.135"  # Replace with your desired timestamp
-
-# Paths to Filter 1 and Filter 2 data
-filter1_fold = '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case1_Jun01/data/cropped/crop_fits/NB03/'
 filter2_fold = '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case1_Jun01/data/cropped/crop_fits/NB03/'
-
-# Find the specific file for Filter 1
-filter1_files = glob.glob(filter1_fold + '*3NB03.fits')
-filter1_files = sorted(filter1_files, key=lambda file_name: datetime.datetime.strptime(os.path.basename(file_name).split('_')[5], "%Y-%m-%dT%H.%M.%S.%f"))
 
 Tx1_qs1,Ty1_qs1=-330,-480
 Tx2_qs1,Ty2_qs1=-280,-450
@@ -37,10 +28,11 @@ Tx2_qs1,Ty2_qs1=-280,-450
 ref_mg_map = sunpy.map.Map('/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case1_Jun01/data/cropped/crop_fits/NB03/SUT_T24_0785_000396_Lev1.0_2024-06-01T08.46.29.783_0983NB03.fits')
 mgk_map=sunpy.map.Map('/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case1_Jun01/data/cropped/crop_fits/NB03/SUT_T24_0785_000396_Lev1.0_2024-06-01T07.10.22.791_0973NB03.fits')
 ref_mg_map_data = ref_mg_map.data * 1000 / ref_mg_map.meta.get('CMD_EXPT')
-qs_coords = SkyCoord(Tx=(Tx1_qs1,Tx2_qs1) * u.arcsec, Ty=(Ty1_qs1,Ty2_qs1) * u.arcsec, frame=mgk_map.coordinate_frame)
+
 ref_pos = get_horizons_coord(-21, ref_mg_map.date)
 ref_mg_map.meta.update(get_observer_meta(ref_pos, rsun=ref_pos.rsun))
 mgk_map.meta.update(get_observer_meta(ref_pos, rsun=ref_pos.rsun))
+qs_coords = SkyCoord(Tx=(Tx1_qs1,Tx2_qs1) * u.arcsec, Ty=(Ty1_qs1,Ty2_qs1) * u.arcsec, frame=mgk_map.coordinate_frame)
 
 qs_coords1 = SkyCoord(Tx=(Tx1_qs1,Tx2_qs1) * u.arcsec, Ty=(Ty1_qs1,Ty2_qs1) * u.arcsec, frame=mgk_map.coordinate_frame)
 
@@ -110,7 +102,7 @@ for filter2_file in filter2_files:
     ca_qs_data = qs_submap.data * 1000 / qs_submap.meta.get('CMD_EXPT')
     filter2_data = filter2_map.data * 1000 / filter2_map.meta.get('CMD_EXPT')
     qs_counts=np.mean(ca_qs_data)
-    
+    qs_area=(ca_qs_data).shape[0]*(ca_qs_data).shape[1]
 
     # Calculate the counts in Filter 2 under the Filter 1 contours
     counts_under_contours = np.sum(np.where(msk==1, filter2_data, 0))
@@ -144,7 +136,8 @@ for filter2_file in filter2_files:
         'filter2_file': filter2_map.date,
         'total_counts_under_contours': counts_under_contours,
         'qs_mean_counts':qs_counts,
-        'contour_area':np.count_nonzero(msk)
+        'contour_area':np.count_nonzero(msk),
+        'QS_area':qs_area
 
     })
 

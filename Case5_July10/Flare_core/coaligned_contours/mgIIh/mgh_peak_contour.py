@@ -31,19 +31,18 @@ Tx2_qs1,Ty2_qs1=80,-100
 # Load the Filter 1 image and compute its contours
 # Load the Filter 1 image and compute its contours
 ref_mg_map = sunpy.map.Map('/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case5_July10/data/processed/Aligned_images/NB03/SUT_T24_0956_000465_Lev1.0_2024-07-10T15.35.28.135_0983NB03.fits')
+mgh_map=sunpy.map.Map('/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case5_July10/data/processed/Aligned_images/NB04/SUT_T24_0956_000465_Lev1.0_2024-07-10T13.31.10.902_0983NB04.fits')
+
 ref_mg_map_data = ref_mg_map.data * 1000 / ref_mg_map.meta.get('CMD_EXPT')
-mgh_map=sunpy.map.Map('')
-mgk_map=ref_mg_map
-ref_mg_map_data = ref_mg_map.data * 1000 / ref_mg_map.meta.get('CMD_EXPT')
-qs_coords = SkyCoord(Tx=(Tx1_qs1,Tx2_qs1) * u.arcsec, Ty=(Ty1_qs1,Ty2_qs1) * u.arcsec, frame=mgk_map.coordinate_frame)
+qs_coords = SkyCoord(Tx=(Tx1_qs1,Tx2_qs1) * u.arcsec, Ty=(Ty1_qs1,Ty2_qs1) * u.arcsec, frame=ref_mg_map.coordinate_frame)
 ref_pos = get_horizons_coord(-21, ref_mg_map.date)
 ref_mg_map.meta.update(get_observer_meta(ref_pos, rsun=ref_pos.rsun))
-mgk_map.meta.update(get_observer_meta(ref_pos, rsun=ref_pos.rsun))
-qs_coords1 =  SkyCoord(Tx=(Tx1_qs1,Tx2_qs1) * u.arcsec, Ty=(Ty1_qs1,Ty2_qs1) * u.arcsec,   frame=mgk_map.coordinate_frame)
+mgh_map.meta.update(get_observer_meta(ref_pos, rsun=ref_pos.rsun))
+qs_coords1 =  SkyCoord(Tx=(Tx1_qs1,Tx2_qs1) * u.arcsec, Ty=(Ty1_qs1,Ty2_qs1) * u.arcsec,   frame=mgh_map.coordinate_frame)
 
 #-------------
 
-qs_map = mgk_map.submap(qs_coords)
+qs_map = ref_mg_map.submap(qs_coords)
 qs_data = qs_map.data * 1000 / qs_map.meta.get('CMD_EXPT')
 print(np.median(qs_data), np.mean(qs_data), np.std(qs_data))
 Thresh_val=np.median(qs_data) * 3
@@ -75,10 +74,10 @@ contours = measure.find_contours(msk, level=0.5)
 
 #---mg_map
 fig=plt.figure(figsize=(10, 10))
-ax = fig.add_subplot(projection=mgk_map)
+ax = fig.add_subplot(projection=mgh_map)
 #ca_map.plot(axes=ax, cmap='gray', vmin=0, vmax=5000)
-im=plt.imshow(mgk_map.data, origin='lower', cmap='gray', vmin=0, vmax=30000)
-mgk_map.draw_quadrangle(qs_coords1, axes=ax, edgecolor="blue", linestyle="-", linewidth=2, label='Mg-II h Flare contour')
+im=plt.imshow(mgh_map.data, origin='lower', cmap='gray', vmin=0, vmax=30000)
+mgh_map.draw_quadrangle(qs_coords1, axes=ax, edgecolor="blue", linestyle="-", linewidth=2, label='Mg-II h Flare contour')
 hpc_coord=[]
 for contour in contours:
     ax.plot(contour[:, 1], contour[:, 0], linewidth=1.5, color='red')
@@ -108,6 +107,7 @@ for filter2_file in filter2_files:
     mg_qs_data = qs_submap.data * 1000 / qs_submap.meta.get('CMD_EXPT')
     filter2_data = filter2_map.data * 1000 / filter2_map.meta.get('CMD_EXPT')
     qs_counts=np.mean(mg_qs_data)
+    qs_area=(mg_qs_data).shape[0]*(mg_qs_data).shape[1]
     #print((filter2_map.data).shape,msk.shape)
     
     # Calculate the counts in Filter 2 under the Filter 1 contours
@@ -141,7 +141,8 @@ for filter2_file in filter2_files:
         'filter2_file': filter2_map.date,
         'total_counts_under_contours': counts_under_contours,
         'qs_mean_counts':qs_counts,
-        'contour_area':np.count_nonzero(msk)
+        'contour_area':np.count_nonzero(msk),
+        'QS area':qs_area
 
     })
 

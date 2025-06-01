@@ -17,11 +17,6 @@ from sunpy.map import get_observer_meta
 from sunpy.coordinates import frames, get_horizons_coord
 
 
-
-# Threshold values for Filter 1 (NB03) and Filter 2 (NB04)
-nb3T = 12000  # Threshold for Filter 1 (NB03)
-nb4T = 10000  # Threshold for Filter 2 (NB04)
-
 filter2_fold = '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case1_Jun01/data/cropped/crop_fits/NB04/'
 
 Tx1_qs1,Ty1_qs1=-330,-480
@@ -104,7 +99,7 @@ for filter2_file in filter2_files:
     mg_qs_data = qs_submap.data * 1000 / qs_submap.meta.get('CMD_EXPT')
     filter2_data = filter2_map.data * 1000 / filter2_map.meta.get('CMD_EXPT')
     qs_counts=np.mean(mg_qs_data)
-    #print((filter2_map.data).shape,msk.shape)
+    qs_area=(mg_qs_data).shape[0]*(mg_qs_data).shape[1]
     
     # Calculate the counts in Filter 2 under the Filter 1 contours
     counts_under_contours = np.sum(np.where(msk==1, filter2_data, 0))
@@ -137,7 +132,8 @@ for filter2_file in filter2_files:
         'filter2_file': filter2_map.date,
         'total_counts_under_contours': counts_under_contours,
         'qs_mean_counts':qs_counts,
-        'contour_area':np.count_nonzero(msk)
+        'contour_area':np.count_nonzero(msk),
+        'QS_area':qs_area
 
     })
 

@@ -75,10 +75,10 @@ fig,axs=plt.subplots(1,1, figsize=(11,5))
 
 
 
-qs_sigma_ca=np.sqrt(float_array_er/20736)
-qs_sigma_mg=np.sqrt(qs_intrep_counts/20736)
-ar_sigma_ca=np.sqrt(float_array/20736)
-ar_sigma_mg=np.sqrt(counts_2_interp/20736)
+qs_sigma_ca=np.sqrt(float_array_er/area)
+qs_sigma_mg=np.sqrt(qs_intrep_counts/area)
+ar_sigma_ca=np.sqrt(float_array/area)
+ar_sigma_mg=np.sqrt(counts_2_interp/area)
 
 qs_sigma=(float_array_er/qs_intrep_counts)*np.sqrt((qs_sigma_ca / float_array_er)**2 + (qs_sigma_mg / qs_intrep_counts)**2)
 ar_sigma=(float_array/counts_2_interp)*np.sqrt((ar_sigma_ca / float_array)**2 + (ar_sigma_mg / counts_2_interp)**2)

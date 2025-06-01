@@ -49,7 +49,7 @@ plt.rcParams["xtick.major.size"] = 10
 plt.rcParams['font.family'] = 'serif'  
 plt.rcParams['font.sans-serif'] = 'Times New Roman'
 fig,axs=plt.subplots(1,1, figsize=(10,5))
-#ax2 = axs.twinx()
+ax2 = axs.twinx()
 axs.xaxis.set_tick_params(size=0.5)
 axs.yaxis.set_tick_params(size=0.5)
 axs.tick_params(axis='both', direction='in', length=6, width=1.5)
@@ -60,12 +60,13 @@ axs.minorticks_on()
 
 
 float_array = [float(string) for string in data[1]]
-#float_array_er = [float(string) for string in data[2]]
+float_array_er = [float(string) for string in data[2]]
 #y_er=np.std(float_array_er)
 
 contour_area=7463 #ca_ii_h
 float_array=np.array(float_array)
-plt.plot(time_array,float_array,'ko-',markersize=2,linewidth=0.5,label='Total count of peak time contour')
+axs.plot(time_array,float_array,'ko-',markersize=2,linewidth=0.5,label='Mean count of peak time contour')
+ax2.plot(time_array,float_array_er,'bo-',markersize=2,linewidth=0.5,label='Mean QS')
 '''
 ax2.plot(g_time_array,g_float_array,'bo--',markersize=0.1,linewidth=0.5)
 ax2.set_ylabel("X-ray flux [1-8 A] (Wm$^{-2}$$s^{-1}$)")
@@ -81,8 +82,9 @@ Flt=param
 axis_title='Total count'
 img_nm=Flt+'_light_curve.png'
 
-plt.ylabel(axis_title,fontsize=13)
-plt.xlabel('Time',fontsize=13)
+axs.set_ylabel('Total_count of AR',fontsize=13)
+ax2.set_ylabel('Mean qount of QS')
+axs.set_xlabel('Time',fontsize=13)
 #plt.axvline(m_cls,color='r',label='M class Flare start time',linestyle='dotted')
 #plt.axvline(x_cls,color='b',linestyle='dotted',label='GOES Flare start time')
 #plt.axvline(m_cls,color='b',linestyle='--',label='GOES Flare start time')

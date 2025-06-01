@@ -94,19 +94,14 @@ for filter2_file in filter2_files:
     mg_qs_data = qs_submap.data * 1000 / qs_submap.meta.get('CMD_EXPT')
     filter2_data = filter2_map.data * 1000 / filter2_map.meta.get('CMD_EXPT')
     qs_counts=np.mean(mg_qs_data)
+    qs_area=(mg_qs_data).shape[0]*(mg_qs_data).shape[1]
     
     # Calculate the counts in Filter 2 under the Filter 1 contours
     counts_under_contours = np.sum(np.where(msk==1, filter2_data, 0))
     #counts_under_contours = np.sum(filter2_data[mask])
     pix1,pix2=filter2_map.world_to_pixel(qs_coords)
     print(pix1,pix2)
-    #rpx=rct_pix.x.value
-    #rpy=rct_pix.y.value
-
-    #x_min = min(pix1.x.value, pix2.x.value)
-    #y_min = min(pix1.y.value, pix2.y.value)
-    #width = abs(pix1.x.value - pix2.x.value)
-    #height = abs(pix1.y.value - pix2.y.value)
+   
 
     # Overlay the Filter 1 contours on the Filter 2 image
     fig, ax = plt.subplots(figsize=(10, 10))
@@ -130,7 +125,7 @@ for filter2_file in filter2_files:
     # Save the plot
     output_filename = os.path.join(output_dir, os.path.basename(filter2_file)[:-5] + '_overlay.jpg')
     #ax.set_colorbars()
-    plt.title(f"ca II h {filter2_map.date}", fontsize=16)
+    plt.title(f"Ca II h {filter2_map.date}", fontsize=16)
     plt.savefig(output_filename)
     plt.close()
 
@@ -139,7 +134,8 @@ for filter2_file in filter2_files:
         'filter2_file': filter2_map.date,
         'total_counts_under_contours': counts_under_contours,
         'qs_mean_counts':qs_counts,
-        'contour_area':np.count_nonzero(msk)
+        'contour_area':np.count_nonzero(msk),
+        'QS area':qs_area
 
     })
 

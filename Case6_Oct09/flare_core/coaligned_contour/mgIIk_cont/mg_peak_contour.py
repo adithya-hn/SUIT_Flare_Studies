@@ -13,13 +13,20 @@ import imageio
 from skimage import filters, measure
 from skimage.measure import label, regionprops
 from skimage.morphology import disk, closing
+from sunpy.map import get_observer_meta
+from sunpy.coordinates import frames, get_horizons_coord
 
-filter2_fold = '/Analysis/Projects_Data/Flare_Data/Oct09_Flare_Data/Processed/Aligned_images/NB03/'
+filter2_fold = '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case6_Oct09/data/processed/aligned_fits/NB03/'
+
+Tx1_qs1,Ty1_qs1=-90,20
+Tx2_qs1,Ty2_qs1=-10,-70
 
 # Load the Filter 1 image and compute its contours
-ref_mg_map = sunpy.map.Map('/Analysis/Projects_Data/Flare_Data/Oct09_Flare_Data/Processed/Aligned_images/NB03/SUT_T24_1472_000592_Lev1.0_2024-10-09T01.49.26.972_0983NB03.fits')
+ref_mg_map = sunpy.map.Map('/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case6_Oct09/data/processed/aligned_fits/NB03/SUT_T24_1472_000592_Lev1.0_2024-10-09T01.49.26.972_0983NB03.fits')
 ref_mg_map_data = ref_mg_map.data * 1000 / ref_mg_map.meta.get('CMD_EXPT')
-qs_coords = SkyCoord(Tx=(-90, -10) * u.arcsec, Ty=(20, -70) * u.arcsec, frame=ref_mg_map.coordinate_frame)
+ref_pos = get_horizons_coord(-21, ref_mg_map.date)
+ref_mg_map.meta.update(get_observer_meta(ref_pos, rsun=ref_pos.rsun))
+qs_coords = SkyCoord(Tx=(Tx1_qs1,Tx2_qs1) * u.arcsec, Ty=(Ty1_qs1,Ty2_qs1) * u.arcsec, frame=ref_mg_map.coordinate_frame)
 
 
 qs_map = ref_mg_map.submap(qs_coords)
@@ -35,17 +42,11 @@ binary_image=closing(binary_image, selem)
 label_img = label(binary_image)
 regions = sorted(regionprops(label_img), key=lambda r: r.area, reverse=True)
 print('Number of regions:', len(regions))
-top_labels = [regions[0].label, regions[1].label, regions[2].label]#, regions[3].label] #, regions[4].label]
+top_labels = [regions[0].label]#, regions[1].label, regions[2].label]#, regions[3].label] #, regions[4].label]
 
 mask1 = label_img == top_labels[0]
-mask2 = label_img == top_labels[1]
-mask3 = label_img == top_labels[2]
-#mask4 = label_img == top_labels[3]
-
-msk=mask1+mask2+mask3#+mask4
-#plt.imshow(binary_image, cmap='gray', origin='lower')
+msk=mask1#+mask2+mask3#+mask4
 plt.imshow(msk, cmap='gray', origin='lower')
-#plt.plot(contours[1][:,1], contours[1][:,0], color='red', linewidth=1,label='Flare contour')
 plt.colorbar()
 plt.show()
 
@@ -54,11 +55,14 @@ contours = measure.find_contours(msk, level=0.5)
 
 fig= plt.figure(figsize=(10, 10))
 ax = fig.add_subplot(projection=ref_mg_map)
-ref_mg_map.plot(axes=ax, cmap='gray', vmin=0, vmax=16000)
+ref_mg_map.plot(axes=ax, cmap='gray', vmin=0, vmax=30000)
 ref_mg_map.draw_quadrangle(qs_coords, axes=ax, edgecolor="red", linestyle="-", linewidth=2, label='Region of interest')
+hpc_coord=[]
 for contour in contours:
     ax.plot(contour[:, 1], contour[:, 0], linewidth=1.5, color='blue')
-plt.colorbar()
+    hpc_coord.append(ref_mg_map.pixel_to_world(contour[:, 1]*u.pixel, contour[:, 0]*u.pixel))
+cax = fig.add_axes([ax.get_position().x1+0.01,ax.get_position().y0,0.02,ax.get_position().height])
+ 
 plt.savefig('Mg_II_k_map.jpg')
 plt.close()
 
@@ -76,33 +80,33 @@ results = []
 for filter2_file in filter2_files:
     # Load the Filter 2 image
     filter2_map = sunpy.map.Map(filter2_file)
-    qs_coords3=SkyCoord(Tx=(-90, 10) * u.arcsec, Ty=(20, -80) * u.arcsec, frame=filter2_map.coordinate_frame)
-    qs_submap = filter2_map.submap(qs_coords3)
-    ca_qs_data = qs_submap.data * 1000 / qs_submap.meta.get('CMD_EXPT')
-    filter2_data = filter2_map.data * 1000 / filter2_map.meta.get('CMD_EXPT')
-    qs_counts=np.mean(ca_qs_data)
+    filter2_map.meta.update(get_observer_meta(ref_pos, rsun=ref_pos.rsun))
+    qs_coords_=SkyCoord(Tx=(Tx1_qs1,Tx2_qs1) * u.arcsec, Ty=(Ty1_qs1,Ty2_qs1) * u.arcsec,   frame=filter2_map.coordinate_frame)
+    qs_submap = filter2_map.submap(qs_coords_)
+    mg_qs_data = qs_submap.data * 1000 / qs_submap.meta.get('CMD_EXPT')
+    filter2_data = filter2_map.data * 1000 / qs_submap.meta.get('CMD_EXPT')
+    qs_counts=np.mean(mg_qs_data)
+    qs_area=(mg_qs_data).shape[0]*(mg_qs_data).shape[1]
     
-
+    
     # Calculate the counts in Filter 2 under the Filter 1 contours
-    counts_under_contours = np.sum(np.where(msk==1, filter2_data, 0))/np.count_nonzero(msk)
+    counts_under_contours = np.sum(np.where(msk==1, filter2_data, 0))
     #counts_under_contours = np.sum(filter2_data[mask])
-    qs_coords3=SkyCoord(Tx=(-90, 10) * u.arcsec, Ty=(20, -80) * u.arcsec, frame=filter2_map.coordinate_frame)
+
     # Overlay the Filter 1 contours on the Filter 2 image
-    fig, ax = plt.subplots(figsize=(10, 10))
-    
+    fig= plt.figure(figsize=(10, 10))
+    ax=fig.add_subplot(111,projection=filter2_map)
+    filter2_map.plot(vmin=0, vmax=30000)
 
-    vr=ax.imshow(filter2_data,origin='lower' ,cmap='gray', vmin=0, vmax=16000)  # Adjust vmin/vmax as needed
-    fig.colorbar(vr,ax=ax , orientation='vertical')
-
-    #for contour in contours:
+    for i in range(len(hpc_coord)):
+        hpc=  hpc_coord[i].transform_to(filter2_map.coordinate_frame)
+        ax.plot_coord(hpc,color='red', linewidth=1,label='Flare contour')
     
-    plt.plot(contours[0][:, 1], contours[0][:, 0], linewidth=1.5, color='blue')
-    plt.plot(contours[1][:, 1], contours[1][:, 0], linewidth=1.5, color='blue')
-    plt.plot(contours[2][:, 1], contours[2][:, 0], linewidth=1.5, color='blue')
-    #plt.plot(contours[3][:, 1], contours[3][:, 0], linewidth=1.5, color='blue')
 
     # Add text to display the counts
     ax.text(50, 50, f"Counts under contours: {counts_under_contours:.2f}", color='white', fontsize=12)
+    filter2_map.draw_quadrangle(qs_coords_,axes=ax,edgecolor="blue",linestyle="-",linewidth=1,label='QS region',alpha=0.5)
+    #plt.colorbar()
 
     # Save the plot
     output_filename = os.path.join(output_dir, os.path.basename(filter2_file)[:-5] + '_overlay.jpg')
@@ -114,8 +118,11 @@ for filter2_file in filter2_files:
     # Append results to the list
     results.append({
         'filter2_file': filter2_map.date,
-        'counts_under_contours': counts_under_contours,
-        'qs_mean_counts':qs_counts
+        'total_counts_under_contours': counts_under_contours,
+        'qs_mean_counts':qs_counts,
+        'contour_area':np.count_nonzero(msk),
+        'QS_area':qs_area
+
     })
 
     print(f"Processed { os.path.basename(filter2_file)}: Counts under contours = {counts_under_contours:.2f}")

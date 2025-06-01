@@ -22,7 +22,7 @@ start = timeit.default_timer()
 fol_nm=os.getcwd()+'/Light_curve_images/'
 Filters=['NB03','NB04','NB08']
 
-fdir='/Analysis/Projects_Data/Flare_Data/June02_Flare_Data2/Processed/Aligned_images/'
+fdir='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case3_June02/data/processed/aligned_images/'
 #dat_file='Flare_files_Jun2_M1.2.dat'
 #Filters=['NB08']
 
@@ -81,10 +81,6 @@ for fltr in Filters:
         er_coords = SkyCoord(Tx=(-260, -80) * u.arcsec, Ty=(-440, -580) * u.arcsec, frame=suit_map.coordinate_frame)
         suit_map.draw_quadrangle(er_coords,axes=ax,edgecolor="blue",linestyle="-",linewidth=2,label='Background')
 
-        #er_coords = SkyCoord(Tx=(-290, -390) * u.arcsec, Ty=(-380, -400) * u.arcsec, frame=suit_map.coordinate_frame)
-        #suit_map.draw_quadrangle(er_coords,axes=ax,edgecolor="blue",linestyle="-",linewidth=2,label='Background')
-        
-        #print(fnm)
         plt.savefig(F_name,dpi=300)
         plt.close()
         fig = plt.figure(figsize=(5, 5))

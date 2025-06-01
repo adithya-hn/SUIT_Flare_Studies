@@ -85,8 +85,9 @@ axs.errorbar(time_array,float_array_er/qs_intrep_counts,yerr=qs_sigma,color=colo
 axs.errorbar(time_array,(float_array/counts_2_interp),yerr=ar_sigma,color=colors_list[2],marker='s',markersize=2,linewidth=0.5,label='AR ratio ')
 img_nm='ratio_light_curve_nb08_nb03.png'
 axs.set_ylabel("Count ratio ")
-m_cls=datetime.fromisoformat('2024-10-09T01:25:00.000')
-m_cls_p=datetime.fromisoformat('2024-10-09T01:56:00.000')
+m_cls=datetime.fromisoformat('2024-11-01T02:05:00.000')
+m_cls_p=datetime.fromisoformat('2024-11-01T02:16:00.000')
+
 #plt.axvline(m_cls,color='orange',linestyle='--',label='GOES Flare start time')
 #plt.axvline(m_cls_p,color='orange',linestyle='-',label='GOES Flare peak time')
 
@@ -120,3 +121,42 @@ plt.savefig(img_nm_,dpi=300)
 plt.close()
 
 np.savetxt('enhancement.csv',np.c_[date_array,enhancement],delimiter=',',header='date,enhancement', fmt='%s')
+
+
+fig3,ax3=plt.subplots(1,1, figsize=(11,5))
+enhancement=((float_array_er/qs_intrep_counts)-(float_array/counts_2_interp))/(float_array_er/qs_intrep_counts)
+ax3.errorbar(time_array,(float_array/counts_2_interp),yerr=ar_sigma,color=colors_list[2],marker='s',markersize=2,linewidth=0.5,label='AR ratio ')
+ax3.set_ylabel('Ratio')
+ax3.set_xlabel('Time')
+axis_title='Total count'
+img_nm_='c7_AR_ratio_light_curve_nb08_nb03.png'
+
+plt.xlabel('Time',fontsize=13)
+plt.title('Ca II h/Mg II k ratio Light Curves')
+plt.figlegend(bbox_to_anchor=(0.001, 0.35, 0.35, 0.5))
+time_formatter = mdates.DateFormatter('%H:%M')  # Format as HH:MM
+plt.gca().xaxis.set_major_formatter(time_formatter)
+plt.figlegend(bbox_to_anchor=(0.001, 0.35, 0.35, 0.5))
+time_formatter = mdates.DateFormatter('%H:%M')  # Format as HH:MM
+plt.gca().xaxis.set_major_formatter(time_formatter)
+plt.savefig(img_nm_,dpi=300)
+plt.close()
+
+fig4,ax4=plt.subplots(1,1, figsize=(11,5))
+ax4.errorbar(time_array,float_array_er/qs_intrep_counts,yerr=qs_sigma,color=colors_list[1],marker='^',markersize=2,linewidth=0.5,label='QS ratio')
+
+ax4.set_ylabel('Ratio')
+ax4.set_xlabel('Time')
+axis_title='Total count'
+img_nm_='c7_QS_ratio_light_curve_nb08_nb03.png'
+
+plt.xlabel('Time',fontsize=13)
+plt.title('Ca II h/Mg II k ratio Light Curves')
+plt.figlegend(bbox_to_anchor=(0.001, 0.35, 0.35, 0.5))
+time_formatter = mdates.DateFormatter('%H:%M')  # Format as HH:MM
+plt.gca().xaxis.set_major_formatter(time_formatter)
+plt.figlegend(bbox_to_anchor=(0.001, 0.35, 0.35, 0.5))
+time_formatter = mdates.DateFormatter('%H:%M')  # Format as HH:MM
+plt.gca().xaxis.set_major_formatter(time_formatter)
+plt.savefig(img_nm_,dpi=300)
+plt.close()

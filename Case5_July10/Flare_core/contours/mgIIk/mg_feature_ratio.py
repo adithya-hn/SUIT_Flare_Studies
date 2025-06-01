@@ -15,16 +15,17 @@ from skimage.measure import label, regionprops
 from skimage.morphology import disk, closing
 from sunpy.map import get_observer_meta
 from sunpy.coordinates import frames, get_horizons_coord
+from sunpy.time import parse_time
+from matplotlib.colors import LogNorm
+from astropy.time import Time
+from matplotlib.animation import FuncAnimation
 
+flare_files = '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case5_July10/data/processed/Aligned_images/'
 
-
-flare_files = '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case1_Jun01/data/raw/Jun01_1/'
-
-rct_Tx1,rct_Ty1=-200,-400
-rct_Tx2,rct_Ty2=60,-100
-
-Tx1_qs1,Ty1_qs1=-210,-340
-Tx2_qs1,Ty2_qs1=-180,-310
+Tx_er1=-400
+Ty_er1=-400
+Tx_er2=-310
+Ty_er2=-475
 
 Tx1_qs2,Ty1_qs2,Tx2_qs2,Ty2_qs2=-30,-130,0,-100
 
@@ -32,50 +33,54 @@ Tx1_qs3,Ty1_qs3,Tx2_qs3,Ty2_qs3=-250,-40,-220,-10
 
 # Load the Filter 1 image and compute its contours
 #ref_mg_map = sunpy.map.Map('/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case1_Jun01/data/raw/SUT_T24_0785_000396_Lev1.0_2024-06-01T08.46.29.783_0983NB03.fits')
-ref_mg_map=sunpy.map.Map('/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case5_July10/data/raw/SUT_T24_0956_000465_Lev1.0_2024-07-10T13.31.01.128_0983NB03.fits')
+ref_mg_map=sunpy.map.Map('/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case5_July10/data/processed/Aligned_images/NB03/SUT_T24_0956_000465_Lev1.0_2024-07-10T15.35.28.135_0983NB03.fits')
 ref_pos = get_horizons_coord(-21, ref_mg_map.date)
 ref_mg_map.meta.update(get_observer_meta(ref_pos, rsun=ref_pos.rsun))
-
+qs_coords1 =SkyCoord(Tx=(Tx_er1,Tx_er2) * u.arcsec, Ty=(Ty_er1,Ty_er2) * u.arcsec, frame=ref_mg_map.coordinate_frame)
 ref_mg_map_data = ref_mg_map.data * 1000 / ref_mg_map.meta.get('CMD_EXPT')
-qs_coords1 =SkyCoord(Tx=(Tx1_qs1,Tx2_qs1) * u.arcsec, Ty=(Ty1_qs1,Ty2_qs1) * u.arcsec, frame=ref_mg_map.coordinate_frame)
-qs_coords2 =SkyCoord(Tx=(Tx1_qs2,Tx2_qs2) * u.arcsec, Ty=(Ty1_qs2,Ty2_qs2) * u.arcsec, frame=ref_mg_map.coordinate_frame)
-qs_coords3 =SkyCoord(Tx=(Tx1_qs3,Tx2_qs3) * u.arcsec, Ty=(Ty1_qs3,Ty2_qs3) * u.arcsec, frame=ref_mg_map.coordinate_frame)
+#qs_coords1 =SkyCoord(Tx=(Tx1_qs1,Tx2_qs1) * u.arcsec, Ty=(Ty1_qs1,Ty2_qs1) * u.arcsec, frame=ref_mg_map.coordinate_frame)
+#qs_coords2 =SkyCoord(Tx=(Tx1_qs2,Tx2_qs2) * u.arcsec, Ty=(Ty1_qs2,Ty2_qs2) * u.arcsec, frame=ref_mg_map.coordinate_frame)
+#qs_coords3 =SkyCoord(Tx=(Tx1_qs3,Tx2_qs3) * u.arcsec, Ty=(Ty1_qs3,Ty2_qs3) * u.arcsec, frame=ref_mg_map.coordinate_frame)
 #qs_coords2=SkyCoord(Tx=(Tx_qs1,Tx_qs2) * u.arcsec, Ty=(Ty_qs1,Ty_qs2) * u.arcsec, frame=ref_mg_map.coordinate_frame)
 fig=plt.figure()
 ax=fig.add_subplot(111,projection=ref_mg_map)
 ref_mg_map.plot(vmin=1000,vmax=25000)
-rect_coords=SkyCoord(Tx=(rct_Tx1,rct_Tx2) * u.arcsec, Ty=(rct_Ty1,rct_Ty2) * u.arcsec, frame=ref_mg_map.coordinate_frame)
-ref_mg_map.draw_quadrangle(rect_coords,axes=ax,edgecolor="blue",linestyle="-",linewidth=2,label='selection region')
+#rect_coords=SkyCoord(Tx=(rct_Tx1,rct_Tx2) * u.arcsec, Ty=(rct_Ty1,rct_Ty2) * u.arcsec, frame=ref_mg_map.coordinate_frame)
+#ref_mg_map.draw_quadrangle(rect_coords,axes=ax,edgecolor="blue",linestyle="-",linewidth=2,label='selection region')
 ref_mg_map.draw_quadrangle(qs_coords1,axes=ax,edgecolor='yellow',linestyle="-",linewidth=2,label='QS region 1')
-ref_mg_map.draw_quadrangle(qs_coords2,axes=ax,edgecolor='yellow',linestyle="-",linewidth=2,label='QS region 2')
-ref_mg_map.draw_quadrangle(qs_coords3,axes=ax,edgecolor='yellow',linestyle="-",linewidth=2,label='QS region 3')
-plt.show()
-selcted_map=ref_mg_map.submap(rect_coords)
-plt.hist((selcted_map.data).flatten(),bins=1000)
+#ref_mg_map.draw_quadrangle(qs_coords2,axes=ax,edgecolor='yellow',linestyle="-",linewidth=2,label='QS region 2')
+#ref_mg_map.draw_quadrangle(qs_coords3,axes=ax,edgecolor='yellow',linestyle="-",linewidth=2,label='QS region 3')
 plt.show()
 
-from astropy.stats import sigma_clipped_stats
+test_map=sunpy.map.Map('/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case5_July10/data/raw/SUT_T24_0956_000465_Lev1.0_2024-07-10T13.31.01.128_0983NB03.fits')
 
-mean_, median_, std_ = sigma_clipped_stats(ref_mg_map_data, sigma=3.0, maxiters=5)
-quiet_sun_mask = ref_mg_map_data < (median_ + 1.5 * std_)
-quiet_sun_level = ref_mg_map_data[quiet_sun_mask].mean()
-print('QS_level',quiet_sun_level)
-plt.imshow(quiet_sun_mask,origin='lower')
-plt.show()
-
-test_map=sunpy.map.Map('/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case1_Jun01/data/raw/SUT_T24_0785_000396_Lev1.0_2024-06-01T07.14.12.134_0973NB03.fits')
+norm_sel_rct=ref_mg_map.data*1000/ref_mg_map.meta.get('CMD_EXPT')
 
 qs_map1 = ref_mg_map.submap(qs_coords1)
-qs_map2 = ref_mg_map.submap(qs_coords2)
-qs_map3 = ref_mg_map.submap(qs_coords3)
+#qs_map2 = ref_mg_map.submap(qs_coords2)
+#qs_map3 = ref_mg_map.submap(qs_coords3)
 qs_data1 = qs_map1.data * 1000 / qs_map1.meta.get('CMD_EXPT')
-qs_data2 = qs_map2.data * 1000 / qs_map2.meta.get('CMD_EXPT')
-qs_data3 = qs_map3.data * 1000 / qs_map3.meta.get('CMD_EXPT')
+#qs_data2 = qs_map2.data * 1000 / qs_map2.meta.get('CMD_EXPT')
+#qs_data3 = qs_map3.data * 1000 / qs_map3.meta.get('CMD_EXPT')
 
 print(np.median(qs_data1), np.mean(qs_data1), np.std(qs_data1))
-print(np.median(qs_data2), np.mean(qs_data2), np.std(qs_data1))
-print(np.median(qs_data3), np.mean(qs_data1), np.std(qs_data1))
-Thresh_val=np.median(qs_data1) * 3
+#print(np.median(qs_data2), np.mean(qs_data2), np.std(qs_data1))
+#print(np.median(qs_data3), np.mean(qs_data1), np.std(qs_data1))
+qs_thresh=(np.median(qs_data1)) #+np.median(qs_data2)+np.median(qs_data3))/3
+print('QS Threshold: ',qs_thresh )
+
+quiet_sun_mask = norm_sel_rct < (qs_thresh*1.5)
+
+quiet_sun_level = np.median(norm_sel_rct[quiet_sun_mask])
+qs_sigma=np.std(norm_sel_rct[quiet_sun_mask])
+print('QS_level',quiet_sun_level,qs_sigma)
+
+fig,axs=plt.subplots(1,2)
+axs[0].imshow(norm_sel_rct,origin='lower')
+axs[1].imshow(quiet_sun_mask,origin='lower')
+plt.show()
+
+Thresh_val=qs_thresh*4 #np.median(qs_data1) * 3
 print('Threshold: ', Thresh_val)
 ny, nx = ref_mg_map_data.data.shape
 # Create binary mask
@@ -85,112 +90,184 @@ binary_image=closing(binary_image, selem)
 label_img = label(binary_image)
 regions = sorted(regionprops(label_img), key=lambda r: r.area, reverse=True)
 print('Number of regions:', len(regions))
-top_labels = [regions[0].label, regions[1].label, regions[2].label] #, regions[3].label, regions[4].label]
-
-mask1 = label_img == top_labels[0]
-mask2 = label_img == top_labels[1]
-mask3 = label_img == top_labels[2]
-#mask4 = label_img == top_labels[3]
-
-msk=mask1+mask2+mask3#+mask4
-#plt.imshow(binary_image, cmap='gray', origin='lower')
-plt.imshow(msk, cmap='gray', origin='lower')
-
-##plt.plot(contours[1][:,1], contours[1][:,0], color='red', linewidth=1,label='Flare contour')
-
-plt.colorbar()
-plt.show()
-
-contours = measure.find_contours(msk, level=0.5)
-print('Number of contours:', len(contours))
-hpc_coord=[]
-for i in range(len(contours)):
-    hpc_coord.append(ref_mg_map.pixel_to_world(contours[i][:, 1]*u.pixel, contours[i][:, 0]*u.pixel))
-    #hpc_coord[i]= hpc_coord[i].transform_to(ref_mg_map.coordinate_frame) # not much chage
 
 # Process all Filter 2 images and overlay Filter 1 contours
-filter2_files = glob.glob(flare_files + '*3NB03.fits')
+filter2_files = glob.glob(flare_files + 'NB03/*3NB03.fits')
+filter1_files = glob.glob(flare_files + 'NB08/*3NB08.fits')
 filter2_files = sorted(filter2_files, key=lambda file_name: datetime.datetime.strptime(os.path.basename(file_name).split('_')[5], "%Y-%m-%dT%H.%M.%S.%f"))
+filter1_files = sorted(filter1_files, key=lambda file_name: datetime.datetime.strptime(os.path.basename(file_name).split('_')[5], "%Y-%m-%dT%H.%M.%S.%f"))
 
+nb3_time_array=[]
+for f in range(len(filter2_files)):
+    nb3_time_array.append(datetime.datetime.strptime(os.path.basename(filter2_files[f]).split('_')[5], "%Y-%m-%dT%H.%M.%S.%f"))
+nb3_time_array=Time(parse_time(nb3_time_array))
 # Create output directories
 output_dir = 'Contour_Overlay_Results'
+ca_cont_dir = 'ma_nb08_contours'
 os.makedirs(output_dir, exist_ok=True)
+os.makedirs(ca_cont_dir, exist_ok=True)
 
 # Initialize lists to store results
 results = []
-
-for filter2_file in filter2_files:
+ca_results = []
+ca_qs_maps=[]
+ca_maps=[]
+for filter1_file in filter1_files:
     # Load the Filter 2 image
-    filter2_map = sunpy.map.Map(filter2_file)
-    filter2_pos = get_horizons_coord(-22, filter2_map.date)
+    filter1_map=sunpy.map.Map(filter1_file)
+    
+    ca_time=Time(parse_time(filter1_map.date))
+    idx=np.argmin(np.abs(nb3_time_array - ca_time))
+    #print(filter1_file,filter2_files[idx])
+    filter2_map = sunpy.map.Map(filter2_files[idx])
+    filter2_pos = get_horizons_coord(-21, filter2_map.date)
     filter2_map.meta.update(get_observer_meta(filter2_pos, rsun=filter2_pos.rsun))
+    filter1_map.meta.update(get_observer_meta(filter2_pos, rsun=filter2_pos.rsun))
+    
+    selected_reg=filter2_map #.submap(rect_coords)
+    #ca_region=filter1_map#.submap(rect_coords)
+    rct_data = selected_reg.data * 1000 / filter2_map.meta.get('CMD_EXPT')
     filter2_data = filter2_map.data * 1000 / filter2_map.meta.get('CMD_EXPT')
-    scale_img= (filter2_data/255).astype(np.uint8)
+    filter1_data = filter1_map.data * 1000 / filter1_map.meta.get('CMD_EXPT')
+    Norm_map=sunpy.map.Map(rct_data,selected_reg.fits_header)
+    Norm_ca_map=sunpy.map.Map(filter1_data,filter1_map.fits_header)
+    norm_map=sunpy.map.Map(filter2_data,filter2_map.fits_header)
+    qs_data1 = norm_map.submap(qs_coords1).data
     
-    ny, nx = filter2_map.data.shape
-    X, Y = np.meshgrid(np.arange(nx), np.arange(ny))
-    points = np.vstack((X.ravel(), Y.ravel())).T
-    masks=[]
-    m_msk=np.zeros((ny,nx))
-    fig=plt.figure(figsize=(10, 10))
-    ax=fig.add_subplot(111, projection=filter2_map)
-    filter2_map.plot(axes=ax,autoalign=True)
-    for i in range(3):
-        # Convert the contour coordinates to the Filter 2 image's coordinate frame
-        print('Contour:', i)    
-        hpc=  hpc_coord[i].transform_to(filter2_map.coordinate_frame)
-        #plt.plot(contours[0][:, 1], contours[0][:, 0], color='blue', linewidth=5,label='Flare contour') 
-        ax.plot_coord(hpc,color='red', linewidth=1,label='Flare contour')
-
-        x_pix,y_pix = filter2_map.world_to_pixel(hpc_coord[i])
-        # Create a polygon path from the contour in pixel space
-        contour_path = Path(np.vstack([x_pix.value, y_pix.value]).T)
-        # Create mask
-        mask = contour_path.contains_points(points).reshape((ny, nx))
-        masks.append(mask)
-        m_msk+=mask
-
-    
-    #plt.close()
-
    
-    # Calculate the counts in Filter 2 under the Filter 1 contours
-    counts_under_contours = np.sum(np.where(m_msk==1, filter2_data, 0))
-    #counts_under_contours = np.sum(filter2_data[mask])
+    qs_thresh=(np.median(qs_data1))#+np.median(qs_data2)+np.median(qs_data3))/3
+    ca_qs_data1 = Norm_ca_map.submap(qs_coords1).data
+    ca_qs_thresh=(np.median(ca_qs_data1))#+np.median(qs_data2)+np.median(qs_data3))/3
+    #print('QS Threshold: ',qs_thresh )
+    qs_qoords2_=SkyCoord(Tx=(-500,-450) * u.arcsec, Ty=(-300,-250) * u.arcsec, frame=filter2_map.coordinate_frame)
+    ca_qs_maps.append(Norm_ca_map.submap(qs_coords1))
+    ca_maps.append(Norm_ca_map)
 
-    # Overlay the Filter 1 contours on the Filter 2 image
-    #fig, ax = plt.subplots(figsize=(10, 10))
-    
+    plg_msk_b = (Norm_map.data > qs_thresh*1.5) & (Norm_map.data < qs_thresh*4) # True where pixel value > threshold
+    kernel = disk(3)
+    plg_msk=closing(plg_msk_b, kernel)
+    plg_cont = measure.find_contours(plg_msk, level=0.5)
+    #print('Total plages contour: ',len(plg_cont))
+    #plg_hpc=[]
+    print('Shutter position:', filter2_map.meta.get('SHTR_STR'),filter1_map.meta.get('SHTR_STR'),filter1_map.date)
 
-    #vr=ax.imshow(filter2_data,origin='lower' ,cmap='gray', vmin=0, vmax=16000)  # Adjust vmin/vmax as needed
-    #fig.colorbar(vr,ax=ax , orientation='vertical')
+    flare_msk_b=Norm_map.data > qs_thresh*4
+    flare_msk=closing(flare_msk_b,kernel)
+    flare_cont = measure.find_contours(flare_msk, level=0.5)
+    #print(' Total flare contours: ', len(flare_cont))
 
-    #for contour in contours:
-    
-    #plt.plot(contours[0][:, 1], contours[0][:, 0], linewidth=1.5, color='blue')
-    #plt.plot(contours[1][:, 1], contours[1][:, 0], linewidth=1.5, color='blue')
-    #plt.plot(contours[2][:, 1], contours[2][:, 0], linewidth=1.5, color='blue')
-    #plt.plot(contours[3][:, 1], contours[3][:, 0], linewidth=1.5, color='blue')
+    fig=plt.figure(figsize=(10, 10))
+    ax=fig.add_subplot(111, projection=Norm_map)
+    #Norm_map.plot(axes=ax,autoalign=True,vmin=1000,vmax=16000)  
+    Norm_ca_map.plot(axes=ax,autoalign=True,vmin=1000,vmax=5000)
+    th_lv=[qs_thresh*1.5,(qs_thresh)*4]
+    for pc in range(len(plg_cont)):
+        plg_hpc=ref_mg_map.pixel_to_world(plg_cont[pc][:, 1]*u.pixel, plg_cont[pc][:, 0]*u.pixel)
 
-    # Add text to display the counts
-    ax.text(50, 50, f"Counts under contours: {counts_under_contours:.2f}", color='white', fontsize=12)
+    Norm_map.draw_contours(axes=ax, levels=th_lv,zorder=1,colors=['yellow','red'])
+    Norm_map.draw_quadrangle(qs_coords1,axes=ax,edgecolor='green',linestyle="-",linewidth=2,label='QS region 1')
+    #Norm_map.draw_quadrangle(qs_coords2,axes=ax,edgecolor='green',linestyle="-",linewidth=2,label='QS region 2')
+    #Norm_map.draw_quadrangle(qs_coords3,axes=ax,edgecolor='green',linestyle="-",linewidth=2,label='QS region 3')
 
-    # Save the plot
-    output_filename = os.path.join(output_dir, os.path.basename(filter2_file)[:-5] + '_overlay.jpg')
+    output_filename = os.path.join(output_dir, os.path.basename(filter2_files[idx])[:-5] + '_overlay.jpg')
+    ca_output_filename = os.path.join(ca_cont_dir, os.path.basename(filter1_file)[:-5] + '_overlay.jpg')
     #ax.set_colorbars()
-    plt.title(f"Mg II k {filter2_map.date}", fontsize=16)
+    plt.title(f"Ca II h {filter2_map.date}", fontsize=16)
     plt.savefig(output_filename)
     plt.close()
 
     # Append results to the list
-    results.append({
-        'filter2_file': filter2_map.date,
-        'counts_under_contours': counts_under_contours
-    })
+    Thresh_alned_data=np.where(Norm_map.data>qs_thresh*4,Norm_map.data,0)
+    
+    flare_area=np.count_nonzero(Thresh_alned_data)
+    flare_count=np.sum(Thresh_alned_data)
 
-    print(f"Processed { os.path.basename(filter2_file)}: Counts under contours = {counts_under_contours:.2f}")
+    #Ca flare data
+    ca_thresh_alned_data=np.where(Norm_map.data>qs_thresh*4,Norm_ca_map.data,0)
+    ca_flare_area=np.count_nonzero(ca_thresh_alned_data)
+    ca_flare_count=np.sum(ca_thresh_alned_data)
+
+
+
+    plage_th=np.where(((Norm_map.data>qs_thresh*2)&(Norm_map.data<qs_thresh*4)),Norm_map.data,0)
+
+    msk_plage_th=np.copy(plage_th)
+    msk_plage_th[300:470,150:400]=0
+    msk_plage_area=np.count_nonzero(msk_plage_th)
+    msk_plage_count=np.sum(msk_plage_th)
+    plage_area=np.count_nonzero(plage_th)
+    plage_count=np.sum(plage_th)
+
+    #Ca data
+    ca_plage_th=np.where(((Norm_map.data>qs_thresh*2)&(Norm_map.data<qs_thresh*4)),Norm_ca_map.data,0)
+    msk_ca_plage_th=np.copy(ca_plage_th)
+    msk_ca_plage_th[300:470,150:400]=0
+    ca_plage_area=np.count_nonzero(ca_plage_th)
+    ca_plage_count=np.sum(ca_plage_th)
+    msk_ca_plage_area=np.count_nonzero(msk_ca_plage_th)
+    msk_ca_plage_count=np.sum(msk_ca_plage_th)
+
+    #---------
+    plt.imshow(msk_ca_plage_th,origin='lower',vmin=500,vmax=3500)
+    plt.colorbar()
+    plt.title(f"Ca II h {filter1_map.date}", fontsize=16)
+    plt.savefig(ca_output_filename)
+    plt.close()
+    #------
+
+
+    results.append({'filter2_file': filter2_map.date,
+                     'flare_tot_count': flare_count,
+                     'flare_tot_area':flare_area,
+                     'plage_tot_count':plage_count,
+                     'plage_tot_area':plage_area,
+                     'qs_threshold':qs_thresh,
+                        'msk_plage_tot_count': msk_plage_count,
+                        'msk_plage_tot_area':msk_plage_area,
+                     })
+    
+    ca_results.append({'filter2_file': filter2_map.date,
+                     'ca_flare_tot_count': ca_flare_count,
+                     'ca_flare_tot_area':ca_flare_area,
+                     'ca_plage_tot_count':ca_plage_count,
+                     'ca_plage_tot_area':ca_plage_area,
+                     'qs_threshold':ca_qs_thresh,
+                     'msk_ca_plage_tot_count': msk_ca_plage_count,
+                     'msk_ca_plage_tot_area':msk_ca_plage_area
+                     
+                     })
+
+    #rint(f"Processed { os.path.basename(filter2_file)}: Counts under contours = {counts_under_contours:.2f}")
+sequence = sunpy.map.MapSequence(ca_qs_maps)
+fig = plt.figure()
+ax = fig.add_subplot(projection=ca_maps[1])
+ani = sequence.plot(axes=ax,vmin=0, vmax=5000)
+
+plt.title(f"Ca II QS region {filter1_map.date}", fontsize=16)
+#plt.colorbar(ani, ax=ax, label='Intensity [DN]')
+ani.save('ca_qs_big_maps.mp4')
+plt.close()
+
+ca_sequence = sunpy.map.MapSequence(ca_maps)
+fig = plt.figure()
+ax = fig.add_subplot(projection=ca_maps[1])
+ani = ca_sequence.plot(axes=ax,vmin=0, vmax=5000)
+
+plt.title(f"Ca II h {filter1_map.date}", fontsize=16)
+#plt.colorbar(ani, ax=ax, label='Intensity [DN]')
+ani.save('ca_maps.mp4')
+plt.close()
+
+
+
+'''ani = Sequence.plot()
+    Writer = animation.writers['ffmpeg']
+    writer = Writer(fps=10, metadata=dict(artist='SunPy'), bitrate=1800)
+    ani.save('mapsequence_animation.mp4', writer=writer)'''
 
 # Save results to a CSV file
 import pandas as pd
 results_df = pd.DataFrame(results)
+ca_results_df = pd.DataFrame(ca_results)
+ca_results_df.to_csv(('nb08_contours.csv'), index=False)
 results_df.to_csv(('nb03_contours.csv'), index=False)

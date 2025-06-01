@@ -27,16 +27,16 @@ rf_hight=1
 
 start = timeit.default_timer()
 now = datetime.datetime.now()-timedelta(days=1)
-fol_nm='/Analysis/Projects_Data/Flare_Data/June02_Flare_Data2/Processed/'
+fol_nm='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case3_June02/data/processed/'
 
-jpg_fold=fol_nm+'/'+'Coloured_ROI_imgs'
-algn_dir=fol_nm+'/'+'Aligned_images'
+jpg_fold=fol_nm+'/'+'roi_imgs'
+algn_dir=fol_nm+'/'+'aligned_images'
 
 #Filter='NB03'
 Filters=['NB03','NB04','NB08'] #,'BB01','BB02','BB03']
 pathlib.Path(algn_dir).mkdir(parents=True, exist_ok=True)
 pathlib.Path(jpg_fold).mkdir(parents=True, exist_ok=True)
-search_fold='/Analysis/Projects_Data/Flare_Data/June02_Flare_Data2/' #'/scratch/suit_data/level1fits/2024/'+str(now.month).zfill(2)+'/'+str(now.day).zfill(2)+'/'+'normal_2k'+'/'
+search_fold='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case3_June02/data/raw/'
 fdir =search_fold 
 for fltr in Filters:
     if fltr=='NB03':
@@ -66,7 +66,7 @@ for fltr in Filters:
         aligned_img.meta['CRPIX2']=(aligned_maps[Ref_idx].meta['CRPIX2'])
         aligned_img.meta['CRVAL1']=(aligned_maps[Ref_idx].meta['CRVAL1'])
         aligned_img.meta['CRVAL2']=(aligned_maps[Ref_idx].meta['CRVAL2'])
-        aligned_img.meta['CROTA2']=0
+        #aligned_img.meta['CROTA2']=0
         aligned_img.save(algn_dir+'/'+fltr+'/'+os.path.basename(files[j]),overwrite=True) #need this for alignement refference
         aln_imgs.append(algn_dir+'/'+fltr+'/'+os.path.basename(files[j]))
         fl_nm=jpg_fold+'/'+fltr+'/'+os.path.basename(files[j])[:-4]+'jpg'

@@ -21,6 +21,7 @@ import pathlib
 from colormap import filterColor
 import astropy.units as u
 from astropy.coordinates import SkyCoord, SkyOffsetFrame
+import matplotlib.animation as animation
 
 
 #---------------------------------------
@@ -103,7 +104,9 @@ for fltr in Filters:
 
     Sequence = sunpy.map.MapSequence(crop_maps)#sunpy.map.Map(files, sequence=True)    
     Sequence.peek()
+    
     aligned_maps=mc_coalign(Sequence,layer_index=Ref_idx,clip=False)
+
     print('Aligned, Saving now...')
     for j in range(len(aligned_maps)):  #account for incerted image, j=0 is refference image
         aligned_img=sunpy.map.Map(aligned_maps[j].data,aligned_maps[j].fits_header)

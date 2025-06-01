@@ -101,6 +101,7 @@ for filter2_file in filter2_files:
     ca_qs_data = qs_submap.data * 1000 / qs_submap.meta.get('CMD_EXPT')
     filter2_data = filter2_map.data * 1000 / filter2_map.meta.get('CMD_EXPT')
     qs_counts=np.mean(ca_qs_data)
+    qs_area=(ca_qs_data).shape[0]*(ca_qs_data).shape[1]
     
 
     # Calculate the counts in Filter 2 under the Filter 1 contours
@@ -135,7 +136,8 @@ for filter2_file in filter2_files:
         'filter2_file': filter2_map.date,
         'total_counts_under_contours': counts_under_contours,
         'qs_mean_counts':qs_counts,
-        'contour_area':np.count_nonzero(msk)
+        'contour_area':np.count_nonzero(msk),
+        'QS_area':qs_area
 
     })
 

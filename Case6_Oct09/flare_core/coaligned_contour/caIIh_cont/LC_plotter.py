@@ -38,11 +38,6 @@ print(len(date_array))
 for i in range(len(date_array)):
     parsed_time = datetime.fromisoformat(date_array[i])
     time_array.append(parsed_time)
-#g_time_array=[]
-'''
-for i in range(len(goes_date)):
-    parsed_time = datetime.fromisoformat(goes_date[i])
-    g_time_array.append(parsed_time)'''
 
 rc('axes', linewidth=1.2)
 plt.rcParams["xtick.major.size"] = 10
@@ -88,7 +83,7 @@ plt.xlabel('Time',fontsize=13)
 #plt.axvline(m_cls,color='b',linestyle='--',label='GOES Flare start time')
 #plt.axvline(m_cls_p,color='b',linestyle='-',label='GOES Flare peak time')
 #plt.axhline(2.58e8,color='g',linestyle='dotted')
-plt.title('Ca II h Light Curve (area normalized)')
+plt.title('Ca II h Light Curve')
 plt.legend(loc='best')
 time_formatter = mdates.DateFormatter('%H:%M')  # Format as HH:MM
 plt.gca().xaxis.set_major_formatter(time_formatter)
