@@ -18,7 +18,7 @@ from subprocess import call
 from matplotlib import colors
 import mpld3
 
-Filters=['NB08']
+Filters=['NB04']
 param=Filters[0]
 pathlib.Path("Figures").mkdir(parents=True, exist_ok=True) 
 data=(np.loadtxt(f'{param}_M2.0_Light_curve_data.csv',delimiter=',',dtype='str')).transpose() #'NB03_Light_curve_data.dat'
@@ -73,8 +73,9 @@ ax2.set_yscale('log')'''
 #m_cls=datetime.fromisoformat('2024-06-01T08:29:00.000')
 #x_cls=datetime.fromisoformat('2024-06-01T08:25:00.000')
 #axs2[0,0].plot(AR_I,AR_M,'ko',markersize=1.5)
-m_cls=datetime.fromisoformat('2024-11-01T14:18:00.000')
 #m_cls=datetime.fromisoformat('2024-06-01T08:29:00.000')
+
+m_cls=datetime.fromisoformat('2024-11-01T14:18:00.000')
 m_cls_p=datetime.fromisoformat('2024-11-01T14:31:00.000')
 
 Flt=param

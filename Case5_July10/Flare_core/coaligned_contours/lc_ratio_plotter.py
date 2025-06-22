@@ -82,8 +82,8 @@ ar_sigma=(float_array/counts_2_interp)*np.sqrt((ar_sigma_ca / float_array)**2 + 
 counts_2_interp=np.array(counts_2_interp)
 float_array=np.array(float_array)
 print(float_array_er[0],qs_intrep_counts[0],float_array_er[0]/qs_intrep_counts[0])
-axs.errorbar(time_array,float_array_er/qs_intrep_counts,yerr=qs_sigma,color=colors_list[1],marker='^',markersize=2,linewidth=0.5,label='QS ratio')
-axs.errorbar(time_array,(float_array/counts_2_interp),yerr=ar_sigma,color=colors_list[2],marker='s',markersize=2,linewidth=0.5,label='AR ratio ')
+axs.errorbar(time_array,float_array_er/qs_intrep_counts,yerr=qs_sigma,color=colors_list[1],marker='^',markersize=2,linewidth=0,label='QS ratio')
+axs.errorbar(time_array,(float_array/counts_2_interp),yerr=ar_sigma,color=colors_list[2],marker='s',markersize=2,linewidth=0,label='AR ratio ')
 img_nm='c5_ratio_light_curve_nb08_nb03.png'
 axs.set_ylabel("Count ratio ")
 

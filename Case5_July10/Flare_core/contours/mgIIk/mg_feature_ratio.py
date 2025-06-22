@@ -22,10 +22,10 @@ from matplotlib.animation import FuncAnimation
 
 flare_files = '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case5_July10/data/processed/Aligned_images/'
 
-Tx_er1=-400
-Ty_er1=-400
-Tx_er2=-310
-Ty_er2=-475
+Tx_er1=-10
+Ty_er1=-10
+Tx_er2=80
+Ty_er2=-100
 
 Tx1_qs2,Ty1_qs2,Tx2_qs2,Ty2_qs2=-30,-130,0,-100
 
@@ -160,7 +160,7 @@ for filter1_file in filter1_files:
     ax=fig.add_subplot(111, projection=Norm_map)
     #Norm_map.plot(axes=ax,autoalign=True,vmin=1000,vmax=16000)  
     Norm_ca_map.plot(axes=ax,autoalign=True,vmin=1000,vmax=5000)
-    th_lv=[qs_thresh*1.5,(qs_thresh)*4]
+    th_lv=[qs_thresh*2,(qs_thresh)*4]
     for pc in range(len(plg_cont)):
         plg_hpc=ref_mg_map.pixel_to_world(plg_cont[pc][:, 1]*u.pixel, plg_cont[pc][:, 0]*u.pixel)
 
@@ -192,7 +192,7 @@ for filter1_file in filter1_files:
     plage_th=np.where(((Norm_map.data>qs_thresh*2)&(Norm_map.data<qs_thresh*4)),Norm_map.data,0)
 
     msk_plage_th=np.copy(plage_th)
-    msk_plage_th[300:470,150:400]=0
+    msk_plage_th[300:430,150:300]=0
     msk_plage_area=np.count_nonzero(msk_plage_th)
     msk_plage_count=np.sum(msk_plage_th)
     plage_area=np.count_nonzero(plage_th)
@@ -201,7 +201,7 @@ for filter1_file in filter1_files:
     #Ca data
     ca_plage_th=np.where(((Norm_map.data>qs_thresh*2)&(Norm_map.data<qs_thresh*4)),Norm_ca_map.data,0)
     msk_ca_plage_th=np.copy(ca_plage_th)
-    msk_ca_plage_th[300:470,150:400]=0
+    msk_ca_plage_th[300:430,150:300]=0
     ca_plage_area=np.count_nonzero(ca_plage_th)
     ca_plage_count=np.sum(ca_plage_th)
     msk_ca_plage_area=np.count_nonzero(msk_ca_plage_th)

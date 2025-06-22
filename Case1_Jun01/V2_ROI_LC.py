@@ -22,7 +22,7 @@ start = timeit.default_timer()
 fol_nm=os.getcwd()+'/Light_curve_images/'
 Filters=['NB03','NB04','NB08']
 
-fdir='/Analysis/Projects_Data/Flare_Data/June01_Flare_Data/Processed_Data/Aligned_images/'
+fdir='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case1_Jun01/data/processed/aligned_fits/'
 #dat_file='Flare_files_Jun2_M1.2.dat'
 #Filters=['NB08']
 

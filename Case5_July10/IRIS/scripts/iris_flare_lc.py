@@ -38,7 +38,7 @@ set_pub_style()
 from astropy.io import fits
 
 # Path to your SJI FITS file
-filename = "/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case5_July10/IRIS/data/raw/flare_data/iris_l2_20240710_152851_3620108477_SJI_2796_t000.fits"
+filename = "/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case5_July10/IRIS/data/raw/pre_flare_data/iris_l2_20240710_141828_3620106457_SJI_2796_t000.fits"
 
 # Open the FITS file
 hdulist = fits.open(filename)
@@ -53,7 +53,7 @@ table=Table.read(filename)
 
 #print(table.columns)
 
-path = '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case5_July10/IRIS/results/iris_lc/'
+path = '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case5_July10/IRIS/results/pre-flare_iris_lc/'
 #
 # Create the directory if it doesn't exist
 if not os.path.exists(path):
@@ -61,7 +61,7 @@ if not os.path.exists(path):
 
 
 # Load the IRIS SJI 2796 map
-iris_img = fits.open("../data/raw/flare_data/iris_l2_20240710_152851_3620108477_SJI_2796_t000.fits")
+iris_img = fits.open("../data/raw/pre_flare_data/iris_l2_20240710_141828_3620106457_SJI_2796_t000.fits")
 
 sji_imgs=iris_img[0].data
 iris_ref_map=sunpy.map.Map(sji_imgs[21], iris_img[0].header) #SJI flare map
@@ -75,7 +75,7 @@ date_array = [datetime.datetime.strptime(ts, "%Y-%m-%d %H:%M:%S.%f") for ts in d
 #print('Start time:', date_array)
 
 #SUIT plate scale correction
-suit_ref_map = sunpy.map.Map("/Analysis/Projects_Data/Flare_Data/July10_Flare_Data2/july10_11ut_to_18ut/SUT_T24_0956_000465_Lev1.0_2024-07-10T15.35.28.135_0983NB03.fits")
+suit_ref_map = sunpy.map.Map("/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case5_July10/data/raw/SUT_T24_0956_000465_Lev1.0_2024-07-10T15.35.28.135_0983NB03.fits")
 suit_pos = get_horizons_coord(-21, suit_ref_map.date)
 suit_ref_map.meta.update(get_observer_meta(suit_pos, rsun=suit_pos.rsun))
 
@@ -147,14 +147,14 @@ for i in range(111):
     plt.colorbar()
     plt.title(f'IRIS SJI 2796: {date_array[i]}')
     plt.legend()
-    plt.savefig(f"../results/iris_lc/iris_sji_2796_{i}.png", dpi=300)
+    plt.savefig(f"../results/pre-flare_iris_lc/iris_sji_2796_{i}.png", dpi=300)
     plt.close()
 
 flare_ct = np.array(flare_ct)
 date_array = np.array(date_array)
 qs_count1 = np.array(qs_count1)
 qs_count2 = np.array(qs_count2)
-np.savetxt(f"../results/iris_sji_2796_lc.csv", np.c_[date_array[:111], flare_ct,qs_count1,qs_count2], delimiter=',', header='Date,Counts', fmt='%s')
+np.savetxt(f"../results/pre_flare_iris_sji_2796_lc.csv", np.c_[date_array[:111], flare_ct,qs_count1,qs_count2], delimiter=',', header='Date,Counts', fmt='%s')
 # Save the light curve data to a CSV file
 #print(len(flare_ct),date_array[:111])
 # Plotting the light curve
@@ -166,5 +166,6 @@ plt.xlabel('Time (UTC)')
 plt.ylabel('Counts')
 plt.title('IRIS SJI 2796 Light Curve')
 plt.xticks(rotation=45)
-plt.savefig(f"../results/iris_sji_2796_light_curve.png", dpi=300)
+plt.savefig(f"../results/pre-flare_iris_lc/iris_sji_2796_light_curve.png", dpi=300)
 plt.show()
+#/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case5_July10/IRIS/results/pre-flare_iris_lc

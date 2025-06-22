@@ -73,7 +73,6 @@ ax2.set_yscale('log')'''
 #x_cls=datetime.fromisoformat('2024-06-01T08:25:00.000')
 #axs2[0,0].plot(AR_I,AR_M,'ko',markersize=1.5)
 m_cls=datetime.fromisoformat('2024-06-02T04:41:00.000')
-#m_cls=datetime.fromisoformat('2024-06-01T08:29:00.000')
 m_cls_p=datetime.fromisoformat('2024-06-02T04:50:00.000')
 
 Flt=param

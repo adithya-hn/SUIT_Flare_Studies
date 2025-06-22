@@ -29,15 +29,15 @@ start = timeit.default_timer()
 now = datetime.datetime.now()-timedelta(days=1)
 fol_nm='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case6_Oct09/data'
 
-jpg_fold=fol_nm+'/processed/'+'coloured_rois'
-algn_dir=fol_nm+'/processed/'+'aligned_fits'
+jpg_fold=fol_nm+'/processed_/'+'coloured_rois'
+algn_dir=fol_nm+'/processed_/'+'aligned_fits'
 
 #Filter='NB03'
-Filters=['NB03','NB04','NB08'] #,'BB01','BB02','BB03']
+Filters=['NB03','NB04','NB08','NB05','NB02'] #,'BB01','BB02','BB03']
 pathlib.Path(algn_dir).mkdir(parents=True, exist_ok=True)
 pathlib.Path(jpg_fold).mkdir(parents=True, exist_ok=True)
 
-fdir =fol_nm+'/raw/'
+fdir =fol_nm+'/raw_/'
 
 
 for fltr in Filters:

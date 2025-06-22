@@ -18,10 +18,11 @@ from subprocess import call
 from matplotlib import colors
 import matplotlib.dates as mdates
 
-Filters=['NB03']
-param=Filters[0]
+
+param='nb08'
+fig_title='Ca II h'
 pathlib.Path("Figures").mkdir(parents=True, exist_ok=True) 
-data=(np.loadtxt(f'nb03_contours.csv',delimiter=',',skiprows=1,dtype='str')).transpose() #'NB03_Light_curve_data.dat'
+data=(np.loadtxt(f'{param}_contours.csv',delimiter=',',skiprows=1,dtype='str')).transpose() #'NB03_Light_curve_data.dat'
 #print(data[0])
 #goes_data=(np.loadtxt(f'/Analysis/Research_Projects/Flare_studies/SUIT_Flares/June01_Flare/Goes_data.csv',delimiter=',',dtype='str')).transpose()
 #print(goes_data)
@@ -48,6 +49,7 @@ rc('axes', linewidth=1.2)
 plt.rcParams["xtick.major.size"] = 10
 plt.rcParams['font.family'] = 'serif'  
 plt.rcParams['font.sans-serif'] = 'Times New Roman'
+
 fig,axs=plt.subplots(1,1, figsize=(10,5))
 #ax2 = axs.twinx()
 axs.xaxis.set_tick_params(size=0.5)
@@ -58,37 +60,110 @@ axs.yaxis.set_ticks_position('both')
 axs.xaxis.set_ticks_position('both')
 axs.minorticks_on()
 
+flare_count = [float(string) for string in data[1]]
+cont_area=[float(string) for string in data[2]]
 
-float_array = [float(string) for string in data[1]]
-#float_array_er = [float(string) for string in data[2]]
-#y_er=np.std(float_array_er)
-Contours_area=7463
-float_array=np.array(float_array)
+flare_count=np.array(flare_count)
+cont_area=np.array(cont_area)
 
-plt.plot(time_array,float_array,'ko-',markersize=2,linewidth=0.5,label='Mean count of peak time contour')
-'''
-ax2.plot(g_time_array,g_float_array,'bo--',markersize=0.1,linewidth=0.5)
-ax2.set_ylabel("X-ray flux [1-8 A] (Wm$^{-2}$$s^{-1}$)")
-axs.set_ylabel('Total count (NUV)')
-ax2.set_yscale('log')'''
-
+plt.plot(time_array,flare_count/cont_area,'ko-',markersize=2,linewidth=0.5,label='Mean count of peak time contour')
 m_cls=datetime.fromisoformat('2024-07-10T15:25:00.000')
 m_cls_p=datetime.fromisoformat('2024-07-10T15:37:00.000')
 #m_cls=datetime.fromisoformat('2024-06-01T08:29:00.000')
 
-
 Flt=param
 axis_title='Mean count'
-img_nm=Flt+'_light_curve.png'
+img_nm=Flt+'_flare_light_curve.png'
 
 plt.ylabel(axis_title,fontsize=13)
 plt.xlabel('Time',fontsize=13)
-#plt.axvline(m_cls,color='r',label='M class Flare start time',linestyle='dotted')
-#plt.axvline(x_cls,color='b',linestyle='dotted',label='GOES Flare start time')
-#plt.axvline(m_cls,color='b',linestyle='--',label='GOES Flare start time')
-#plt.axvline(m_cls_p,color='b',linestyle='-',label='GOES Flare peak time')
-#plt.axhline(2.58e8,color='g',linestyle='dotted')
-plt.title('Mg II k Light Curve')
+plt.axvline(m_cls,color='b',linestyle='--',label='GOES Flare start time')
+plt.axvline(m_cls_p,color='b',linestyle='-',label='GOES Flare peak time')
+plt.title(f'{fig_title} Light Curve')
+plt.legend(loc='best')
+time_formatter = mdates.DateFormatter('%H:%M')  # Format as HH:MM
+plt.gca().xaxis.set_major_formatter(time_formatter)
+plt.savefig(img_nm,dpi=300)
+plt.show() #close()
+#---------------------------------------------------------
+fig,axs=plt.subplots(1,1, figsize=(10,5))
+
+plage_count = [float(string) for string in data[3]]
+plage_area=[float(string) for string in data[4]]
+qs_count1=[float(string) for string in data[5]]
+
+msk_plge_count = np.array([float(string) for string in data[6]])
+msk_plge_area=np.array([float(string) for string in data[7]])
+
+
+
+plage_count=np.array(plage_count)
+plage_area=np.array(plage_area)
+qs_count1=np.array(qs_count1)
+
+#qs_count3=np.array(qs_count3)
+qs_count=(qs_count1)#+qs_count2+qs_count3)/3
+           
+           
+
+flare_count=np.array(flare_count)
+cont_area=np.array(cont_area)
+ax_1=fig.add_subplot()
+ax_2=ax_1.twinx()
+
+ax_1.plot(time_array,plage_count/plage_area,'ko-',markersize=2,linewidth=0.5,label='Mean count of peak time contour')
+ax_2.plot(time_array,qs_count1,label=' QS1')
+Flt=param
+axis_title='Mean count'
+img_nm=Flt+'_plage_light_curve.png'
+
+plt.ylabel(axis_title,fontsize=13)
+plt.xlabel('Time',fontsize=13)
+plt.axvline(m_cls,color='b',linestyle='--',label='GOES Flare start time')
+plt.axvline(m_cls_p,color='b',linestyle='-',label='GOES Flare peak time')
+plt.title(f'{fig_title} plage light curve')
+plt.legend(loc='best')
+time_formatter = mdates.DateFormatter('%H:%M')  # Format as HH:MM
+plt.gca().xaxis.set_major_formatter(time_formatter)
+plt.savefig(img_nm,dpi=300)
+plt.show() #close()
+
+#-----------------------------------------
+fig,axs=plt.subplots(1,1, figsize=(10,5))
+
+#plt.plot(time_array,qs_count,label='Mean QS')
+plt.plot(time_array,qs_count1,label=' QS1')
+#plt.plot(time_array,qs_count2,label=' QS2')
+#plt.plot(time_array,qs_count3,label=' QS3')
+Flt=param
+axis_title='Mean count'
+img_nm=Flt+'_qs_light_curve.png'
+
+plt.ylabel(axis_title,fontsize=13)
+plt.xlabel('Time',fontsize=13)
+plt.axvline(m_cls,color='b',linestyle='--',label='GOES Flare start time')
+plt.axvline(m_cls_p,color='b',linestyle='-',label='GOES Flare peak time')
+plt.title(f'{fig_title} QS light curve')
+plt.legend(loc='best')
+time_formatter = mdates.DateFormatter('%H:%M')  # Format as HH:MM
+plt.gca().xaxis.set_major_formatter(time_formatter)
+plt.savefig(img_nm,dpi=300)
+plt.show() #close()
+
+#---------masked data---------
+
+fig,axs=plt.subplots(1,1, figsize=(10,5))
+
+plt.plot(time_array,(msk_plge_count/msk_plge_area),label=' AR masked plage')
+Flt=param
+axis_title='Mean count'
+img_nm=Flt+'_msk_plage_light_curve.png'
+
+plt.ylabel(axis_title,fontsize=13)
+plt.xlabel('Time',fontsize=13)
+plt.axvline(m_cls,color='b',linestyle='--',label='GOES Flare start time')
+plt.axvline(m_cls_p,color='b',linestyle='-',label='GOES Flare peak time')
+plt.title(f'{fig_title} AR region masked plage light curve')
 plt.legend(loc='best')
 time_formatter = mdates.DateFormatter('%H:%M')  # Format as HH:MM
 plt.gca().xaxis.set_major_formatter(time_formatter)

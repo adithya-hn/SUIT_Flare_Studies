@@ -18,7 +18,7 @@ from sunpy.map import get_observer_meta
 from sunpy.coordinates import frames, get_horizons_coord
 
 
-filter2_fold = '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case6_Oct09/data/processed/aligned_fits/NB08/'
+filter2_fold = '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case6_Oct09/data/processed_/aligned_fits/NB08/'
 
 Tx1_qs1,Ty1_qs1=-90,20
 Tx2_qs1,Ty2_qs1=-10,-70

@@ -27,16 +27,16 @@ rf_hight=1
 
 start = timeit.default_timer()
 now = datetime.datetime.now()-timedelta(days=1)
-fol_nm='/Analysis/Projects_Data/Flare_Data/June02_Flare_Data1/Processed/'
+fol_nm='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case2_June02/data/Processed/'
 
 jpg_fold=fol_nm+'/'+'Coloured_ROI_imgs'
 algn_dir=fol_nm+'/'+'Aligned_images'
 
 #Filter='NB03'
-Filters=['NB03','NB04','NB08'] #,'BB01','BB02','BB03']
+Filters=['NB03','NB04','NB08','NB05','NB02'] #,'BB01','BB02','BB03']
 pathlib.Path(algn_dir).mkdir(parents=True, exist_ok=True)
 pathlib.Path(jpg_fold).mkdir(parents=True, exist_ok=True)
-search_fold='/Analysis/Projects_Data/Flare_Data/June02_Flare_Data1/' #'/scratch/suit_data/level1fits/2024/'+str(now.month).zfill(2)+'/'+str(now.day).zfill(2)+'/'+'normal_2k'+'/'
+search_fold='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case2_June02/data/raw/' #'/scratch/suit_data/level1fits/2024/'+str(now.month).zfill(2)+'/'+str(now.day).zfill(2)+'/'+'normal_2k'+'/'
 fdir =search_fold 
 for fltr in Filters:
     if fltr=='NB03':

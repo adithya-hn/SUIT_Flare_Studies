@@ -36,7 +36,7 @@ nb4Mx=15000
 nb8Mx=4300
 nb6Mx=95000
 nb7Mx=310000
-Filters=['GONG']
+Filters=['171']
 
 for fltr in Filters:
     fltr2=fltr

@@ -37,7 +37,7 @@ nb8Mx=4300
 nb6Mx=95000
 nb7Mx=310000
 
-Filters=['GONG']#,'171','131']
+Filters=['131'] #,'171','GONG']#,'171','131']
 
 for fltr in Filters:
     fltr2=fltr
@@ -45,8 +45,8 @@ for fltr in Filters:
     c2_data=[]
     dates=[]
 
-    search_fold=f'/Analysis/Projects_Data/Flare_Data/June02_Flare_Data2/P_corr_data/' # for NB03 filter
-    search_fold2=f'/Analysis/Projects_Data/Flare_Data/June02_Flare_Data2/P_corr_data/'# for NB08 filter
+    search_fold=f'/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case3_June02/data/raw/' # for NB03 filter
+    search_fold2=f'/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case3_June02/data/raw/'# for NB08 filter
     
     if fltr2=='HMI':
         base_fold=f'/Analysis/Projects_Data/Flare_Data/June02_Flare_Data2/{fltr2}/{fltr2}_cutouts/'
@@ -113,7 +113,7 @@ for fltr in Filters:
         Base_img=sunpy.map.Map(base_data,BaseMap.fits_header)
 
         img_head=suitMap.fits_header
-        norm_data=suitMap.data*1000/int(suitMap.meta.get('MEAS_EXP'))
+        norm_data=suitMap.data*1000/int(suitMap.meta.get('CMD_EXPT'))
         
         norm_suit_Map=sunpy.map.Map(norm_data,img_head)
         normsuitMap=sunpy.map.Map(gaussian_filter(norm_data, sigma=1),img_head)
@@ -128,7 +128,7 @@ for fltr in Filters:
         c2_data.append(Thresh2_data)
         dates.append(base_time)
 
-        th_lvs=[3900,4100]
+        th_lvs=[3100,3300]
         th_lvs2=[12000,14000]
 
 
@@ -140,7 +140,7 @@ for fltr in Filters:
         #norm_suit_Map.draw_contours(axes=ax, levels=th_lvs,zorder=1,colors=['skyblue','yellow'],alpha=0.7)
         
         normsuitMap.draw_contours(axes=ax, levels=th_lvs,zorder=1,colors=['skyblue','yellow'])
-        Mg_Map.draw_contours(axes=ax, levels=th_lvs2,zorder=2,colors=['pink','green'],alpha=0.5)
+        #Mg_Map.draw_contours(axes=ax, levels=th_lvs2,zorder=2,colors=['pink','green'],alpha=0.5)
         
         plot_str='Ca II h: '+str(suitMap.date)
         ax.text(50,50, plot_str, color='white', fontsize=10)

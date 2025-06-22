@@ -75,7 +75,7 @@ plt.show()'''
 
 fig2,ax3=plt.subplots(1,1, figsize=(10,5))
 
-ax3.errorbar(time_array,float_array,yerr=np.sqrt(float_array),fmt=clr_fmt,markersize=2,linewidth=0.5,label='Total count of peak time contour')
+ax3.errorbar(time_array,float_array,yerr=np.sqrt(float_array),fmt=clr_fmt,markersize=2,linewidth=0,label='Total count of peak time contour')
 
 img_nm=Flt+'_ar_lc.png'
 

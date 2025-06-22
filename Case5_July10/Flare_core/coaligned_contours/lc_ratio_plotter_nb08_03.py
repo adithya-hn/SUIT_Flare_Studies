@@ -180,13 +180,18 @@ plt.close()
 
 #-------------------------------------------- Scatter plot of ratios --------------------------------
 fig5,ax5=plt.subplots(1,1, figsize=(11,5))
-#ax5.scatter(float_array_er/qs_intrep_counts,float_array/counts_2_interp,s=1,color=colors_list[1],label='QS ratio')
-ax5.scatter(float_array,counts_2_interp,s=3,color=colors_list[1],label='AR ratio')
-ax5.set_ylabel('Mg II k counts')
-ax5.set_xlabel('Ca II h counts')
+scatter=ax5.scatter(counts_2_interp,float_array,s=6, c=mdates.date2num(time_array),cmap='jet',edgecolors='k',linewidth=0.2,label='AR ratio')
+cbar = plt.colorbar(scatter)
+cbar.set_label('Time')
+cbar.ax.yaxis.set_major_formatter(mdates.DateFormatter('%H:%M:%S'))
+#cbar.ax.set_ticks()
+ax5.set_xlabel('Mg II k counts')
+ax5.set_ylabel('Ca II h counts')
 ax5.set_title(f'{fig_title} ratio scatter plot')
 
 ax5.legend()
 img_nm5=f'{img_suffix}_ratio_scatter_{flt1}_{flt2}.png'
 plt.savefig(img_nm5,dpi=300)
 plt.close()
+
+#ax5.scatter(float_array_er/qs_intrep_counts,float_array/counts_2_interp,s=1,color=colors_list[1],label='QS ratio')

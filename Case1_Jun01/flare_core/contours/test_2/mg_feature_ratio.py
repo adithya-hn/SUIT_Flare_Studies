@@ -27,7 +27,7 @@ rct_Tx2,rct_Ty2=-225,-174
 
 #Tx1_qs1,Ty1_qs1,Tx2_qs1,Ty2_qs1=-330,-480,-280,-450
 
-Tx1_qs1,Ty1_qs1,Tx2_qs1,Ty2_qs1=-330,-480,-250,-400
+Tx1_qs1,Ty1_qs1,Tx2_qs1,Ty2_qs1=-330,-480,-250,-440
 
 Tx1_qs2,Ty1_qs2,Tx2_qs2,Ty2_qs2=-275,-240,-225,-225
 
@@ -163,7 +163,7 @@ for filter1_file in filter1_files:
     ca_qs_maps.append(Norm_ca_map.submap(qs_coords1))
     ca_maps.append(Norm_ca_map)
 
-    plg_msk_b = (Norm_map.data > qs_thresh*1.5) & (Norm_map.data < qs_thresh*4) # True where pixel value > threshold
+    plg_msk_b = (Norm_map.data > qs_thresh*1.6) & (Norm_map.data < qs_thresh*4) # True where pixel value > threshold
     kernel = disk(3)
     plg_msk=closing(plg_msk_b, kernel)
     plg_cont = measure.find_contours(plg_msk, level=0.5)
@@ -180,7 +180,7 @@ for filter1_file in filter1_files:
     ax=fig.add_subplot(111, projection=Norm_map)
     #Norm_map.plot(axes=ax,autoalign=True,vmin=1000,vmax=16000)  
     Norm_ca_map.plot(axes=ax,autoalign=True,vmin=1000,vmax=5000)
-    th_lv=[qs_thresh*1.5,(qs_thresh)*4]
+    th_lv=[qs_thresh*2,(qs_thresh)*4]
     for pc in range(len(plg_cont)):
         plg_hpc=ref_mg_map.pixel_to_world(plg_cont[pc][:, 1]*u.pixel, plg_cont[pc][:, 0]*u.pixel)
 

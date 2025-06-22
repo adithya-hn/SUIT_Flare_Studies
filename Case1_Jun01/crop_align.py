@@ -49,9 +49,11 @@ algn_dir=fol_nm+'/processed/'+'aligned_fits'
 
 
 #Filter='NB03'
-Filters=['NB03','NB04','NB08'] #,'BB01','BB02','BB03']
+Filters=['NB03','NB04','NB08'] #'NB05','NB02'] #,'BB01','BB02','BB03'],
 pathlib.Path(crop_dir).mkdir(parents=True, exist_ok=True)
 pathlib.Path(jpg_crop).mkdir(parents=True, exist_ok=True)
+pathlib.Path(jpg_fold).mkdir(parents=True, exist_ok=True)
+pathlib.Path(algn_dir).mkdir(parents=True, exist_ok=True)
 
 fdir =fol_nm+'/raw/'
 
@@ -61,6 +63,14 @@ for fltr in Filters:
         Ref_idx=Ref_index_NB3
         vminT=1000
         vmaxT=30000
+    elif fltr=='NB02':
+        Ref_idx=Ref_index_NB3
+        vminT=500
+        vmaxT=35000
+    elif fltr=='NB05':
+        Ref_idx=Ref_index_NB3
+        vminT=500
+        vmaxT=35000
     else:
         Ref_idx=Ref_index
         vminT=500
@@ -74,6 +84,7 @@ for fltr in Filters:
     crop_maps=[]
     for k in range(len(files)):
         suit_map=sunpy.map.Map(files[k])
+        #suit_map.peek()
         rotation_angle=suit_map.meta["CROTA2"]
         #print('Angle rotated',rotation_angle)
         center_coord4 = SkyCoord(-386 * u.arcsec, -354 * u.arcsec, frame=suit_map.coordinate_frame)
@@ -88,7 +99,7 @@ for fltr in Filters:
 
         fig = plt.figure()
         ax = fig.add_subplot(projection=crop_suit)
-        suit_map.plot(axes=ax, vmin=vminT, vmax=vmaxT)
+        suit_map.plot(axes=ax, vmin=vminT, vmax=vmaxT,autoalign=True)
         
         ax.plot_coord(center_coord4, "o", color="red")
 
@@ -117,6 +128,7 @@ for fltr in Filters:
         aligned_img.save(crop_dir+'/'+fltr+'/'+os.path.basename(files[j]),overwrite=True) #need this for alignement refference
         
         fl_nm=jpg_fold+'/'+fltr+'/'+os.path.basename(files[j])[:-4]+'png'
+        #/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case1_Jun01/data/processed/coloured_imgs/NB05/SUT_T24_0785_000396_Lev1.0_2024-06-01T07.10.37.657_0973NB05.jpg
         #Title_=aligned_img.meta.get('FTR_NAME') +' Filter: '+aligned_img.date
         fig=plt.figure(figsize=(10,10))
         ax = fig.add_subplot(111, projection=aligned_img)

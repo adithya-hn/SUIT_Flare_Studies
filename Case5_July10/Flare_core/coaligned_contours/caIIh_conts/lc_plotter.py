@@ -44,7 +44,7 @@ for i in range(len(date_array)):
     time_array.append(parsed_time)
 
 fig,axs=plt.subplots(1,1, figsize=(10,5))
-ax2 = axs.twinx()
+#ax2 = axs.twinx()
 
 
 float_array = [float(string) for string in data[1]]
@@ -54,13 +54,13 @@ float_array=np.array(float_array)
 float_array_er=np.array(float_array_er)
 qs_err=np.sqrt(float_array_er)/qs_area
 
-axs.errorbar(time_array,float_array,yerr=np.sqrt(float_array),fmt=clr_fmt,markersize=2,linewidth=0.5,label='AR total count \n of peak time contour')
-ax2.errorbar(time_array,float_array_er,yerr=qs_err,fmt='bo-',markersize=2,linewidth=0.5,label='Mean QS')
+axs.errorbar(time_array,float_array,yerr=np.sqrt(float_array),fmt=clr_fmt,markersize=2,linewidth=0,label='AR total count \n of peak time contour')
+#ax2.errorbar(time_array,float_array_er,yerr=qs_err,fmt='bo',markersize=2,linewidth=0.5,label='Mean QS')
 axis_title='Total count'
 img_nm=case_num+'_'+Flt+'_qs_ar_light_curve.png'
 
 axs.set_ylabel('Total_count of AR',fontsize=13)
-ax2.set_ylabel('Mean qount of QS')
+#ax2.set_ylabel('Mean qount of QS')
 axs.set_xlabel('Time',fontsize=13)
 plt.figlegend(bbox_to_anchor=(0.001, 0.35, 0.35, 0.5))
 plt.axvline(m_cls,color='gray',linestyle='--',label='GOES Flare start time')
