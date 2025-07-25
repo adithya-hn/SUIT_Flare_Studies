@@ -21,7 +21,7 @@ import mpld3
 Filters=['NB04']
 param=Filters[0]
 pathlib.Path("Figures").mkdir(parents=True, exist_ok=True) 
-data=(np.loadtxt(f'{param}_M1.0_Light_curve_data.csv',delimiter=',',dtype='str')).transpose() #'NB03_Light_curve_data.dat'
+data=(np.loadtxt(f'{param}_M1.7_Light_curve_data.csv',delimiter=',',dtype='str')).transpose() #'NB03_Light_curve_data.dat'
 #print(data[0])
 #goes_data=(np.loadtxt(f'/Analysis/Research_Projects/Flare_studies/SUIT_Flares/June01_Flare/Goes_data.csv',delimiter=',',dtype='str')).transpose()
 #print(goes_data)
@@ -72,9 +72,8 @@ ax2.set_yscale('log')'''
 #m_cls=datetime.fromisoformat('2024-06-01T08:29:00.000')
 #x_cls=datetime.fromisoformat('2024-06-01T08:25:00.000')
 #axs2[0,0].plot(AR_I,AR_M,'ko',markersize=1.5)
-m_cls=datetime.fromisoformat('2024-11-13T00:10:00.000')
-#m_cls=datetime.fromisoformat('2024-06-01T08:29:00.000')
-m_cls_p=datetime.fromisoformat('2024-11-13T00:22:00.000')
+m_cls=datetime.fromisoformat('2024-11-13T16:57:00.000')
+m_cls_p=datetime.fromisoformat('2024-11-13T17:08:00.000')
 
 Flt=param
 axis_title='Total count'

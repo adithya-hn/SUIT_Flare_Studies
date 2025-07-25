@@ -108,14 +108,14 @@ for fltr in Filters:
 
         # Light curve values
         exposure = Sequence[i].meta.get('CMD_EXPT')
-        fltr_count.append(np.median(suit_box.data * 1000 / exposure))
+        fltr_count.append(np.sum(suit_box.data * 1000 / exposure))
         fltr_count_err.append(np.sum(er_box.data * 1000 / exposure) / er_area)
         date_array.append(Sequence[i].date)
         bx_area.append(L * H)
         er_bx_area.append(er_area)
 
     # Save light curve
-    np.savetxt(f'{fltr}_c3_lc_data.csv',
+    np.savetxt(f'{fltr}_c4_lc_data.csv',
                np.c_[date_array, fltr_count, fltr_count_err, bx_area,er_bx_area],
                delimiter=',', fmt='%s')
 

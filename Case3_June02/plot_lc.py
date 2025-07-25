@@ -34,8 +34,8 @@ data5=(np.loadtxt(f'NB05_c3_lc_data.csv',delimiter=',',dtype='str')).transpose()
 
 
 
-m_cls=datetime.fromisoformat('2024-11-01T02:05:00.000')
-m_cls_p=datetime.fromisoformat('2024-11-01T02:16:00.000')
+m_cls=datetime.fromisoformat('2024-06-02T08:50:00.000')
+m_cls_p=datetime.fromisoformat('2024-06-02T08:56:00.000')
 
 date_array5=data5[0]
 date_array4=data4[0]
@@ -186,14 +186,14 @@ plt.close()
 #------------------------------------Over plotting all the light curves----------------------------------#
 fig4,ax4=plt.subplots(1,1, figsize=(10,5))
 ax41 = ax4.twinx()
-#ax42 = ax4.twinx()
-#ax43 = ax4.twinx()
+ax42 = ax4.twinx()
+#ax45 = ax4.twinx()
 #ax44 = ax4.twinx()
 
 ax4.errorbar(time_array2,list(map(int,float_array2)),yerr=float_array_er2_,fmt='ko-',capsize=2,markersize=2,linewidth=0.5, label='Ca II h light curve')
-ax41.errorbar(time_array1,list(map(int,float_array1)),yerr=float_array_er1_,color='tab:blue', marker="o",capsize=2,markersize=2,linewidth=0.5, label='Mg II k light curve')
-#ax42.errorbar(time_array3,list(map(int,float_array3)),yerr=float_array_er3_,fmt='co-',capsize=2,markersize=2,linewidth=0.5, label='Mg II h light curve')
-#ax43.errorbar(time_array4,list(map(int,float_array4)),yerr=float_array_er4_,fmt='bo-',capsize=2,markersize=2,linewidth=0.5, label='Mg II k wing light curve')
+#ax41.errorbar(time_array1,list(map(int,float_array1)),yerr=float_array_er1_,color='tab:blue', marker="o",capsize=2,markersize=2,linewidth=0.5, label='Mg II k light curve')
+ax42.errorbar(time_array3,list(map(int,float_array3)),yerr=float_array_er3_,fmt='co-',capsize=2,markersize=2,linewidth=0.5, label='Mg II h light curve')
+#ax45.errorbar(time_array4,list(map(int,float_array4)),yerr=float_array_er4_,fmt='bo-',capsize=2,markersize=2,linewidth=0.5, label='Mg II k wing light curve')
 #ax44.errorbar(time_array5,list(map(int,float_array5)),yerr=float_array_er5_,fmt='mo-',capsize=2,markersize=2,linewidth=0.5, label='Mg II h wing light curve')
 #ax42.spines.right.set_position(("axes", 1.08))
 
@@ -203,7 +203,7 @@ img_nm='all_lc.png'
 
 #------------------------------------Helios----------------------------------------------------#
 
-Helios=(np.load("cdte_data_flare_7.npy", allow_pickle=True)).transpose()
+Helios=(np.load("cdte_data_flare_3.npy", allow_pickle=True)).transpose()
 print(Helios.shape)
 cdte1=Helios[1]
 cdte2=Helios[2]
@@ -224,6 +224,9 @@ ax43.spines.right.set_position(("axes", 1.1))
 ax4.set_ylabel('Ca II h total counts',fontsize=13)
 ax43.set_ylabel('Helios counts',fontsize=13)
 ax4.set_xlabel('Time',fontsize=13)
+
+#ax43.set_axis_off()
+#ax42.set_axis_off()
 
 plt.axvline(m_cls,color='orange',linestyle='--')#,label='GOES Flare start time')
 plt.axvline(m_cls_p,color='orange',linestyle='-')#,label='GOES Flare peak time')

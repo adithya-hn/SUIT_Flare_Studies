@@ -187,16 +187,16 @@ plt.close()
 fig4,ax4=plt.subplots(1,1, figsize=(10,5))
 ax41 = ax4.twinx()
 #ax42 = ax4.twinx()
-#ax43 = ax4.twinx()
+#ax45 = ax4.twinx()
 #ax44 = ax4.twinx()
 
 ax4.errorbar(time_array2,list(map(int,float_array2)),yerr=float_array_er2_,fmt='ko-',capsize=2,markersize=2,linewidth=0.5, label='Ca II h light curve')
 ax41.errorbar(time_array1,list(map(int,float_array1)),yerr=float_array_er1_,color='tab:blue', marker="o",capsize=2,markersize=2,linewidth=0.5, label='Mg II k light curve')
 #ax42.errorbar(time_array3,list(map(int,float_array3)),yerr=float_array_er3_,fmt='co-',capsize=2,markersize=2,linewidth=0.5, label='Mg II h light curve')
-#ax43.errorbar(time_array4,list(map(int,float_array4)),yerr=float_array_er4_,fmt='bo-',capsize=2,markersize=2,linewidth=0.5, label='Mg II k wing light curve')
+#ax45.errorbar(time_array4,list(map(int,float_array4)),yerr=float_array_er4_,fmt='bo-',capsize=2,markersize=2,linewidth=0.5, label='Mg II k wing light curve')
 #ax44.errorbar(time_array5,list(map(int,float_array5)),yerr=float_array_er5_,fmt='mo-',capsize=2,markersize=2,linewidth=0.5, label='Mg II h wing light curve')
-#ax42.spines.right.set_position(("axes", 1.08))
 
+#ax42.spines.right.set_position(("axes", 1.08))
 #ax44.spines.right.set_position(("axes", 1.12))
 img_nm='all_lc.png'
 

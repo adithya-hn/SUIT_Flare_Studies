@@ -35,7 +35,7 @@ warnings.simplefilter('ignore')
 
 Ref_index=0
 Ref_index_NB3=0
-make_movie='no'
+make_movie='yes'
 Rf_tx=1
 Rf_ty=1
 Rf_width=1
@@ -44,13 +44,13 @@ ref_fltr='NB08'
 
 #--------------------------------------
 
-fol_nm='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case6_Oct09'
+fol_nm='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case11_Nov13'
 
 start = timeit.default_timer()
 now = datetime.datetime.now()-timedelta(days=1)
 
-jpg_fold=fol_nm+'/data/pro/'+'coloured_imgs'
-algn_dir=fol_nm+'/data/pro/'+'aligned_fits'
+jpg_fold=fol_nm+'/data/processed/'+'coloured_imgs'
+algn_dir=fol_nm+'/data/processed/'+'aligned_fits'
 
 #Filter='NB03'
 Filters=['NB02','NB04','NB08','NB03','NB05'] #'NB03',

@@ -22,8 +22,9 @@ end_time=Time('2024-06-01T09:15:00', scale='utc', format='isot')
 
 
 #jsoc_email = os.environ["adithyabhattsringeri@gmail.com", adithya1@atulbhats.com
+#series = a.jsoc.Series('aia.lev1_euv_12s')
 series = a.jsoc.Series('aia.lev1_euv_12s')
-query = Fido.search(a.Time(start_time, end_time),series,a.Wavelength(94*u.angstrom),a.jsoc.Notify("sreejith.p@manipal.edu"),a.jsoc.Segment("image")) #a.
+query = Fido.search(a.Time(start_time, end_time),series,a.Wavelength(335*u.angstrom),a.jsoc.Notify("adithya1@atulbhats.com"),a.jsoc.Segment("image")) #a.
 print(query)
 
 files = Fido.fetch(query,path=Path)

@@ -5,11 +5,12 @@ import pandas as pd
 
 from sys import path as sys_path
 sys_path.append('/home/adithya/Adithya_repos')
+
 from plot_goes_lightcurve import plot_goes_lightcurve
 
 # 1. Define the time range
-start_time = '2024-10-30 23:30'
-end_time = '2024-11-01 02:50'
+start_time = '2024-06-02 02:30'
+end_time = '2024-06-02 05:30'
 
 # 2. Search GOES data
 #result = Fido.search(a.Time(start_time, end_time), a.Instrument('goes'))
@@ -35,7 +36,7 @@ df = df[(df["xrsa_quality"] == 0) & (df["xrsb_quality"] == 0)]
 df_filtered = df.loc[start_time:end_time]
 
 # 6. Save to CSV
-csv_filename = "goes_xray_lightcurve_20241101.csv"
+csv_filename = "goes_xray_lightcurve_20240602_1.csv"
 df_filtered.to_csv(csv_filename)
 
 print(f"GOES light curve saved to {csv_filename}")

@@ -212,7 +212,7 @@ datetime_objects = pd.to_datetime(Helios[0])
 helio_time_array=[datetime.strptime(str(ts)[:26], "%Y-%m-%d %H:%M:%S.%f") for ts in datetime_objects]
 ax43 = ax4.twinx()
 
-ax43.spines.right.set_position(("axes", 1.15))
+ax43.spines.right.set_position(("axes", 1.1))
 ax43.errorbar(helio_time_array,cdte1,yerr=cdte1_er, fmt='ro-',capsize=2,markersize=2,linewidth=0.5,label="Helios-CdTe1",alpha=0.5)
 #ax3.plot(helio_time_array,cdte2, label="Helios")
 ax43.set_yscale('log')

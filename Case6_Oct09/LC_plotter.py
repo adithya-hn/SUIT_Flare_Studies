@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 import matplotlib
 from pylab import *
 from astropy.io import fits
-import scipy.misc
 import math as mt
 from datetime import datetime
 import os
@@ -18,7 +17,7 @@ from subprocess import call
 from matplotlib import colors
 import mpld3
 
-Filters=['NB04']
+Filters=['NB03']
 param=Filters[0]
 pathlib.Path("Figures").mkdir(parents=True, exist_ok=True) 
 data=(np.loadtxt(f'{param}_X1.8_Light_curve_data.csv',delimiter=',',dtype='str')).transpose() #'NB03_Light_curve_data.dat'

@@ -15,7 +15,7 @@ start = timeit.default_timer()
 # Parameters
 
 #csv_path = 'Flare_files_Nov11_M1.4_case28f.dat'  # <- change this to your actual file path
-fdir='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case7_Nov01/data/processed/aligned_fits/'
+fdir='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case3_June02/data/processed/aligned_fits/'
 fol_nm = os.getcwd() + '/lc_images/'
 Filters = ['NB03','NB04','NB08','NB02','NB05']
 
@@ -23,15 +23,15 @@ Filters = ['NB03','NB04','NB08','NB02','NB05']
 #cTx1, cTy1, cTx2, cTy2 = -413, -178, -285, -93
 #Tx_er1, Ty_er1, Tx_er2, Ty_er2 = -174, -85, -100, -11
 
-cTx1=-550
-cTy1=400
-cTx2=-250
-cTy2=50
+cTx1=-370
+cTy1=-500
+cTx2=0
+cTy2=-200
 
-Tx_er1=-550
-Ty_er1=400
-Tx_er2=-440
-Ty_er2=350
+Tx_er1=-100
+Ty_er1=-450
+Tx_er2=0
+Ty_er2=-550
 
 # Read CSV of image paths
 

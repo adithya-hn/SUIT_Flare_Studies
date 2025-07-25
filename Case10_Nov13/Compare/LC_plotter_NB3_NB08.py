@@ -22,20 +22,21 @@ Filters=['NB08']
 param1='magnetogram'
 param=Filters[0]
 pathlib.Path("Figures").mkdir(parents=True, exist_ok=True) 
-data=(np.loadtxt(f'NB08_M1.0_Light_curve_data.csv',delimiter=',',dtype='str')).transpose() #'NB03_Light_curve_data.dat'
+data=(np.loadtxt(f'NB08_M1.7_Light_curve_data.csv',delimiter=',',dtype='str')).transpose() #'NB03_Light_curve_data.dat'
 date_array=data[0]
 
-NB3_data=(np.loadtxt(f'NB03_M1.0_Light_curve_data.csv',delimiter=',',dtype='str')).transpose()
+NB3_data=(np.loadtxt(f'NB03_M1.7_Light_curve_data.csv',delimiter=',',dtype='str')).transpose()
 NB3_date_array=NB3_data[0]
 
-Helios=(np.load("cdte_data_flare_10.npy", allow_pickle=True)).transpose()
+
+Helios=(np.load("cdte_data_flare_11.npy", allow_pickle=True)).transpose()
 
 cdte1=Helios[1]
 cdte2=Helios[2]
 datetime_objects = pd.to_datetime(Helios[0])
 helio_time_array=[datetime.strptime(str(ts)[:26], "%Y-%m-%d %H:%M:%S.%f") for ts in datetime_objects]
 
-Solexs=np.loadtxt('fit_results_AL1_SOLEXS_20241113_SDD2_L1_2411132215_2411132359_TEMP_EM.txt',dtype='str',skiprows=1).transpose()
+Solexs=np.loadtxt('fit_results_AL1_SOLEXS_20241113_SDD2_L1_2411131500_2411131730_TEMP_EM.txt',dtype='str',skiprows=1).transpose()
 
 sl_temp=[float(tp) for tp in Solexs[1]]
 sl_temp_er=[float(tpe) for tpe in Solexs[2]]
@@ -59,12 +60,12 @@ for i in range(len(NB3_date_array)):
 
 rc('axes', linewidth=1.2)
 plt.rcParams["xtick.major.size"] = 10
-fig,axs=plt.subplots(1,1, figsize=(10,5))
+fig,axs=plt.subplots(1,1, figsize=(11,5))
 ax2 = axs.twinx()
 ax4 = axs.twinx()
 ax5 = axs.twinx()
 ax3 = axs.twinx()
-#'''
+'''
 ax3.spines.right.set_position(("axes", 1.1))
 ax3.plot(helio_time_array,cdte1, 'r',label="Helios")
 #ax3.plot(helio_time_array,cdte2, label="Helios")
@@ -75,7 +76,7 @@ ax3.set_yscale('log')
 ax4.spines.right.set_position(("axes", 1.33))
 ax4.errorbar(sl_time,sl_temp,yerr=sl_temp_er, fmt='g',capsize=2,markersize=2,linewidth=0.5,label="Temperature-SoLExs",alpha=0.5)
 ax4.set_ylabel('Temperature',fontsize=13)
-ax4.set_yscale('log')#'''
+ax4.set_yscale('log')'''
 
 #ax5.spines.right.set_position(("axes", 1.48))
 #ax5.errorbar(sl_time,sl_Em,yerr=sl_Em_er, fmt='gray',capsize=2,markersize=2,linewidth=0.5,label="EM-SoLExs",alpha=0.5)
@@ -104,16 +105,14 @@ ax2.errorbar(nb3_time_array,list(map(int,nb3float_array)),yerr=nb3float_array_er
 ax2.set_ylabel("NB03 Total count ")
 axs.set_ylabel('NB08 Total count ')
 ax2.set_yscale('log')
-
 #axs.legend(loc='best')
 #ax2.legend()
 #ax2.set_ylim(7.2e6,7.3e6)
 #axs.set_ylim(2.1e8,2.25e8) #NB08
 #axs.set_ylim(5.5e8,6.5e8) #NB03
 
-m_cls=datetime.fromisoformat('2024-11-13T00:10:00.000')
-#m_cls=datetime.fromisoformat('2024-06-01T08:29:00.000')
-m_cls_p=datetime.fromisoformat('2024-11-13T00:22:00.000')
+m_cls=datetime.fromisoformat('2024-11-13T16:57:00.000')
+m_cls_p=datetime.fromisoformat('2024-11-13T17:08:00.000')
 
 #axs2[0,0].plot(AR_I,AR_M,'ko',markersize=1.5)
 Flt=param
@@ -127,11 +126,10 @@ plt.axvline(m_cls,color='b',linestyle='dotted',label='GOES Flare start time')
 #plt.axvline(m_cls_p,color='r',linestyle='-',label='M class Flare peak time')
 plt.axvline(m_cls_p,color='b',linestyle='-',label='GOES Flare peak time')
 #plt.axhline(2.58e8,color='g',linestyle='dotted')
-plt.title('Light Curve')
+plt.title(' Light Curve')
 #plt.ylim(57e4,68e4)#(66e4,700000)
 #plt.legend(loc='best')
 plt.figlegend(bbox_to_anchor=(0.001, 0.35, 0.35, 0.5))
-
 #mpld3.save_html(fig, '12th_June_ROI_CRval.html')
 plt.savefig(img_nm,dpi=300)
 plt.show() #close()

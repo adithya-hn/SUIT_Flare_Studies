@@ -23,6 +23,16 @@ from sunpy.time import parse_time
 from astropy.time import Time
 from sunpy.map import get_observer_meta
 from sunpy.coordinates import frames, get_horizons_coord
+from tqdm import tqdm
+
+
+import warnings
+warnings.simplefilter('ignore')
+
+import logging
+#sunpy.log.set_level("WARNING")
+log_ = logging.getLogger('sunpy')
+log_.setLevel('WARNING')
 
 #Threshold values:
 
@@ -36,7 +46,8 @@ nb4Mx=15000
 nb8Mx=4300
 nb6Mx=95000
 nb7Mx=310000
-Filters=['171']
+
+Filters=['171','HMI']
 
 for fltr in Filters:
     fltr2=fltr
@@ -47,11 +58,12 @@ for fltr in Filters:
     search_fold=f'/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case1_Jun01/data/raw/' #Custom Folder
     #search_fold2=f'/Analysis/Projects_Data/Flare_Data/July10_Flare_Data2/P_corr_data/'
     if fltr2=='HMI':
-        base_fold=f'/Analysis/Projects_Data/Flare_Data/June01_Flare_Data/{fltr2}/{fltr2}_cutouts/'
+        base_fold=f'/media/adithya/Adi_disk4/SUIT_flare_work/case1_Jun01/data/hmi/{fltr2}_cutouts/'
     elif fltr2=='GONG':
         base_fold=f'/Analysis/Projects_Data/Flare_Data/June01_Flare_Data/{fltr2}/{fltr2}_cutouts/'
     else:
-        base_fold=f'/Analysis/Projects_Data/Flare_Data/June01_Flare_Data/AIA/{fltr2}/{fltr2}_cutouts/'
+        base_fold=f'/media/adithya/Adi_disk4/SUIT_flare_work/case1_Jun01/data/aia/cut_outs/{fltr2}_cutouts/'
+                   
     
     print(f'Searching for {fltr} images in {search_fold} folder')
     
@@ -92,11 +104,11 @@ for fltr in Filters:
     pathlib.Path(jpg_fold+f'/{fltr2}').mkdir(parents=True, exist_ok=True)
 
     
-    for i in range(len(files)):
+    for i in tqdm (range(len(files))):
         suitMap=sunpy.map.Map(files[i]) #ca image
         base_time=Time(parse_time(suitMap.date))
         idx=np.argmin(np.abs(base_time_array - base_time))
-        print(idx)
+        #print(idx)
         idx2=np.argmin(np.abs(mg_map_time_array - base_time))
 
         suit_pos = get_horizons_coord(-21, suitMap.date)
@@ -108,11 +120,20 @@ for fltr in Filters:
         Mg_Map=sunpy.map.Map(gaussian_filter(MgII_data, sigma=1),MgII_Map.fits_header)
                 
         BaseMap=sunpy.map.Map(b_files[idx])
+        if fltr2 == 'HMI':
+            smoothed_data=gaussian_filter(BaseMap.data, sigma=2)
+            sign_map = np.sign(smoothed_data)
+            # Calculate where the sign changes between neighboring pixels
+            pil_mask = np.zeros_like(BaseMap.data, dtype=bool)
+            pil_mask[:-1, :] |= (sign_map[:-1, :] * sign_map[1:, :] < 0)  # vertical edges
+            pil_mask[:, :-1] |= (sign_map[:, :-1] * sign_map[:, 1:] < 0)  # horizontal edges
+            pil_mask=np.where(abs(BaseMap.data)>40,pil_mask,0)
+
         base_data=BaseMap.data#/int(BaseMap.meta.get('EXPTIME'))
         Base_img=sunpy.map.Map(base_data,BaseMap.fits_header)
 
         img_head=suitMap.fits_header
-        norm_data=suitMap.data*1000/int(suitMap.meta.get('MEAS_EXP'))
+        norm_data=suitMap.data*1000/int(suitMap.meta.get('CMD_EXPT'))
         
         norm_suit_Map=sunpy.map.Map(norm_data,img_head)
         normsuitMap=sunpy.map.Map(gaussian_filter(norm_data, sigma=1),img_head)
@@ -127,15 +148,17 @@ for fltr in Filters:
         c2_data.append(Thresh2_data)
         dates.append(base_time)
 
-        th_lvs=[3900,4100]
-        th_lvs2=[12000,14000]
+        th_lvs=[3300,3450]
+        th_lvs2=[14000,16000]
         #th_lvs2=[10000,12000]
 
 
         fl_nm=jpg_fold+f'/{fltr2}'+'/'+os.path.basename(files[i])[:-4]+'jpg'
         fig=plt.figure(figsize=(10,10))
-        ax = fig.add_subplot(111, projection=suitMap)
+        ax = fig.add_subplot(111, projection=BaseMap)
         Base_img.plot(cmap='gray',autoalign=True)
+        if fltr2 == 'HMI':
+            plt.contour(pil_mask, colors='red', linewidths=0.8)
 
         #norm_suit_Map.draw_contours(axes=ax, levels=th_lvs,zorder=1,colors=['skyblue','yellow'],alpha=0.7)
         
@@ -145,10 +168,10 @@ for fltr in Filters:
         plot_str='Ca II h: '+str(suitMap.date)
         ax.text(50,50, plot_str, color='white', fontsize=10)
         plt.draw()
-        plt.colorbar()
+        #plt.colorbar()
         plt.savefig(fl_nm)
         plt.close()    
-        print(i,' / ',len(files))
+        #print(i,' / ',len(files))
     c1_data=np.array(c1_data)
     c2_data=np.array(c2_data)
     np.savetxt(f'{fltr2}_threshold_count.csv',np.c_[dates,c1_data,c2_data],delimiter=',',fmt='%s')

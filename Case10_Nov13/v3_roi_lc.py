@@ -15,7 +15,7 @@ start = timeit.default_timer()
 # Parameters
 
 #csv_path = 'Flare_files_Nov11_M1.4_case28f.dat'  # <- change this to your actual file path
-fdir='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case6_Oct09/data/processed_/aligned_fits/'
+fdir='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case11_Nov13/data/processed/aligned_fits/'
 fol_nm = os.getcwd() + '/lc_images/'
 Filters = ['NB03','NB04','NB08','NB02','NB05']
 
@@ -23,15 +23,15 @@ Filters = ['NB03','NB04','NB08','NB02','NB05']
 #cTx1, cTy1, cTx2, cTy2 = -413, -178, -285, -93
 #Tx_er1, Ty_er1, Tx_er2, Ty_er2 = -174, -85, -100, -11
 
-cTx1=-50
-cTy1=300
-cTx2=250
-cTy2=-100
+cTx1=-100
+cTy1=-90
+cTx2=320
+cTy2=-350
 
 Tx_er1=-90
-Ty_er1=-50
-Tx_er2=-10
-Ty_er2=50
+Ty_er1=-330
+Tx_er2=10
+Ty_er2=-430
 
 # Read CSV of image paths
 
@@ -115,7 +115,7 @@ for fltr in Filters:
         er_bx_area.append(er_area)
 
     # Save light curve
-    np.savetxt(f'{fltr}_c6_lc_data.csv',
+    np.savetxt(f'{fltr}_c11_lc_data.csv',
                np.c_[date_array, fltr_count, fltr_count_err, bx_area,er_bx_area],
                delimiter=',', fmt='%s')
 

@@ -115,7 +115,7 @@ for fltr in Filters:
         er_bx_area.append(er_area)
 
     # Save light curve
-    np.savetxt(f'{fltr}_c7_lc_data.csv',
+    np.savetxt(f'{fltr}_c8_lc_data.csv',
                np.c_[date_array, fltr_count, fltr_count_err, bx_area,er_bx_area],
                delimiter=',', fmt='%s')
 

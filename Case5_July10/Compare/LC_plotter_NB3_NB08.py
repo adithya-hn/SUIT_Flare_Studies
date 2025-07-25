@@ -60,9 +60,9 @@ rc('axes', linewidth=1.2)
 plt.rcParams["xtick.major.size"] = 10
 fig,axs=plt.subplots(1,1, figsize=(11,5))
 #fig.subplots_adjust(right=0.83)
-ax2 = axs.twinx()
+#ax2 = axs.twinx()
 
-#ax4 = axs.twinx()
+ax4 = axs.twinx()
 #ax5 = axs.twinx()
 '''
 ax3 = axs.twinx()
@@ -71,13 +71,13 @@ ax3.spines.right.set_position(("axes", 1.1))
 ax3.plot(helio_time_array,cdte1, 'r',label="Helios")
 #ax3.plot(helio_time_array,cdte2, label="Helios")
 ax3.set_ylabel('Helios',fontsize=13)
-ax3.set_yscale('log')
+ax3.set_yscale('log')'''
 
 
-ax4.spines.right.set_position(("axes", 1.33))
+#ax4.spines.right.set_position(("axes", 1.33))
 ax4.errorbar(sl_time,sl_temp,yerr=sl_temp_er, fmt='g',capsize=2,markersize=2,linewidth=0.5,label="Temperature-SoLExs",alpha=0.5)
 ax4.set_ylabel('Temperature',fontsize=13)
-ax4.set_yscale('log')'''
+ax4.set_yscale('log')
 
 #ax5.spines.right.set_position(("axes", 1.48))
 #ax5.errorbar(sl_time,sl_Em,yerr=sl_Em_er, fmt='gray',capsize=2,markersize=2,linewidth=0.5,label="EM-SoLExs",alpha=0.5)
@@ -102,10 +102,10 @@ nb3float_array = [float(string) for string in NB3_data[1]]
 nb3float_array_er = [float(string) for string in NB3_data[2]]
 nb3float_array_er=np.std(nb3float_array_er)
 
-axs.errorbar(time_array,list(map(int,float_array)),yerr=float_array_er,fmt='ko',capsize=2,markersize=2,linewidth=0.5,label='Ca II h')
-ax2.errorbar(nb3_time_array,list(map(int,nb3float_array)),yerr=nb3float_array_er,fmt='bo',capsize=2,markersize=2,linewidth=0.5,label='Mg II k')
+#axs.errorbar(time_array,list(map(int,float_array)),yerr=float_array_er,fmt='ko',capsize=2,markersize=2,linewidth=0.5,label='Ca II h')
+axs.errorbar(nb3_time_array,list(map(int,nb3float_array)),yerr=nb3float_array_er,fmt='bo',capsize=2,markersize=2,linewidth=0.5,label='Mg II k')
 #ax2.plot(nb3_time_array,hmi_data,'bo--',markersize=2,linewidth=0.5)
-ax2.set_ylabel("Mg II k Total count ")
+#ax2.set_ylabel("Mg II k Total count ")
 axs.set_ylabel('Ca II h Total count ')
 axs.set_xlabel('Time')
 
