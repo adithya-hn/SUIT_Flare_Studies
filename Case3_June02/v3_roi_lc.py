@@ -75,7 +75,9 @@ for fltr in Filters:
 
         # Intensity scaling
         Imn, Imx = 1000, 30000
-        if fltr == 'NB08': Imx = 12000
+        if fltr == 'NB08': 
+            Imx = 7000
+            Imn = 3500
         elif fltr == 'NB04': Imx = 33000
         elif fltr == 'BB01': Imx = 21000
         elif fltr in ['BB02', 'BB03']: Imx = 26000
@@ -87,7 +89,7 @@ for fltr in Filters:
         coords = SkyCoord(Tx=(cTx1, cTx2) * u.arcsec, Ty=(cTy1, cTy2) * u.arcsec, frame=suit_map.coordinate_frame)
         er_coords = SkyCoord(Tx=(Tx_er1, Tx_er2) * u.arcsec, Ty=(Ty_er1, Ty_er2) * u.arcsec, frame=suit_map.coordinate_frame)
         suit_map.draw_quadrangle(coords, axes=ax, edgecolor="red", linestyle="-", linewidth=2, label='Region of interest')
-        suit_map.draw_quadrangle(er_coords, axes=ax, edgecolor="blue", linestyle="-", linewidth=2, label='Background')
+        #suit_map.draw_quadrangle(er_coords, axes=ax, edgecolor="blue", linestyle="-", linewidth=2, label='Background')
         plt.colorbar()
         plt.savefig(F_name, dpi=300)
         plt.close()

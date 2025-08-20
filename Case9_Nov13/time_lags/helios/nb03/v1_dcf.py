@@ -399,11 +399,13 @@ if OPTS.noplot:
 
     plt.figure(0)
     plt.errorbar(T, DCF, DCFERR, color='k', ls='-', capsize=0)
-    plt.plot(new_px,gaus(new_px,*param_optimised))
+    #plt.plot(new_px,gaus(new_px,*param_optimised))
     mx_dcf=round(max(DCF),2)
     decf_er=round(DCFERR[idx],2)
     #plt.txt(T[idx], DCF[idx], f'Max DCF: {DCF[idx]:.2f} ± {DCFERR[idx]:.2f}',horizontalalignment='left', verticalalignment='bottom',fontsize=10)
-    plt.text((OPTS.lgl[0]-(0.25*OPTS.lgl[0])), 0.9,'Lag of {} seconds \nwith DCF val: {} $\pm$ {} \nGaussian fit $\mu$={} $\pm${}'.format(round(T[idx],2),mx_dcf,decf_er,round(mu_fit,2),round(mu_err,2)), color='red', bbox=dict(facecolor='none',pad=10, edgecolor='red'))
+    plt.text((OPTS.lgl[0]-(0.25*OPTS.lgl[0])), 0.9,'Lag of {} seconds \nwith DCF val: {} $\pm$ {}'.format(round(T[idx],2),mx_dcf,decf_er))
+
+    # \nGaussian fit $\mu$={} $\pm${}'.format(round(T[idx],2),mx_dcf,decf_er,round(mu_fit,2),round(mu_err,2)), color='red', bbox=dict(facecolor='none',pad=10, edgecolor='red'))
     #plt.text(0.5, 0.5, f'Variable Value: {my_variable:.2f}', fontsize=12, color='blue')
     plt.xlabel("Lag") # f'{T[idx]} seconds \nWith DCF val: {max(DCF)} +- {DCFERR[idx]}' #\nWith DCF val: {max(DCF)} +- {DCFERR[idx]} {T[idx]} 
     plt.ylabel("Correlation Coefficient")

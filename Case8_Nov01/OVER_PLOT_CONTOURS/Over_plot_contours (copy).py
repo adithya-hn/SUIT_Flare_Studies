@@ -1,0 +1,264 @@
+import os
+import matplotlib.pyplot as plt
+import astropy.units as u
+import sunpy.map
+from sunpy.net import Fido
+import glob
+import datetime
+from sunkit_image.coalignment import mapsequence_coalign_by_match_template as mc_coalign
+from sunkit_image.coalignment import calculate_match_template_shift,apply_shifts
+from datetime import timedelta
+import timeit
+import pathlib
+import numpy as np
+from matplotlib.offsetbox import OffsetImage, AnnotationBbox
+#import ImagesToMovie_pkg
+import matplotlib.image as mpimg
+from PIL import Image
+import pandas as pd
+from scipy.ndimage import shift
+from scipy.ndimage import gaussian_filter
+from sunpy.time import parse_time
+from astropy.time import Time
+from sunpy.map import get_observer_meta
+from sunpy.coordinates import frames, get_horizons_coord
+from tqdm import tqdm
+from astropy.coordinates import SkyCoord, SkyOffsetFrame
+
+import warnings
+warnings.simplefilter('ignore')
+
+import logging
+#sunpy.log.set_level("WARNING")
+log_ = logging.getLogger('sunpy')
+log_.setLevel('WARNING')
+
+#Threshold values:
+
+nb3T=11000
+nb4T=11500
+nb8T=3900
+nb6T=86000
+nb7T=295000
+nb3Mx=14000
+nb4Mx=15000
+nb8Mx=4300
+nb6Mx=95000
+nb7Mx=310000
+
+Filters=['1600']
+
+for fltr in Filters:
+    fltr2=fltr
+    c1_data=[]
+    c2_data=[]
+    dates=[]
+
+    search_fold=f'/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case8_Nov01/data/raw/' #Custom Folder
+    #search_fold2=f'/Analysis/Projects_Data/Flare_Data/July10_Flare_Data2/P_corr_data/'
+    if fltr2=='HMI':
+        base_fold=f'/media/adithya/Adi_disk4/SUIT_flare_work/case8_nov01/data/HMI/{fltr2}_cutouts/'
+    elif fltr2=='GONG':
+        base_fold=f'/Analysis/Projects_Data/Flare_Data/June01_Flare_Data/{fltr2}/{fltr2}_cutouts/'
+    
+    else:
+        base_fold=f'/media/adithya/Adi_disk4/SUIT_flare_work/case8_nov01/data/aia/cut_outs/{fltr2}_cutouts_suit/'
+        #base_fold ='/media/adithya/Adi_disk4/SUIT_flare_work/case8_nov01/data/aia/aia_fd_data/'    
+    
+    print(f'Searching for {fltr} images in {search_fold} folder')
+    
+    files2 = glob.glob(search_fold + '*3'+'NB08.fits')
+    files2=sorted(files2, key=lambda file_name: datetime.datetime.strptime(os.path.basename(file_name).split('_')[5], "%Y-%m-%dT%H.%M.%S.%f"))
+    files = glob.glob(search_fold + '*3'+'NB03'+'.fits')
+    files =sorted(files, key=lambda file_name: datetime.datetime.strptime(os.path.basename(file_name).split('_')[5], "%Y-%m-%dT%H.%M.%S.%f"))
+
+    #b_files=glob.glob(base_fold + '*.fits')
+    b_files=glob.glob(base_fold + '*1600.image_lev1.fits')
+    #b_files=sorted(b_files, key=lambda file_name: datetime.datetime.strptime(os.path.basename(file_name).split('_')[5], "%Y-%m-%dT%H.%M.%S.%f"))
+
+    print('Total SUIT NB08 files:',len(files2))
+    print('Total SUIT NB03 files:',len(files))
+    print('Total AIA files:',len(b_files))
+
+    ca_map_time=[]
+    base_time_array=[]
+    for f in range(len(b_files)):##    @
+        if fltr2=='HMI':
+            #hmi.m_45s.20240602_023000_TAI.2.magnetogram
+            base_time_array.append(datetime.datetime.strptime(os.path.basename(b_files[f])[10:25], "%Y%m%d_%H%M%S"))
+        elif fltr2=='GONG':
+            base_time_array.append(datetime.datetime.strptime(os.path.basename(b_files[f])[:11], "%Y%m%d%H%M%S"))
+        
+        elif fltr2=='1600':
+            base_time_array.append(datetime.datetime.strptime(os.path.basename(b_files[f])[16:33], "%Y-%m-%dT%H%M%S"))
+
+        else:
+            base_time_array.append(datetime.datetime.strptime(os.path.basename(b_files[f])[17:33], "%Y-%m-%dT%H%M%S"))
+    base_time_array=Time(parse_time(base_time_array))
+
+    for j in range(len(files2)):
+        ca_map_time.append(datetime.datetime.strptime(os.path.basename(files2[j]).split('_')[5], "%Y-%m-%dT%H.%M.%S.%f"))
+    ca_map_time_array=Time(parse_time(ca_map_time))
+
+    fol_nm=os.getcwd()
+    print(fol_nm)
+
+    jpg_fold=fol_nm+'/'+'Contour_imgs'
+
+    #pathlib.Path(algn_dir).mkdir(parents=True, exist_ok=True)
+    pathlib.Path(jpg_fold).mkdir(parents=True, exist_ok=True)
+    pathlib.Path(jpg_fold+f'/{fltr2}').mkdir(parents=True, exist_ok=True)
+
+    
+    for i in tqdm (range(len(files))):
+        suitMap=sunpy.map.Map(files[i]) #mg IIk  image
+        base_time=Time(parse_time(suitMap.date))
+        idx=np.argmin(np.abs(base_time_array - base_time))
+        #print(idx)
+        idx2=np.argmin(np.abs(ca_map_time_array - base_time))
+
+        suit_pos = get_horizons_coord(-21, suitMap.date)
+        suitMap.meta.update(get_observer_meta(suit_pos, rsun=suit_pos.rsun))
+        
+        CaII_Map=sunpy.map.Map(files2[idx2])
+        CaII_Map.meta.update(get_observer_meta(suit_pos, rsun=suit_pos.rsun))
+                
+        BaseMap=sunpy.map.Map(b_files[idx])
+        BaseMap.peek()
+
+        #print('suit scale', suitMap.scale[0])
+        #print('aia scale',BaseMap.scale)
+
+        target_scale = 0.698
+
+        # Get current scale from header
+        current_scale =0.6093729 #BaseMap.scale  # Tuple in arcsec/pixel
+        
+
+        # Compute new shape
+        factor_x = current_scale / target_scale
+        factor_y = current_scale / target_scale
+
+        #print(factor_x,factor_y)
+
+        new_shape = (int(BaseMap.data.shape[1] * factor_y),int(BaseMap.data.shape[0] * factor_x))
+
+        # Resample the map
+        aia_resampled = BaseMap.resample(new_shape * u.pixel)
+        
+        #print(BaseMap.data.shape,new_shape,(aia_resampled.data).shape)
+
+        smoothed_data=gaussian_filter(aia_resampled.data, sigma=10)
+        smoothed_map=sunpy.map.Map(smoothed_data,aia_resampled.fits_header)
+
+        Sequence = sunpy.map.MapSequence(smoothed_map,suitMap)     
+        map_dates=[]
+        for maps in Sequence:
+            map_dates.append(maps.meta.get('DATE-OBS'))
+            #print(maps.meta.get('DATE-OBS'))
+        #print(base_time_array[idx],b_files[idx],BaseMap.date)
+        Ref_idx=np.where(map_dates==BaseMap.date)[0][0]
+        print('aia ref idx:',Ref_idx)
+        #suitMap.peek()
+        aligned_maps=mc_coalign(Sequence,layer_index=Ref_idx,clip=False)
+        algn_dir='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case8_Nov01/OVER_PLOT_CONTOURS/aligned'
+        aligned_maps_=[]
+        for j in range(len(aligned_maps)):
+            aligned_img=sunpy.map.Map(aligned_maps[j].data,aligned_maps[j].fits_header)
+            if aligned_img.meta['WAVELNTH']== 1600:
+                fname= os.path.basename(b_files[idx])
+                #plt.imshow(aligned_img.data,cmap='gist_heat',alpha=0.5)
+                #plt.savefig('1600.png',dpi=300)
+       
+            if aligned_img.meta['WAVELNTH']==3968.5:
+                fname=aligned_maps[j].meta.get('F_NAME')
+                ca_idx=j
+                
+            elif aligned_img.meta['WAVELNTH']==2796:
+                fname=aligned_maps[j].meta.get('F_NAME')
+                mg_idx=j
+                #plt.imshow(aligned_img.data,cmap='viridis',alpha=0.5)
+                #plt.savefig('mgIIk.png',dpi=300)
+            
+
+            #aligned_img.meta['CRPIX1']=(aia_resampled.meta['CRPIX1'])
+            #a#ligned_img.meta['CRPIX2']=(aia_resampled.meta['CRPIX2'])
+            #aligned_img.meta['CRVAL1']=(aia_resampled.meta['CRVAL1'])
+            #aligned_img.meta['CRVAL2']=(aia_resampled.meta['CRVAL2'])
+            aligned_maps_.append(aligned_img)
+            print(aligned_img.scale)
+            aligned_img.save(algn_dir+'/'+fname,overwrite=True) 
+            aligned_img.plot()
+            plt.show()
+            #aligned_img.save('')
+            
+        
+        plt.show()
+        if fltr2 == 'HMI':
+            if BaseMap.meta.get('CROTA2')>10:
+                BaseMap = BaseMap.rotate(order=3)
+            smoothed_data=gaussian_filter(BaseMap.data, sigma=2)
+            sign_map = np.sign(smoothed_data)
+            # Calculate where the sign changes between neighboring pixels
+            pil_mask = np.zeros_like(BaseMap.data, dtype=bool)
+            pil_mask[:-1, :] |= (sign_map[:-1, :] * sign_map[1:, :] < 0)  # vertical edges
+            pil_mask[:, :-1] |= (sign_map[:, :-1] * sign_map[:, 1:] < 0)  # horizontal edges
+            pil_mask=np.where(abs(BaseMap.data)>40,pil_mask,0)
+
+        base_data=BaseMap.data#/int(BaseMap.meta.get('EXPTIME'))
+        Base_img=BaseMap #sunpy.map.Map(base_data,BaseMap.fits_header)
+        suitMap=aligned_maps_[mg_idx]
+        #CaII_Map=aligned_maps_[ca_idx]
+
+        img_head=suitMap.fits_header
+        #suitMap.peek()
+        #print(suitMap.date)
+        #print(int(suitMap.meta.get('CMD_EXPT')),suitMap.data.shape)
+
+        norm_data=suitMap.data*1000/int(suitMap.meta.get('CMD_EXPT'))
+        CaII_data=CaII_Map.data*1000/int(CaII_Map.meta.get('CMD_EXPT'))
+        Ca_Map=sunpy.map.Map(gaussian_filter(CaII_data, sigma=1),CaII_Map.fits_header)
+        
+        norm_suit_Map=sunpy.map.Map(norm_data,img_head)
+        normsuitMap=sunpy.map.Map(gaussian_filter(norm_data, sigma=1),img_head)
+
+        
+        
+        flt_th_lvs=[500,1000]
+        
+        Thresh1_data=np.sum(np.where(abs(base_data)>flt_th_lvs[0],abs(base_data),0))
+        Thresh2_data=np.sum(np.where(abs(base_data)>flt_th_lvs[1],abs(base_data),0))
+        c1_data.append(Thresh1_data)
+        c2_data.append(Thresh2_data)
+        dates.append(base_time)
+
+        th_lvs2=[3400,3800]
+        th_lvs=[10000,11000]
+        #th_lvs2=[10000,12000]
+
+
+        fl_nm=jpg_fold+f'/{fltr2}'+'/'+os.path.basename(files[i])[:-4]+'jpg'
+        fig=plt.figure(figsize=(10,10))
+        ax = fig.add_subplot(111, projection=BaseMap)
+        Base_img.plot(cmap='gray',autoalign=True)
+        if fltr2 == 'HMI':
+            plt.contour(pil_mask, colors='red', linewidths=0.8)
+
+        #norm_suit_Map.draw_contours(axes=ax, levels=th_lvs,zorder=1,colors=['skyblue','yellow'],alpha=0.7)
+        
+        normsuitMap.draw_contours(axes=ax, levels=th_lvs,zorder=1,lws=0.5,colors=['pink','green'])
+        Ca_Map.draw_contours(axes=ax, levels=th_lvs2,zorder=2,lws=0.5,colors=['skyblue','yellow'],alpha=0.7)
+        
+        plot_str='Ca II h: '+str(suitMap.date) +'\n'+ 'Mg II k: '+str(CaII_Map.date) 
+        ax.text(50,50, plot_str, color='white', fontsize=10)
+        plt.draw()
+        #plt.colorbar()
+        plt.savefig(fl_nm)
+        plt.close()    
+        #print(i,' / ',len(files))
+    c1_data=np.array(c1_data)
+    c2_data=np.array(c2_data)
+    np.savetxt(f'{fltr2}_threshold_count.csv',np.c_[dates,c1_data,c2_data],delimiter=',',fmt='%s')
+
+
+

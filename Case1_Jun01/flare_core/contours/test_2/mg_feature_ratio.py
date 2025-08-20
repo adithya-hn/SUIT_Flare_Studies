@@ -198,7 +198,6 @@ for filter1_file in filter1_files:
 
     # Append results to the list
     Thresh_alned_data=np.where(Norm_map.data>qs_thresh*4,Norm_map.data,0)
-    
     flare_area=np.count_nonzero(Thresh_alned_data)
     flare_count=np.sum(Thresh_alned_data)
 

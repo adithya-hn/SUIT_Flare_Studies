@@ -15,12 +15,12 @@ end_time = '2024-11-13 17:30'
 #result = Fido.search(a.Time(start_time, end_time), a.Instrument('goes'))
 #results = Fido.search(a.Time(start_time, end_time), a.Instrument("XRS"), a.Resolution("flx1s"))
 #result_goes15 = Fido.search(a.Time(start_time, end_time), a.Instrument("XRS"), a.goes.SatelliteNumber(15), a.Resolution("flx1s"))
-result = Fido.search(a.Time(start_time, end_time), a.Instrument("XRS"),a.goes.SatelliteNumber(16),a.Resolution("flx1s"))
+result = Fido.search(a.Time(start_time, end_time), a.Instrument("XRS"),a.goes.SatelliteNumber(15),a.Resolution("flx1s"))
 
 print(result)
 
 # 3. Download the data
-downloaded_files = Fido.fetch(result)
+downloaded_files = Fido.fetch(result,path='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case10_Nov13')
 
 # 4. Load as TimeSeries
 goes_ts = TimeSeries(downloaded_files, concatenate=True)

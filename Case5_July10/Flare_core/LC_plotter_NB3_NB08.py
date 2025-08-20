@@ -55,14 +55,14 @@ fig,axs=plt.subplots(1,1, figsize=(11,5))
 
 fig.subplots_adjust(right=0.83)
 ax2 = axs.twinx()
-#''' 
+''' 
 ax3 = axs.twinx()
 ax3.spines.right.set_position(("axes", 1.13))
 #ax3.plot(helio_time_array,cdte1, label="Helios-CdTe1")
 ax3.errorbar(helio_time_array,cdte1,yerr=cdte1_er,fmt='ro',capsize=2,markersize=2,linewidth=0.5,label='Hard X-ray')
 #ax3.plot(helio_time_array,cdte2, label="Helios")
 ax3.set_ylabel('Helios',fontsize=13)
-ax3.set_yscale('log')#'''
+ax3.set_yscale('log')'''
 
 
 axs.xaxis.set_tick_params(size=0.5)

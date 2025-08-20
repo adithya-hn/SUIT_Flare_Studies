@@ -186,13 +186,13 @@ plt.close()
 #------------------------------------Over plotting all the light curves----------------------------------#
 fig4,ax4=plt.subplots(1,1, figsize=(10,5))
 ax41 = ax4.twinx()
-ax42 = ax4.twinx()
+#ax42 = ax4.twinx()
 #ax45 = ax4.twinx()
 #ax44 = ax4.twinx()
 
-ax4.errorbar(time_array2,list(map(int,float_array2)),yerr=float_array_er2_,fmt='ko-',capsize=2,markersize=2,linewidth=0.5, label='Ca II h light curve')
+ax4.errorbar(time_array2,list(map(int,float_array2)),yerr=float_array_er2_,fmt='ko',capsize=2,markersize=2,linewidth=0.5, label='Ca II H light curve')
 #ax41.errorbar(time_array1,list(map(int,float_array1)),yerr=float_array_er1_,color='tab:blue', marker="o",capsize=2,markersize=2,linewidth=0.5, label='Mg II k light curve')
-ax42.errorbar(time_array3,list(map(int,float_array3)),yerr=float_array_er3_,fmt='co-',capsize=2,markersize=2,linewidth=0.5, label='Mg II h light curve')
+ax41.errorbar(time_array3,list(map(int,float_array3)),yerr=float_array_er3_,fmt='bo',capsize=2,markersize=2,linewidth=0.5, label='Mg II h light curve')
 #ax45.errorbar(time_array4,list(map(int,float_array4)),yerr=float_array_er4_,fmt='bo-',capsize=2,markersize=2,linewidth=0.5, label='Mg II k wing light curve')
 #ax44.errorbar(time_array5,list(map(int,float_array5)),yerr=float_array_er5_,fmt='mo-',capsize=2,markersize=2,linewidth=0.5, label='Mg II h wing light curve')
 #ax42.spines.right.set_position(("axes", 1.08))
@@ -205,24 +205,24 @@ img_nm='all_lc.png'
 
 Helios=(np.load("cdte_data_flare_3.npy", allow_pickle=True)).transpose()
 print(Helios.shape)
-cdte1=Helios[1]
+cdte1=Helios[1]+Helios[2]
 cdte2=Helios[2]
 #print(np.array(Helios[1]))
-cdte1_er=np.sqrt(np.array(Helios[1], dtype=np.float64))
+cdte1_er=Helios[3]+Helios[4]
 datetime_objects = pd.to_datetime(Helios[0])
 helio_time_array=[datetime.strptime(str(ts)[:26], "%Y-%m-%d %H:%M:%S.%f") for ts in datetime_objects]
 ax43 = ax4.twinx()
 
 #ax43.spines.right.set_position(("axes", 1.15))
-ax43.errorbar(helio_time_array,cdte1,yerr=cdte1_er, fmt='ro-',capsize=2,markersize=2,linewidth=0.5,label="Helios-CdTe1",alpha=0.5)
+ax43.errorbar(helio_time_array,cdte1,yerr=cdte1_er, fmt='ro',capsize=2,markersize=2,linewidth=0.5,label="Helios-(CdTe1+CdT2)",alpha=0.5)
 #ax3.plot(helio_time_array,cdte2, label="Helios")
 ax43.set_ylabel('Helios',fontsize=13)
 ax41.set_ylabel('Mg II k total counts',fontsize=13)
 ax43.set_yscale('log')
 ax43.spines.right.set_position(("axes", 1.1))
 
-ax4.set_ylabel('Ca II h total counts',fontsize=13)
-ax43.set_ylabel('Helios counts',fontsize=13)
+ax4.set_ylabel('Ca II H total counts',fontsize=13)
+ax43.set_ylabel('HEL1OS counts',fontsize=13)
 ax4.set_xlabel('Time',fontsize=13)
 
 #ax43.set_axis_off()

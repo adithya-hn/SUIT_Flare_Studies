@@ -31,7 +31,7 @@ NB3_date_array=NB3_data[0]
 
 Helios=(np.load("cdte_data_flare_11.npy", allow_pickle=True)).transpose()
 
-cdte1=Helios[1]
+cdte1=Helios[1] +Helios[2]
 cdte2=Helios[2]
 datetime_objects = pd.to_datetime(Helios[0])
 helio_time_array=[datetime.strptime(str(ts)[:26], "%Y-%m-%d %H:%M:%S.%f") for ts in datetime_objects]

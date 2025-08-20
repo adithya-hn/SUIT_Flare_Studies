@@ -26,7 +26,7 @@ set_pub_style()
 #palette = sns.color_palette("deep")
 
 pathlib.Path("Figures").mkdir(parents=True, exist_ok=True) 
-data1=(np.loadtxt(f'NB03_c10_lc_data.csv',delimiter=',',dtype='str')).transpose() #'NB03_Light_curve_data.dat'
+data1=(np.loadtxt(f'NB04_c10_lc_data.csv',delimiter=',',dtype='str')).transpose() #'NB03_Light_curve_data.dat'
 Solexs=(np.loadtxt(f'fit_results_AL1_SOLEXS_20241113_SDD2_L1_2411131500_2411131730_TEMP_EM.txt',skiprows=1,dtype='str')).transpose() #'NB08_Light_curve_data.dat'
 Helios=(np.load("cdte_data_flare_10.npy", allow_pickle=True)).transpose()
 
@@ -80,17 +80,17 @@ time_array2=[datetime.strptime(str(ts)[:19], "%Y-%m-%dT%H:%M:%S") for ts in slti
 
 fig,axs=plt.subplots(1,1, figsize=(10,5))
 axs1=axs.twinx()
-axs.errorbar(time_array2,list(map(int,sl_Em)),yerr=sl_Em_er,fmt='gray', marker="o",capsize=2,markersize=2,linewidth=0.5, label='Emission Measure')
-axs1.errorbar(time_array2,list(map(int,sl_temp)),yerr=sl_temp_er,fmt='g-', marker="o",capsize=2,markersize=2,linewidth=0.5, label='Temperature')
+#axs.errorbar(time_array2,list(map(int,sl_Em)),yerr=sl_Em_er,fmt='gray', marker="o",capsize=2,markersize=2,linewidth=0.5, label='Emission Measure')
+axs.errorbar(time_array2,list(map(int,sl_temp)),yerr=sl_temp_er,fmt='go',linewidth=0.5, capsize=2,markersize=2, label='Temperature')
 
 
 img_nm='SOLEXs_EM_temp_lc.png'
-axs.set_ylabel('Emission measure',fontsize=13)
-axs1.set_ylabel('Temperature (in MK)',fontsize=13)
+#axs.set_ylabel('Emission measure',fontsize=13)
+axs.set_ylabel('Temperature (in MK)',fontsize=13)
 plt.xlabel(f"Time ",fontsize=13)
 plt.axvline(m_cls,color='orange',linestyle='--',label='GOES Flare start time')
 plt.axvline(m_cls_p,color='orange',linestyle='-',label='GOES Flare peak time')
-plt.title(f'SoLEXS EM-Temp light curves ({date})')
+plt.title(f'SoLEXS Temp light curves ({date})')
 plt.figlegend(bbox_to_anchor=(0.001, 0.38, 0.4, 0.5))
 
 time_formatter = mdates.DateFormatter('%H:%M')  # Format as HH:MM
@@ -101,9 +101,9 @@ plt.close()
 #------------------------------------Over plotting all the light curves----------------------------------#
 fig4,ax4=plt.subplots(1,1, figsize=(12,5))
 
-ax41 = ax4.twinx()
+
 ax42 = ax4.twinx()
-ax43 = ax4.twinx()
+#ax43 = ax4.twinx()
 fig4.subplots_adjust(right=0.85)
 
 print(Helios.shape)
@@ -114,25 +114,24 @@ cdte1_er=np.sqrt(np.array(Helios[1], dtype=np.float64))
 datetime_objects = pd.to_datetime(Helios[0])
 helio_time_array=[datetime.strptime(str(ts)[:26], "%Y-%m-%d %H:%M:%S.%f") for ts in datetime_objects]
 
-ax4.errorbar(time_array1,list(map(int,float_array1)),yerr=float_array_er1_,color='tab:blue', marker="o",capsize=2,markersize=2,linewidth=0.5, label='Mg II k light curve')
+#ax4.errorbar(time_array1,list(map(int,float_array1)),yerr=float_array_er1_,color='tab:blue', marker="o",capsize=2,markersize=2,linewidth=0.5, label='Mg II k light curve')
 ax4.set_ylabel('Mg II k total counts',fontsize=13)
 ax4.set_xlabel('Time',fontsize=13)
 
-#ax41.errorbar(time_array2,list(map(int,sl_Em)),yerr=sl_Em_er,fmt='gray', marker="o",capsize=2,markersize=2,linewidth=0.5, label='Emission Measure')
-ax42.errorbar(time_array2,list(map(int,sl_temp)),yerr=sl_temp_er,fmt='g-', marker="o",capsize=2,markersize=2,linewidth=0.5, label='Temperature')
-
+'''ax41 = ax4.twinx()
+ax41.errorbar(time_array2,list(map(int,sl_Em)),yerr=sl_Em_er,fmt='gray', marker="o",capsize=2,markersize=2,linewidth=0.5, label='Emission Measure')
 ax41.set_ylabel('Emission measure (in $10^{46} cm^{-3}$)',fontsize=13)
-ax41.set_yscale('log')
+ax41.set_yscale('log')'''
 
+ax42.errorbar(time_array2,list(map(int,sl_temp)),yerr=sl_temp_er,fmt='g-', marker="o",capsize=2,markersize=2,linewidth=0.5, label='Temperature')
 ax42.set_ylabel('Temperature (in MK)',fontsize=13)
+#ax42.spines.right.set_position(("axes", 1.1))
 #ax42.set_yscale('log')
 
-ax42.spines.right.set_position(("axes", 1.1))
-
-ax43.errorbar(helio_time_array,cdte1,yerr=cdte1_er, fmt='ro-',capsize=2,markersize=2,linewidth=0.5,label="Helios-CdTe1",alpha=0.5)
-ax43.set_ylabel('HEL1OS counts',fontsize=13)
-ax43.set_yscale('log')
-ax43.spines.right.set_position(("axes", 1.2))
+ax4.errorbar(helio_time_array,cdte1,yerr=cdte1_er, fmt='ro-',capsize=2,markersize=2,linewidth=0.5,label="Helios-CdTe1",alpha=0.5)
+ax4.set_ylabel('HEL1OS counts',fontsize=13)
+ax4.set_yscale('log')
+#ax43.spines.right.set_position(("axes", 1.1))
 
 img_nm='all_lc.png'
 plt.axvline(m_cls,color='orange',linestyle='--')#,label='GOES Flare start time')

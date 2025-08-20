@@ -26,8 +26,8 @@ set_pub_style()
 #palette = sns.color_palette("deep")
 
 pathlib.Path("Figures").mkdir(parents=True, exist_ok=True) 
-data1=(np.loadtxt(f'NB03_c2_lc_data.csv',delimiter=',',dtype='str')).transpose() #'NB03_Light_curve_data.dat'
-Solexs=(np.loadtxt(f'fit_results_AL1_SOLEXS_20240602_SDD2_L1_2406020230_2406020530_TEMP_EM.txt',skiprows=1,dtype='str')).transpose() #'NB08_Light_curve_data.dat'
+data1=(np.loadtxt(f'NB03_c6_lc_data.csv',delimiter=',',dtype='str')).transpose() #'NB03_Light_curve_data.dat'
+Solexs=(np.loadtxt(f'AL1_SOLEXS_20241009_SDD2_L1_puc_tb_fit_results_TEMP_EM.txt',skiprows=1,dtype='str')).transpose() #'NB08_Light_curve_data.dat'
 Helios=(np.load("cdte_data_flare_6.npy", allow_pickle=True)).transpose()
 
 m_cls=datetime.fromisoformat('2024-10-09T01:25:00.000')
@@ -72,10 +72,13 @@ sl_temp=[float(tp) for tp in Solexs[1]]
 sl_temp_er=[float(tpe) for tpe in Solexs[2]]
 sl_Em=[float(em) for em in Solexs[3]]
 sl_Em_er=[float(eme) for eme in Solexs[4]]
-sltime=Solexs[0]
+sltime=np.array([float(tp) for tp in Solexs[0]])
 
-time_array2=[datetime.strptime(str(ts)[:19], "%Y-%m-%dT%H:%M:%S") for ts in sltime]
-
+#sl_time=[datetime.strptime(str(ts)[:19], "%Y-%m-%dT%H:%M:%S") for ts in sltime]
+base_time = datetime(2024, 10, 9, 0, 0, 0)  # Jun 1, 2025 07:00:00 UTC
+time_seconds = sltime-sltime[0]  # Convert string times to float seconds
+# Convert seconds to datetime
+time_array2 = [base_time + timedelta(seconds=int(t)*60) for t in time_seconds]
 
 fig,axs=plt.subplots(1,1, figsize=(10,5))
 axs1=axs.twinx()
