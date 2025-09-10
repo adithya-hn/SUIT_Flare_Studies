@@ -9,13 +9,14 @@ import pathlib
 from astropy.coordinates import SkyCoord
 import numpy as np
 import glob
+import matplotlib.colors as colors
 
 start = timeit.default_timer()
 
 # Parameters
 
 #csv_path = 'Flare_files_Nov11_M1.4_case28f.dat'  # <- change this to your actual file path
-fdir='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case3_June02/data/processed/aligned_fits/'
+fdir='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case3_June02/data/processed/aligned_images/'
 fol_nm = os.getcwd() + '/lc_images/'
 Filters = ['NB03','NB04','NB08','NB02','NB05']
 
@@ -28,10 +29,10 @@ cTy1=-500
 cTx2=0
 cTy2=-200
 
-Tx_er1=-100
-Ty_er1=-450
-Tx_er2=0
-Ty_er2=-550
+Tx_er1=-175
+Ty_er1=-470
+Tx_er2=-100
+Ty_er2=-520
 
 # Read CSV of image paths
 
@@ -74,7 +75,7 @@ for fltr in Filters:
         Headr_data['DATE-OBS'] = str(aligned_maps[i].date)
 
         # Intensity scaling
-        Imn, Imx = 1000, 30000
+        Imn, Imx = 1000, 40000
         if fltr == 'NB08': 
             Imx = 7000
             Imn = 3500
@@ -85,11 +86,12 @@ for fltr in Filters:
         # Plot full map
         fig = plt.figure(figsize=(6, 5))
         ax = fig.add_subplot(projection=suit_map)
-        suit_map.plot(axes=ax, vmin=Imn, vmax=Imx)
+        suit_map.plot_settings['norm'] = colors.Normalize(vmin=Imn, vmax=Imx)
+        suit_map.plot(axes=ax)
         coords = SkyCoord(Tx=(cTx1, cTx2) * u.arcsec, Ty=(cTy1, cTy2) * u.arcsec, frame=suit_map.coordinate_frame)
         er_coords = SkyCoord(Tx=(Tx_er1, Tx_er2) * u.arcsec, Ty=(Ty_er1, Ty_er2) * u.arcsec, frame=suit_map.coordinate_frame)
         suit_map.draw_quadrangle(coords, axes=ax, edgecolor="red", linestyle="-", linewidth=2, label='Region of interest')
-        #suit_map.draw_quadrangle(er_coords, axes=ax, edgecolor="blue", linestyle="-", linewidth=2, label='Background')
+        suit_map.draw_quadrangle(er_coords, axes=ax, edgecolor="blue", linestyle="-", linewidth=2, label='Background')
         plt.colorbar()
         plt.savefig(F_name, dpi=300)
         plt.close()
@@ -104,7 +106,7 @@ for fltr in Filters:
 
         fig = plt.figure(figsize=(5, 5))
         ax = fig.add_subplot(projection=suit_box)
-        suit_box.plot(axes=ax, clip_interval=(1, 99.99) * u.percent)
+        suit_box.plot(axes=ax)
         plt.savefig(Box_fnm, dpi=300)
         plt.close()
 

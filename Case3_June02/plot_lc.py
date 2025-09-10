@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 import matplotlib
 from pylab import *
 from astropy.io import fits
-import scipy.misc
 import math as mt
 from datetime import datetime
 import os
@@ -141,7 +140,6 @@ float_array4 = [float(string)  for string in data4[1]]
 float_array_er4 = [float(string)  for string in data4[2]]
 float_array_er4_=np.sqrt(int(data4[3,0]))
 axs.errorbar(time_array4,list(map(int,float_array4)),yerr=float_array_er4_,fmt='co-',capsize=2,markersize=2,linewidth=0.5, label='Mg II k wing light curve')
-
 img_nm='nb2_lc.png'
 plt.ylabel('Total counts',fontsize=13)
 plt.xlabel(f"Time ",fontsize=13)
@@ -220,7 +218,7 @@ ax43.set_ylabel('Helios',fontsize=13)
 ax41.set_ylabel('Mg II k total counts',fontsize=13)
 ax43.set_yscale('log')
 ax43.spines.right.set_position(("axes", 1.1))
-
+                
 ax4.set_ylabel('Ca II H total counts',fontsize=13)
 ax43.set_ylabel('HEL1OS counts',fontsize=13)
 ax4.set_xlabel('Time',fontsize=13)

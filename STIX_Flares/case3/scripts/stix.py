@@ -51,6 +51,6 @@ lc.peek()
 plt.savefig('raw_lc_plot.png',dpi=300)
 plt.show()
 
-ql_query = Fido.search(a.Time('2021-10-09', '2021-10-09T07:00:00'), a.Instrument.stix, a.stix.DataType.ql)
+ql_query = Fido.search(a.Time(start_dt.date(), end_dt), a.Instrument.stix, a.stix.DataType.ql)
 Path='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/STIX_Flares/case3/data'
 files = Fido.fetch(ql_query,path=Path)

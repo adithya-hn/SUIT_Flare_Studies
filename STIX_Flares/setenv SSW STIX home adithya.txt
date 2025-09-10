@@ -1,0 +1,28 @@
+setenv SSW_SITE_SETUP $SSW/site/setup
+setenv SSW_STIX /home/adithya/Soft/SSW/STIX-GSW/stix
+setenv STX_CONF      $SSW_STIX/dbase/conf
+setenv STX_GRID      $SSW_STIX/dbase/grid
+setenv STX_DEMO_DATA $SSW_STIX/dbase/demo
+setenv STX_DET       $SSW_STIX/dbase/detector
+setenv STX_CFL       $SSW_STIX/dbase/cfl
+setenv STX_VIS_PHASE $SSW_STIX/dbase/vis_phase
+setenv STX_SAS       $SSW_STIX/dbase/sas
+
+setenv SSW_PACKAGES  $SSW/packages
+setenv SSW_DAVE      $SSW_PACKAGES/dave
+
+setenv IDL_TMPDIR /home/adithya/Soft/SSW_DATA
+setenv GOESR_DATA /home/adithya/Soft/SSW_DATA/goes
+setenv SSWDB '/Analysis/SSW_DB'
+
+
+
+
+
+
+setenv SSW /home/adithya/Soft/SSW
+setenv IDL_DIR /home/adithya/IDL/idl71/
+
+setenv SSW_INSTR "gen ontology goes sdo aia soho hinode xrt ontology nlfff iris sot rhessi spex stix spec"
+
+source $SSW/gen/setup/setup.ssw

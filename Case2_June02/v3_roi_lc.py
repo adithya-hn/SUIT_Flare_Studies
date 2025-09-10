@@ -1,3 +1,5 @@
+
+#version in use
 import os
 import matplotlib.pyplot as plt
 import astropy.units as u
@@ -63,6 +65,8 @@ for fltr in Filters:
     fltr_count_err = []
     bx_area = []
     er_bx_area = []
+    qs_box=[]
+    qs_box_err=[]
 
     Sequence = sunpy.map.Map(files, sequence=True)
     aligned_maps = Sequence
@@ -75,7 +79,7 @@ for fltr in Filters:
         Headr_data['DATE-OBS'] = str(aligned_maps[i].date)
 
         # Intensity scaling
-        Imn, Imx = 1000, 30000
+        Imn, Imx = 10000, 45000
         if fltr == 'NB08': Imx = 12000
         elif fltr == 'NB04': Imx = 33000
         elif fltr == 'BB01': Imx = 21000
@@ -117,18 +121,25 @@ for fltr in Filters:
         plt.savefig(Box_fnm, dpi=300)
         plt.close()
 
+
         # Light curve values
         exposure = Sequence[i].meta.get('CMD_EXPT')
         fltr_count.append(np.sum(suit_box.data * 1000 / exposure))
-        fltr_count_err.append(np.sum(er_box.data * 1000 / exposure) / er_area)
+        fltr_count_err.append(np.sqrt(np.sum(suit_box.data))*1000/exposure)
+
+        qs_box.append(np.sum(er_box.data * 1000 / exposure))
+        qs_box_err.append(np.sqrt(np.sum(er_box.data))*1000/exposure)
+
+        #fltr_count_err.append(np.sum(er_box.data * 1000 / exposure) / er_area)
         date_array.append(Sequence[i].date)
         bx_area.append(L * H)
         er_bx_area.append(er_area)
+   
 
     # Save light curve
-    np.savetxt(f'{fltr}_c3_lc_data.csv',
-               np.c_[date_array, fltr_count, fltr_count_err, bx_area,er_bx_area],
-               delimiter=',', fmt='%s')
+    np.savetxt(f'{fltr}_c2_lc_data.csv',
+               np.c_[date_array, fltr_count, fltr_count_err,qs_box,qs_box_err, bx_area,er_bx_area],
+               delimiter=',',header='Time,AR_total,AR_count_Er,QS_total,QS_count_Er,AR_area,QS_area' ,fmt='%s')
 
 stop = timeit.default_timer()
 print('Run Time: ', (stop - start)/60, 'Mins')

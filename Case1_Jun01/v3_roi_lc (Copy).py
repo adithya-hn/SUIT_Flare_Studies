@@ -31,8 +31,8 @@ cTy2=-160
 
 Tx_er1=-350
 Ty_er1=-460
-Tx_er2=-300
-Ty_er2=-500
+Tx_er2=-280
+Ty_er2=-505
 
 # Read CSV of image paths
 
@@ -61,8 +61,6 @@ for fltr in Filters:
     fltr_count = []
     date_array = []
     fltr_count_err = []
-    qs_box=[]
-    qs_box_err=[]
     bx_area = []
     er_bx_area = []
 
@@ -122,21 +120,15 @@ for fltr in Filters:
         # Light curve values
         exposure = Sequence[i].meta.get('CMD_EXPT')
         fltr_count.append(np.sum(suit_box.data * 1000 / exposure))
-        fltr_count_err.append(np.sqrt(np.sum(suit_box.data))*1000/exposure)
-
-        qs_box.append(np.sum(er_box.data * 1000 / exposure))
-        qs_box_err.append(np.sqrt(np.sum(er_box.data))*1000/exposure)
-
-        #fltr_count_err.append(np.sum(er_box.data * 1000 / exposure) / er_area)
+        fltr_count_err.append(np.sum(er_box.data * 1000 / exposure) / er_area)
         date_array.append(Sequence[i].date)
         bx_area.append(L * H)
         er_bx_area.append(er_area)
-   
 
     # Save light curve
     np.savetxt(f'{fltr}_c1_lc_data.csv',
-               np.c_[date_array, fltr_count, fltr_count_err,qs_box,qs_box_err, bx_area,er_bx_area],
-               delimiter=',',header='Time,AR_total,AR_count_Er,QS_total,QS_count_Er,AR_area,QS_area' ,fmt='%s')
+               np.c_[date_array, fltr_count, fltr_count_err, bx_area,er_bx_area],
+               delimiter=',', fmt='%s')
 
 stop = timeit.default_timer()
 print('Run Time: ', (stop - start)/60, 'Mins')

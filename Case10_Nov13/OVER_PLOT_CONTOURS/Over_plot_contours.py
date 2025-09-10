@@ -266,7 +266,7 @@ for fltr in Filters:
        
         
         norm_mg_Map.draw_contours(axes=ax, levels=th_lvs,lws=0.5,colors=['blue','pink','green'])
-        norm_ca_Map.draw_contours(axes=ax, levels=th_lvs2,lws=0.5,colors=['red','skyblue','yellow'],alpha=0.7)
+        #norm_ca_Map.draw_contours(axes=ax, levels=th_lvs2,lws=0.5,colors=['red','skyblue','yellow'],alpha=0.7)
 
         plot_str='Mg II h: '+str(suitMap.date) +'\n'+ 'Ca II h: '+str(CaII_Map.date) 
         ax.text(50,50, plot_str, color='white', fontsize=10)

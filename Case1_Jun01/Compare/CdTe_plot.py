@@ -47,7 +47,7 @@ helio_time_array=[datetime.strptime(str(ts)[:26], "%Y-%m-%d %H:%M:%S.%f") for ts
 
 
 
-ax43.errorbar(helio_time_array,cdte,yerr=cdte_er, fmt='ro-',capsize=2,markersize=2,linewidth=0.5,label="Helios-CdTe1",alpha=0.5)
+ax43.errorbar(helio_time_array,cdte,yerr=cdte_er, fmt='ro-',capsize=2,markersize=2,linewidth=0.5,label="Helios-CdTe",alpha=0.5)
 ax43.set_ylabel('HEL1OS (CdTe 10-40 keV) counts',fontsize=13)
 ax43.set_yscale('log')
 ax43.set_xlabel("Time",fontsize=13)

@@ -208,7 +208,9 @@ print(Helios.shape)
 cdte1=Helios[1]
 cdte2=Helios[2]
 #print(np.array(Helios[1]))
-cdte1_er=np.sqrt(np.array(Helios[1], dtype=np.float64))
+cdte1_er=np.sqrt(np.array(Helios[4], dtype=np.float64))
+cdte2_er=np.sqrt(np.array(Helios[5], dtype=np.float64))
+cdte_er=cdte1_er+cdte2_er
 datetime_objects = pd.to_datetime(Helios[0])
 helio_time_array=[datetime.strptime(str(ts)[:26], "%Y-%m-%d %H:%M:%S.%f") for ts in datetime_objects]
 ax43 = ax4.twinx()

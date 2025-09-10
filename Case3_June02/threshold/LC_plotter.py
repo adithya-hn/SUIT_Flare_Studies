@@ -76,7 +76,7 @@ plt.ylabel(axis_title,fontsize=13)
 plt.xlabel('Time',fontsize=13)
 plt.axvline(m_cls_p,color='orange',linestyle='-',label='GOES Flare peak time')
 plt.axvline(m_cls,color='orange',linestyle='--',label='GOES Flare start time')
-plt.title('Mg II h Light Curve')
+plt.title('Mg II h Light Curve and HELIOS')
 plt.legend(loc='best')
 time_formatter = mdates.DateFormatter('%H:%M')  # Format as HH:MM
 plt.gca().xaxis.set_major_formatter(time_formatter)

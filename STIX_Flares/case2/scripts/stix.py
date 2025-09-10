@@ -45,7 +45,7 @@ lc = LightCurves.from_sdc(start_utc=start_time, end_utc=end_time, ltc=True)
 
 lc.peek()
 plt.savefig('lc_plot.png',dpi=300)
-plt.show()
+plt.close()
 
 ql_query = Fido.search(a.Time('2021-05-07', '2021-05-07T19:15:00'), a.Instrument.stix, a.stix.DataType.ql)
 Path='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/STIX_Flares/case2/data'

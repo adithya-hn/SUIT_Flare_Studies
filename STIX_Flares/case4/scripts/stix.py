@@ -10,16 +10,17 @@ from astropy.table import QTable
 from stixdcpy.quicklook import LightCurves
 from stixdcpy.energylut import EnergyLUT
 from stixdcpy import auxiliary as aux
-from stixdcpy.net import FitsQuery as fq
+from stixdcpy.net import FitsQuery
 from stixdcpy.net import Request as jreq
 from stixdcpy import instrument as inst
-from stixdcpy.science import PixelData, Spectrogram, spec_fits_crop, spec_fits_concatenate, fits_time_to_datetime
+#from stixdcpy.science import ScienceL1 , PixelData, Spectrogram, spec_fits_crop, spec_fits_concatenate, fits_time_to_datetime
 from stixdcpy.housekeeping import Housekeeping
 from astropy.io import fits
 from stixdcpy import detector_view as dv
 from stixdcpy import spectrogram  as cspec
 from stixdcpy.imgspec import ImgSpecArchive as isar
 
+from stixdcpy.science import  Spectrogram, spec_fits_crop, spec_fits_concatenate
 
 import numpy as np
 import pandas as pd
@@ -36,17 +37,23 @@ from stixpy.net import client
 from sunpy.timeseries import TimeSeries
 from stixpy import timeseries # Registers stixpy TimeSeries with sunpy TimeSeries
 
-#-------------------------
-start_time='2021-09-23T15:00:00'
-end_time='2021-09-23T16:00:00'
 
 #-------------------------
-lc = LightCurves.from_sdc(start_utc=start_time, end_utc=end_time, ltc=True)
+start_time='2022-03-11T22:00:00'
+end_time=  '2022-03-11T23:00:00'
 
-lc.peek()
-plt.savefig('lc_plot.png',dpi=300)
-plt.show()
+start_dt = Time(start_time).to_datetime()
+end_dt = Time(end_time).to_datetime()
+print(f"Start time: {start_dt.date()}, End time: {end_dt}")
 
-ql_query = Fido.search(a.Time('2021-09-13', '2021-09-13T17:50:00'), a.Instrument.stix, a.stix.DataType.ql)
-Path='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/STIX_Flares/Case1/data'
-files = Fido.fetch(ql_query,path=Path)
+spec_res=FitsQuery.query(start_dt, end_dt, product_type='xray-spec')
+print(len(spec_res))
+
+FitsQuery.fetch(spec_res[:4]) #only fetch first 2 files
+
+
+
+hk=Housekeeping.from_sdc(start_utc=start_dt, end_utc=end_dt)
+print(hk.param_names)
+emph=aux.Ephemeris.from_sdc(start_utc=start_dt, end_utc=end_dt, steps=100)
+#hk.plot('NIX00078,NIX00079,NIX00080,NIX00081')
