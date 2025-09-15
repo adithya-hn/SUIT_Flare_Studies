@@ -51,7 +51,7 @@ nb8Mx=4300
 nb6Mx=95000
 nb7Mx=310000
 
-Filters=['1600']
+Filters=['HMI']
 
 for fltr in Filters:
     fltr2=fltr
@@ -114,7 +114,7 @@ for fltr in Filters:
     rf_idx=np.argmin(np.abs(base_time_array - ref_time))
 
     #ref_baseMap=sunpy.map.Map(b_files[rf_idx]) #or specific map
-    ref_baseMap=sunpy.map.Map('/media/adithya/Adi_disk4/SUIT_flare_work/case1_Jun01/data/aia/aia_fd/aia.lev1_uv_24s.2024-06-01T065952Z.1600.image_lev1.fits')
+    ref_baseMap=sunpy.map.Map('/media/adithya/Adi_disk4/SUIT_flare_work/case1_Jun01/data/aia/cut_outs/1600_cutouts/aia.lev1_uv_24s.2024-06-01T065952Z.1600.image_lev1.fits')
 
     '''
     target_scale = 0.698
@@ -246,7 +246,7 @@ for fltr in Filters:
         '''
         #-- Derotate aia maps --
         with propagate_with_solar_surface():
-            Base_img=BaseMap.reproject_to(ref_baseMap.wcs,parallel=True,dask_method='memmap') 
+            Base_img=BaseMap.reproject_to(ref_baseMap.wcs,parallel=True) 
 
         #-- Make expo-normalised map--
 
@@ -259,16 +259,25 @@ for fltr in Filters:
 
         #th_lvs2=[2000,3400,3800]
         th_lvs2=[1500,2900,3100]
-        th_lvs=[3500,10000,11000]
+        th_lvs=[13000,15000]
         #th_lvs=[3000,8000]
 
         fl_nm=jpg_fold+f'/{fltr2}'+'/'+os.path.basename(files[i])[:-4]+'jpg'
         fig=plt.figure(figsize=(10,10))
         ax = fig.add_subplot(111, projection=Base_img)
         Base_img.plot(cmap='gray',autoalign=True,title=str(BaseMap.date))
-       
+        if fltr2 == 'HMI':
+            smoothed_data=gaussian_filter(BaseMap.data, sigma=2)
+            sign_map = np.sign(smoothed_data)
+            # Calculate where the sign changes between neighboring pixels
+            pil_mask = np.zeros_like(BaseMap.data, dtype=bool)
+            pil_mask[:-1, :] |= (sign_map[:-1, :] * sign_map[1:, :] < 0)  # vertical edges
+            pil_mask[:, :-1] |= (sign_map[:, :-1] * sign_map[:, 1:] < 0)  # horizontal edges
+            pil_mask=np.where(abs(BaseMap.data)>40,pil_mask,0)
+        if fltr2 == 'HMI':
+            plt.contour(pil_mask, colors='red', linewidths=0.8)
         
-        norm_mg_Map.draw_contours(axes=ax, levels=th_lvs,lws=0.5,colors=['blue','pink','green'])
+        norm_mg_Map.draw_contours(axes=ax, levels=th_lvs,lws=0.5,colors=['pink','green'])
         #norm_ca_Map.draw_contours(axes=ax, levels=th_lvs2,lws=0.5,colors=['red','skyblue','yellow'],alpha=0.7)
 
         plot_str='Mg II h: '+str(suitMap.date) +'\n'+ 'Ca II h: '+str(CaII_Map.date) 
@@ -278,11 +287,11 @@ for fltr in Filters:
         plt.savefig(fl_nm,dpi=300)
         plt.close()    
         # Append results to the list
-        mg_th1=np.where(norm_mg_Map.data>th_lvs[1],norm_mg_Map.data,0)
+        mg_th1=np.where(norm_mg_Map.data>th_lvs[0],norm_mg_Map.data,0)
         mg_th1_area=np.count_nonzero(mg_th1)
         mg_th1_count=np.sum(mg_th1)
 
-        mg_th2=np.where(norm_mg_Map.data>th_lvs[2],norm_mg_Map.data,0)
+        mg_th2=np.where(norm_mg_Map.data>th_lvs[1],norm_mg_Map.data,0)
         mg_th2_area=np.count_nonzero(mg_th2)
         mg_th2_count=np.sum(mg_th2)
 

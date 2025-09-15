@@ -76,14 +76,9 @@ sltime=np.array([float(tp) for tp in Solexs[0]])
 base_time = datetime(2024, 6, 1, 7, 0, 0)  # Jun 1, 2024 07:00:00 UTC
 time_seconds = sltime-sltime[0]  # Convert string times to float seconds
 time_array4 = [base_time + timedelta(seconds=int(t)) for t in time_seconds]
-qs_fig=plt.figure(figsize=(8,5))
-mean_line=np.mean(qs2_mean)
-plt.axhline(mean_line,color='r',linestyle='--',label=f'mean QS  {mean_line:.2f}')
-plt.plot(time_array2,qs2_mean)
-plt.savefig('qs_lc.png',dpi=300)
-plt.legend()
-plt.show()
 
+plt.plot(time_array2,qs2_mean)
+plt.show()
 
 #-------------------
 
