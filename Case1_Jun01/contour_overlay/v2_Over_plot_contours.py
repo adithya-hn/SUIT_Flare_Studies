@@ -1,4 +1,6 @@
 import os
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import astropy.units as u
 import sunpy.map
@@ -12,6 +14,7 @@ import timeit
 import pathlib
 import numpy as np
 from matplotlib.offsetbox import OffsetImage, AnnotationBbox
+#import ImagesToMovie_pkg
 import matplotlib.image as mpimg
 from PIL import Image
 import pandas as pd
@@ -25,8 +28,10 @@ from tqdm import tqdm
 from astropy.coordinates import SkyCoord, SkyOffsetFrame
 from sunpy.visualization.animator import MapSequenceAnimator
 from sunpy.coordinates import Helioprojective, SphericalScreen, propagate_with_solar_surface
+
 import warnings
 warnings.simplefilter('ignore')
+
 import logging
 #sunpy.log.set_level("WARNING")
 log_ = logging.getLogger('sunpy')
@@ -36,20 +41,23 @@ log_.setLevel('WARNING')
 #-----------------Intial paths and params--------------------------
 
 Filters=['171','1600']
-suit_raw_files= f'/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case3_June02/data/raw/'
-aia_imgs_pth='/media/adithya/Adi_disk4/SUIT_flare_work/case3_Jun02/data/aia/cut_outs/'
-hmi_imgs_pth=f'/media/adithya/Adi_disk4/SUIT_flare_work/case3_Jun02/data/HMI/HMI_cutouts/'
-suit_filters=['NB03','NB08']
-ref_1600='/media/adithya/Adi_disk4/SUIT_flare_work/case3_Jun02/data/aia/cut_outs/1600_cutouts/aia.lev1_uv_24s.2024-06-02T063016Z.1600.image_lev1.fits'
-tx1,ty1=-380,-430
-tx2,ty2=-90,-200
-save_aligned='no' #yes
-save_aligned_pth='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case3_June02/data/1600_aligned/'
+suit_raw_files= '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case1_Jun01/data/cropped/crop_fits/'
+aia_imgs_pth='/media/adithya/Adi_disk4/SUIT_flare_work/case1_Jun01/data/aia/cut_outs/'
+hmi_imgs_pth='/media/adithya/Adi_disk4/SUIT_flare_work/case1_Jun01/data/hmi/HMI_cutouts/'
+suit_filters=['NB03','NB08','NB04']
+ref_1600='/media/adithya/Adi_disk4/SUIT_flare_work/case1_Jun01/data/aia/cut_outs/1600_cutouts/aia.lev1_uv_24s.2024-06-01T065952Z.1600.image_lev1.fits'
+tx1,ty1=-550,-350
+tx2,ty2=-350,-220
+save_aligned='yes'
+save_pngs='no'
+save_aligned_pth='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case1_Jun01/data/1600_aligned/'
 alin_fltr='NB03' #Filter to align other SUIT filters to
 # Threshold levels
 
 th_lvs2=[1800,3000,3250]  # Ca II H
 th_lvs=[2000,10000,14000] # Mg II h/k
+
+pathlib.Path(save_aligned_pth).mkdir(parents=True, exist_ok=True)
 
 
 #-------------------------------------------
@@ -72,9 +80,9 @@ for fltr2 in Filters:
     
     print(f'Searching for {fltr2} images in {search_fold} folder')
     
-    files2 = glob.glob(search_fold + '*3'+'NB08.fits')
+    files2 = glob.glob(search_fold + '**/*3'+'NB08.fits')
     files2=sorted(files2, key=lambda file_name: datetime.datetime.strptime(os.path.basename(file_name).split('_')[5], "%Y-%m-%dT%H.%M.%S.%f"))
-    files = glob.glob(search_fold + '*3'+alin_fltr+'.fits')
+    files = glob.glob(search_fold + '**/*3'+alin_fltr+'.fits')
     files =sorted(files, key=lambda file_name: datetime.datetime.strptime(os.path.basename(file_name).split('_')[5], "%Y-%m-%dT%H.%M.%S.%f"))
   
     b_files=glob.glob(base_fold + '*.fits')
@@ -163,30 +171,34 @@ for fltr2 in Filters:
         alnMap.meta['CRPIX2']=mg_aln_maps[0].meta['CRPIX2']
         alnMap.meta['CRVAL1']=mg_aln_maps[0].meta['CRVAL1']
         alnMap.meta['CRVAL2']=mg_aln_maps[0].meta['CRVAL2']
-        alnMap.plot()
+        
         Map_sq.append(alnMap)
         fname=str(maps.meta.get('F_NAME'))[:-5]+'.png'
         #print(fname)
         if save_aligned=='yes':
             alnMap.save(save_aligned_pth+maps.meta.get('F_NAME'),overwrite=True)
-        plt.savefig(fname)
-        plt.close()
+        if save_pngs =='yes':
+            alnMap.plot()
+            plt.savefig(fname)
+            plt.close()
     
     for i in range(len(ca_aln_maps)):
         alnMap=sunpy.map.Map(ca_aln_maps[i].data,ca_aln_maps[i].meta)
-        alnMap.meta['CRPIX1']=mg_aln_maps[0].meta['CRPIX1']
+        '''alnMap.meta['CRPIX1']=mg_aln_maps[0].meta['CRPIX1']
         alnMap.meta['CRPIX2']=mg_aln_maps[0].meta['CRPIX2']
         alnMap.meta['CRVAL1']=mg_aln_maps[0].meta['CRVAL1']
-        alnMap.meta['CRVAL2']=mg_aln_maps[0].meta['CRVAL2']
-        alnMap.plot(vmin=3500,vmax=7000)
+        alnMap.meta['CRVAL2']=mg_aln_maps[0].meta['CRVAL2']'''
+        
         if i != mg_ca_ref_idx:
             caMap_sq.append(alnMap)
         fname=str(alnMap.meta.get('F_NAME'))[:-5]+'.png'
         #print(fname)
         if save_aligned=='yes':
             alnMap.save(save_aligned_pth+alnMap.meta.get('F_NAME'),overwrite=True)
-        plt.savefig(fname)
-        plt.close()
+        if save_pngs =='yes':
+            alnMap.plot(vmin=3500,vmax=7000)
+            plt.savefig(fname)
+            plt.close()
 
     for maps in caMap_sq:
         ca_map_time.append(maps.date)

@@ -1,3 +1,5 @@
+
+#version in use
 import os
 import matplotlib.pyplot as plt
 import astropy.units as u
@@ -16,35 +18,27 @@ start = timeit.default_timer()
 # Parameters
 
 #csv_path = 'Flare_files_Nov11_M1.4_case28f.dat'  # <- change this to your actual file path
-fdir='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case1_Jun01/data/processed/aligned_fits/'
+fdir='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case2_June02/data/processed/aligned_fits/'
 fol_nm = os.getcwd() + '/lc_images/'
-Filters = ['NB03','NB04','NB08']
+Filters = ['NB03','NB04','NB08'] #,'NB02','NB05'
 
 # ROI and Background box coordinates
 #cTx1, cTy1, cTx2, cTy2 = -413, -178, -285, -93
 #Tx_er1, Ty_er1, Tx_er2, Ty_er2 = -174, -85, -100, -11
 
-cTx1=-500
-cTy1=-400
-cTx2=-300
-cTy2=-250
+cTx1=-255
+cTy1=-305
+arH=365
+arW=240
 
-Tx_er1=-350
-Ty_er1=-460
-Tx_er2=-300
-Ty_er2=-500
-
-# Read CSV of image paths
-
-#with open(csv_path, 'r') as f:
-#    all_files = [line.strip() for line in f if line.strip().endswith('.fits')]
-
+Tx_er1=-150
+Ty_er1=-500
+qsH=50
+qsW=50
 
 # Loop over filters
 for fltr in Filters:
-    # Filter files for the current filter
-    #files = sorted([f for f in all_files if f'*3{fltr}.fits' in f or f.endswith(f'3{fltr}.fits')])
-    
+
     files = sorted(glob.glob(fdir+fltr + '/*3'+fltr+'.fits'))
     if not files:
         print(f"No files found for filter {fltr}")
@@ -61,10 +55,10 @@ for fltr in Filters:
     fltr_count = []
     date_array = []
     fltr_count_err = []
-    qs_box=[]
-    qs_box_err=[]
     bx_area = []
     er_bx_area = []
+    qs_box=[]
+    qs_box_err=[]
 
     Sequence = sunpy.map.Map(files, sequence=True)
     aligned_maps = Sequence
@@ -77,8 +71,8 @@ for fltr in Filters:
         Headr_data['DATE-OBS'] = str(aligned_maps[i].date)
 
         # Intensity scaling
-        Imn, Imx = 5000, 45000
-        if fltr == 'NB08': Imx = 9000
+        Imn, Imx = 10000, 45000
+        if fltr == 'NB08': Imx = 12000
         elif fltr == 'NB04': Imx = 33000
         elif fltr == 'BB01': Imx = 21000
         elif fltr in ['BB02', 'BB03']: Imx = 26000
@@ -90,17 +84,21 @@ for fltr in Filters:
         #coords = SkyCoord(Tx=(cTx1, cTx2) * u.arcsec, Ty=(cTy1, cTy2) * u.arcsec, frame=suit_map.coordinate_frame)
 
         rotation_angle=suit_map.meta["CROTA2"]
-        #print('Angle rotated',rotation_angle)
-        center_coord4 = SkyCoord(-400 * u.arcsec, -300 * u.arcsec, frame=suit_map.coordinate_frame)
+        
+        cen_cord      = SkyCoord(-400 * u.arcsec, -300 * u.arcsec, frame=suit_map.coordinate_frame)
+        offset_frame1 = SkyOffsetFrame(origin=cen_cord, rotation=-rotation_angle*u.deg)
+        width1  = 280 * u.arcsec
+        height1 = 225 * u.arcsec
+        coords = SkyCoord(lon=[-1/2, 1/2] * width1, lat=[-1/2, 1/2] * height1, frame=offset_frame1)
+
+        center_coord4 = SkyCoord(-325 * u.arcsec, -485 * u.arcsec, frame=suit_map.coordinate_frame)
         offset_frame4 = SkyOffsetFrame(origin=center_coord4, rotation=-rotation_angle*u.deg)
-        width4 = 220 * u.arcsec
-        height4 =200 * u.arcsec
-        coords=SkyCoord(lon=[-1/2, 1/2] * width4, lat=[-1/2, 1/2] * height4, frame=offset_frame4)
-
-
-        er_coords = SkyCoord(Tx=(Tx_er1, Tx_er2) * u.arcsec, Ty=(Ty_er1, Ty_er2) * u.arcsec, frame=suit_map.coordinate_frame)
-        suit_map.draw_quadrangle(coords, axes=ax, edgecolor="red", linestyle="-", linewidth=2, label='Region of interest')
-        suit_map.draw_quadrangle(er_coords, axes=ax, edgecolor="blue", linestyle="-", linewidth=2, label='Background')
+        width4  = 40 * u.arcsec
+        height4 = 40 * u.arcsec
+        er_coords=SkyCoord(lon=[-1/2, 1/2] * width4, lat=[-1/2, 1/2] * height4, frame=offset_frame4)
+        suit_map.draw_quadrangle(er_coords,axes=ax,edgecolor="blue",linestyle="-",linewidth=2,label='Background')
+        suit_map.draw_quadrangle(coords,axes=ax,edgecolor="red",linestyle="-",linewidth=2,label='Region of interest')
+        
         plt.colorbar()
         plt.savefig(F_name, dpi=300)
         plt.close()
@@ -119,6 +117,7 @@ for fltr in Filters:
         plt.savefig(Box_fnm, dpi=300)
         plt.close()
 
+
         # Light curve values
         exposure = Sequence[i].meta.get('CMD_EXPT')
         fltr_count.append(np.sum(suit_box.data * 1000 / exposure))
@@ -134,7 +133,7 @@ for fltr in Filters:
    
 
     # Save light curve
-    np.savetxt(f'{fltr}_c1_lc_data.csv',
+    np.savetxt(f'{fltr}_c2_lc_data.csv',
                np.c_[date_array, fltr_count, fltr_count_err,qs_box,qs_box_err, bx_area,er_bx_area],
                delimiter=',',header='Time,AR_total,AR_count_Er,QS_total,QS_count_Er,AR_area,QS_area' ,fmt='%s')
 

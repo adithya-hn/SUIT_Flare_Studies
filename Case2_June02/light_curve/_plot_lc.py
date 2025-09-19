@@ -26,9 +26,9 @@ set_pub_style()
 #palette = sns.color_palette("deep")
 
 pathlib.Path("Figures").mkdir(parents=True, exist_ok=True) 
-data1=(np.loadtxt(f'NB03_c3_lc_data.csv',delimiter=',',dtype='str')).transpose() #'NB03_Light_curve_data.dat'
-data2=(np.loadtxt(f'NB08_c3_lc_data.csv',delimiter=',',dtype='str')).transpose() #'NB08_Light_curve_data.dat'
-data3=(np.loadtxt(f'NB04_c3_lc_data.csv',delimiter=',',dtype='str')).transpose() #'NB04_Light_curve_data.dat'
+data1=(np.loadtxt(f'NB03_c2_lc_data.csv',delimiter=',',dtype='str')).transpose() #'NB03_Light_curve_data.dat'
+data2=(np.loadtxt(f'NB08_c2_lc_data.csv',delimiter=',',dtype='str')).transpose() #'NB08_Light_curve_data.dat'
+data3=(np.loadtxt(f'NB04_c2_lc_data.csv',delimiter=',',dtype='str')).transpose() #'NB04_Light_curve_data.dat'
 #data4=(np.loadtxt(f'NB02_c3_lc_data.csv',delimiter=',',dtype='str')).transpose() #'NB02_Light_curve_data.dat'
 #data5=(np.loadtxt(f'NB05_c3_lc_data.csv',delimiter=',',dtype='str')).transpose() #'NB05_Light_curve_data.dat'
 

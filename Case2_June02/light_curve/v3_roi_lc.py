@@ -1,6 +1,16 @@
+#Data created on 11th June 2025
+#Author : Adithya HN
 
-#version in use
+#Script ti create light curves for different filters in a specified ROI and background box
+#The ROI and background box coordinates can be modified as per requirement
+
+#Implementing ROI counter rotation to keep account for submap issues.
+
+
+
 import os
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import astropy.units as u
 import sunpy.map
@@ -15,38 +25,30 @@ from astropy.coordinates import SkyCoord, SkyOffsetFrame
 
 start = timeit.default_timer()
 
-# Parameters
 
-#csv_path = 'Flare_files_Nov11_M1.4_case28f.dat'  # <- change this to your actual file path
+# ----------Input Parameters------
+
 fdir='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case2_June02/data/processed/aligned_fits/'
 fol_nm = os.getcwd() + '/lc_images/'
-Filters = ['NB03','NB04','NB08'] #,'NB02','NB05'
+Filters = ['NB03','NB04','NB08','NB02','NB05']
 
-# ROI and Background box coordinates
-#cTx1, cTy1, cTx2, cTy2 = -413, -178, -285, -93
-#Tx_er1, Ty_er1, Tx_er2, Ty_er2 = -174, -85, -100, -11
+cTx1=-255
+cTy1=-310
+arW=365
+arH=240
 
-cTx1=-580
-cTy1=-320
-cTx2=-390
-cTy2=-160
+Tx_er1=-170
+Ty_er1=-500
+qsH=40
+qsW=40
 
-Tx_er1=-200
-Ty_er1=-540
-Tx_er2=-100
-Ty_er2=-465
-
-# Read CSV of image paths
-
-#with open(csv_path, 'r') as f:
-#    all_files = [line.strip() for line in f if line.strip().endswith('.fits')]
+#------------------------
 
 
-# Loop over filters
+
+
 for fltr in Filters:
-    # Filter files for the current filter
-    #files = sorted([f for f in all_files if f'*3{fltr}.fits' in f or f.endswith(f'3{fltr}.fits')])
-    
+
     files = sorted(glob.glob(fdir+fltr + '/*3'+fltr+'.fits'))
     if not files:
         print(f"No files found for filter {fltr}")
@@ -59,14 +61,15 @@ for fltr in Filters:
     box_pth = f'{fol_nm}/{fltr}/Box'
     pathlib.Path(f'{fol_nm}/{fltr}').mkdir(parents=True, exist_ok=True)
     pathlib.Path(box_pth).mkdir(parents=True, exist_ok=True)
+    pathlib.Path('csv_files').mkdir(parents=True, exist_ok=True)
 
     fltr_count = []
     date_array = []
     fltr_count_err = []
-    bx_area = []
-    er_bx_area = []
     qs_box=[]
     qs_box_err=[]
+    bx_area = []
+    er_bx_area = []
 
     Sequence = sunpy.map.Map(files, sequence=True)
     aligned_maps = Sequence
@@ -79,7 +82,7 @@ for fltr in Filters:
         Headr_data['DATE-OBS'] = str(aligned_maps[i].date)
 
         # Intensity scaling
-        Imn, Imx = 10000, 45000
+        Imn, Imx = 5000, 45000
         if fltr == 'NB08': Imx = 12000
         elif fltr == 'NB04': Imx = 33000
         elif fltr == 'BB01': Imx = 21000
@@ -89,20 +92,22 @@ for fltr in Filters:
         fig = plt.figure(figsize=(6, 5))
         ax = fig.add_subplot(projection=suit_map)
         suit_map.plot(axes=ax, vmin=Imn, vmax=Imx)
-        #coords = SkyCoord(Tx=(cTx1, cTx2) * u.arcsec, Ty=(cTy1, cTy2) * u.arcsec, frame=suit_map.coordinate_frame)
-
         rotation_angle=suit_map.meta["CROTA2"]
-        #print('Angle rotated',rotation_angle)
-        center_coord4 = SkyCoord(-250 * u.arcsec, -350 * u.arcsec, frame=suit_map.coordinate_frame)
+        
+        cen_cord      = SkyCoord(cTx1 * u.arcsec, cTy1 * u.arcsec, frame=suit_map.coordinate_frame)
+        offset_frame1 = SkyOffsetFrame(origin=cen_cord, rotation=-rotation_angle*u.deg)
+        width1  = arW * u.arcsec
+        height1 = arH * u.arcsec
+        coords = SkyCoord(lon=[-1/2, 1/2] * width1, lat=[-1/2, 1/2] * height1, frame=offset_frame1)
+
+        center_coord4 = SkyCoord(Tx_er1 * u.arcsec, Ty_er1 * u.arcsec, frame=suit_map.coordinate_frame)
         offset_frame4 = SkyOffsetFrame(origin=center_coord4, rotation=-rotation_angle*u.deg)
-        width4 = 300 * u.arcsec
-        height4 =300 * u.arcsec
-        coords=SkyCoord(lon=[-1/2, 1/2] * width4, lat=[-1/2, 1/2] * height4, frame=offset_frame4)
-
-
-        er_coords = SkyCoord(Tx=(Tx_er1, Tx_er2) * u.arcsec, Ty=(Ty_er1, Ty_er2) * u.arcsec, frame=suit_map.coordinate_frame)
-        suit_map.draw_quadrangle(coords, axes=ax, edgecolor="red", linestyle="-", linewidth=2, label='Region of interest')
-        suit_map.draw_quadrangle(er_coords, axes=ax, edgecolor="blue", linestyle="-", linewidth=2, label='Background')
+        width4  = qsW * u.arcsec
+        height4 = qsH * u.arcsec
+        er_coords=SkyCoord(lon=[-1/2, 1/2] * width4, lat=[-1/2, 1/2] * height4, frame=offset_frame4)
+        suit_map.draw_quadrangle(er_coords,axes=ax,edgecolor="blue",linestyle="-",linewidth=2,label='Background')
+        suit_map.draw_quadrangle(coords,axes=ax,edgecolor="red",linestyle="-",linewidth=2,label='Region of interest')
+        
         plt.colorbar()
         plt.savefig(F_name, dpi=300)
         plt.close()
@@ -121,7 +126,6 @@ for fltr in Filters:
         plt.savefig(Box_fnm, dpi=300)
         plt.close()
 
-
         # Light curve values
         exposure = Sequence[i].meta.get('CMD_EXPT')
         fltr_count.append(np.sum(suit_box.data * 1000 / exposure))
@@ -137,9 +141,9 @@ for fltr in Filters:
    
 
     # Save light curve
-    np.savetxt(f'{fltr}_c2_lc_data.csv',
+    np.savetxt(f'csv_files/{fltr}_c2_lc_data.csv',
                np.c_[date_array, fltr_count, fltr_count_err,qs_box,qs_box_err, bx_area,er_bx_area],
-               delimiter=',',header='Time,AR_total,AR_count_Er,QS_total,QS_count_Er,AR_area,QS_area' ,fmt='%s')
+               delimiter=',',header='Time,AR_total,AR_count_Er,QS_total,QS_count_Er,AR_area,QS_area',comments='' ,fmt='%s')
 
 stop = timeit.default_timer()
 print('Run Time: ', (stop - start)/60, 'Mins')

@@ -4,7 +4,7 @@ import astropy.units as u
 import sunpy.map
 import glob
 import datetime
-
+import matplotlib.dates as mdates
 import pathlib
 from astropy.coordinates import SkyCoord
 import numpy as np
@@ -34,7 +34,7 @@ for fltr in Filters:
     test_point=[]
     
 
-    search_fold=f'/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case1_Jun01/data/cropped/crop_fits/{fltr}/' #Custom Folder
+    search_fold=f'/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case2_June02/data/processed/aligned_fits/{fltr}/' #Custom Folder
 
     
     print(f'Searching for {fltr} images in {search_fold} folder')
@@ -51,9 +51,6 @@ for fltr in Filters:
     print(fol_nm)
 
     jpg_fold=fol_nm+'/'+'box_images'
-    #algn_dir=fol_nm+'/'+'Aligned_Fits'
-
-    #pathlib.Path(algn_dir).mkdir(parents=True, exist_ok=True)
     pathlib.Path(jpg_fold).mkdir(parents=True, exist_ok=True)
     pathlib.Path(jpg_fold+f'/{fltr}').mkdir(parents=True, exist_ok=True)
 
@@ -87,71 +84,74 @@ for fltr in Filters:
 
         fig = plt.figure(figsize=(6, 5))
         ax = fig.add_subplot(projection=suit_map)
-        #suit_map.plot(axes=ax, vmin=1000,vmax=16000)
+        suit_map.plot(axes=ax, vmin=1000,vmax=16000)
 
         rotation_angle=suit_map.meta["CROTA2"]
-        #print('Angle rotated',rotation_angle)
-        center_coord4 = SkyCoord(-325 * u.arcsec, -485 * u.arcsec, frame=suit_map.coordinate_frame)
-        offset_frame4 = SkyOffsetFrame(origin=center_coord4, rotation=-rotation_angle*u.deg)
-        width4 = 40 * u.arcsec
-        height4 =40 * u.arcsec
-        er_coords=SkyCoord(lon=[-1/2, 1/2] * width4, lat=[-1/2, 1/2] * height4, frame=offset_frame4)
 
-        coords = SkyCoord(Tx=(-410, -380) * u.arcsec, Ty=(-430, -470) * u.arcsec, frame=suit_map.coordinate_frame)
-        suit_map.draw_quadrangle(coords,axes=ax,edgecolor="red",linestyle="-",linewidth=2,label='Region of interest')
-        #er_coords = SkyCoord(Tx=(-350, -300) * u.arcsec, Ty=(-510, -460) * u.arcsec, frame=suit_map.coordinate_frame)
-        #SkyCoord(Tx=(-400, -310) * u.arcsec, Ty=(-390, -480) * u.arcsec, frame=suit_map.coordinate_frame)
+        #AR sub box
+        cen_cord      = SkyCoord(-255 * u.arcsec, -310 * u.arcsec, frame=suit_map.coordinate_frame)
+        offset_frame1 = SkyOffsetFrame(origin=cen_cord, rotation=-rotation_angle*u.deg)
+        width1  = 365 * u.arcsec
+        height1 = 240 * u.arcsec
+        coords = SkyCoord(lon=[-1/2, 1/2] * width1, lat=[-1/2, 1/2] * height1, frame=offset_frame1)
+
+        #Quiet sub box
+        center_coord4 = SkyCoord(-170 * u.arcsec, -500 * u.arcsec, frame=suit_map.coordinate_frame)
+        #center_coord4 = SkyCoord(-275 * u.arcsec, -540 * u.arcsec, frame=suit_map.coordinate_frame) # point left, belwoe th ar box
+        #center_coord4 = SkyCoord(-350 * u.arcsec, -570 * u.arcsec, frame=suit_map.coordinate_frame)
+        offset_frame4 = SkyOffsetFrame(origin=center_coord4, rotation=-rotation_angle*u.deg)
+        width4  = 40 * u.arcsec
+        height4 = 40 * u.arcsec
+        er_coords=SkyCoord(lon=[-1/2, 1/2] * width4, lat=[-1/2, 1/2] * height4, frame=offset_frame4)
         suit_map.draw_quadrangle(er_coords,axes=ax,edgecolor="blue",linestyle="-",linewidth=2,label='Background')
 
+        suit_map.draw_quadrangle(coords,axes=ax,edgecolor="red",linestyle="-",linewidth=2,label='Region of interest')
+        
         er_box=suit_map.submap(er_coords)
         test_box=suit_map.submap(coords)
         print('QS val: ', np.mean(er_box.data))
-        #plt.colorbar()
-        #plt.savefig(jpg_fold+f'/{fltr}/mgIIk{suit_map.date}_{i}.png', dpi=300)    
-
-        print('Test thresh val: ', np.mean(er_box.data)*3)
-        Thresh_val= np.mean(er_box.data)*2
+        print('File',suit_map.meta['DATE-OBS'])
+        Thresh_val= np.mean(er_box.data)*3
+        if fltr== 'NB08':
+            Thresh_val= np.mean(er_box.data)*1.5
 
         Thresh_alned_data=np.where(alned_data>Thresh_val,alned_data,0)
         alignedMap=sunpy.map.Map(Thresh_alned_data,img_head)
 
         fl_nm=jpg_fold+f'/{fltr}'+'/'+os.path.basename(files[i])[:-4]+'jpg'
         
-        #ax = fig.add_subplot(111, projection=alignedMap)
-        alignedMap.plot(cmap='gray', vmin=Thresh_val-1, vmax=Tmax)
+        #alignedMap.plot(cmap='gray', vmin=Thresh_val-1, vmax=Tmax)
         plot_data.append(np.count_nonzero(Thresh_alned_data))
         tot_count.append(np.sum(Thresh_alned_data))
-        
-        #alignedMap.draw_limb(axes=ax)
-        #alignedMap.draw_grid(axes=ax)
-        plot_str=str(alignedMap.date)+' - '+str(suitMap.date)
-        ax.text(50,50, plot_str, color='white', fontsize=10)
-        plt.draw()
-        #plt.title('NB03 diff: '+str(suitMap_.date))
-        #plt.axis('off')
-        #plt.subplots_adjust(left=0, right=1, top=1, bottom=0)
-        #plt.tight_layout()
-        plt.savefig(fl_nm)
+        #plot_str=str(alignedMap.date)+' - '+str(suitMap.date)
+        #ax.text(50,50, plot_str, color='white', fontsize=10)
+        #plt.draw()
+        plt.savefig(fl_nm,dpi=300)
         plt.close()
         qs.append(np.mean(er_box.data))
         dates.append(suitMap.date.datetime)
-        test_point.append(np.mean(test_box.data))
-        #print(i,' / ',len(files))
+        test_point.append(np.mean(test_box.data)) #test_box.meta.get("CMD_EXPT") test_box.meta.get("SHTR_STR"))#
+
     dates=np.array(dates)
     qs=np.array(qs)
-    np.savetxt(f'{fltr}_qs_count.csv',np.c_[dates,qs],delimiter=',',fmt='%s')
+    test_point=np.array(test_point)
+    np.savetxt(f'{fltr}_qs1_count.csv',np.c_[dates,qs,test_point],comments='',header='Time,QS_mean,AR_mean',delimiter=',',fmt='%s')
     plt.figure(figsize=(10, 5))
     ax=plt.subplot(111)
     ax1=ax.twinx()
-    #plt.plot(dates, qs, marker='o',markersize=0.5)
-    #plt.plot(dates, qs, marker='o',markersize=0.5)
-    ax.plot(dates, test_point, marker='o',markersize=0.5)
-    ax1.plot(dates, qs,'r', marker='o',markersize=0.5)
+
+    date_stamp=dates[0].strftime('%Y-%m-%d')
+    plt.title(f'AR and QS Box Light curve - {fltr} ({date_stamp})')
+    ax.plot(dates, test_point, marker='o',markersize=0.5,label='AR box Intensity')
+    ax1.plot(dates, qs,'r', marker='o',markersize=0.5,label='QS1 box Intensity')
     plt.gcf().autofmt_xdate()
     plt.xlabel("Time")
-    plt.ylabel("QS Intensity")
-    plt.title(f"QS Intensity Variation in a box - {fltr}")
-    plt.savefig(f'box_QS_intensity_{fltr}.png', dpi=300, bbox_inches='tight')
+    ax1.set_ylabel("QS Intensity")
+    ax.set_ylabel("AR Intensity")
+    plt.figlegend(bbox_to_anchor=(0.001, 0.38, 0.4, 0.5))
+    time_formatter = mdates.DateFormatter('%H:%M')  # Format as HH:MM
+    plt.gca().xaxis.set_major_formatter(time_formatter)
+    plt.savefig(f'box_QS1_intensity_{fltr}.png', dpi=300, bbox_inches='tight')
     plt.close()
 
 

@@ -4,33 +4,25 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib
 from pylab import *
-from astropy.io import fits
-import scipy.misc
-import math as mt
 from datetime import datetime
-import os
-import timeit
 from scipy import stats as S
 import scipy as sp
 import pathlib
-import pandas as pd
 from subprocess import call
 from matplotlib import colors
 import matplotlib.dates as mdates
-import seaborn as sns
 from sys import path as sys_path
 sys_path.append('/home/adithya/Adithya_repos')
 from plots_styl import set_pub_style
 set_pub_style()
 
-#palette = sns.color_palette("deep")
 
 pathlib.Path("Figures").mkdir(parents=True, exist_ok=True) 
-data1=(np.loadtxt(f'NB03_c3_lc_data.csv',delimiter=',',dtype='str')).transpose() #'NB03_Light_curve_data.dat'
-data2=(np.loadtxt(f'NB08_c3_lc_data.csv',delimiter=',',dtype='str')).transpose() #'NB08_Light_curve_data.dat'
-data3=(np.loadtxt(f'NB04_c3_lc_data.csv',delimiter=',',dtype='str')).transpose() #'NB04_Light_curve_data.dat'
-data4=(np.loadtxt(f'NB02_c3_lc_data.csv',delimiter=',',dtype='str')).transpose() #'NB02_Light_curve_data.dat'
-data5=(np.loadtxt(f'NB05_c3_lc_data.csv',delimiter=',',dtype='str')).transpose() #'NB05_Light_curve_data.dat'
+data1=(np.loadtxt(f'NB03_c1_lc_data.csv',skiprows=1,delimiter=',',dtype='str')).transpose() #'NB03_Light_curve_data.dat'
+data2=(np.loadtxt(f'NB08_c1_lc_data.csv',skiprows=1,delimiter=',',dtype='str')).transpose() #'NB08_Light_curve_data.dat'
+data3=(np.loadtxt(f'NB04_c1_lc_data.csv',skiprows=1,delimiter=',',dtype='str')).transpose() #'NB04_Light_curve_data.dat'
+data4=(np.loadtxt(f'NB02_c1_lc_data.csv',skiprows=1,delimiter=',',dtype='str')).transpose() #'NB02_Light_curve_data.dat'
+data5=(np.loadtxt(f'NB05_c1_lc_data.csv',skiprows=1,delimiter=',',dtype='str')).transpose() #'NB05_Light_curve_data.dat'
 
 
 
