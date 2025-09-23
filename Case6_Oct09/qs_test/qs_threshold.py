@@ -21,26 +21,25 @@ from astropy.coordinates import SkyCoord, SkyOffsetFrame
 
 #---------Input parameters-----------------
 
-ArTx= -205 
-ArTy= -310 
+ArTx= 50
+ArTy= 120 
 
-arW=405
-arH=240
+arW=300
+arH=220
 
-qs1Tx=-140
-qs1Ty=-500
+qs1Tx=-50
+qs1Ty=-10
 
-qs2Tx=-250
-qs2Ty=-550
+qs2Tx=50
+qs2Ty=-50
 
-qs3Tx=-330
-qs3Ty=-570
+qs3Tx=260
+qs3Ty=290
 
-Filters=['NB03','NB08']
-search_fold=f'/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case3_June02/data/1600_aligned/' #Custom Folder
+Filters=['NB04','NB08']
+search_fold=f'/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case6_Oct09/data/1600_aligned/' #Custom Folder
 
 #------------------------------------------
-
 
 
 #Threshold values:
@@ -117,7 +116,6 @@ for fltr in Filters:
 
         fig = plt.figure(figsize=(6, 5))
         ax = fig.add_subplot(projection=suit_map)
-        #suit_map.plot(axes=ax, vmin=1000,vmax=16000)
 
         rotation_angle=suit_map.meta["CROTA2"]
 
@@ -154,23 +152,28 @@ for fltr in Filters:
         test_box=suit_map.submap(coords)
         print('QS val: ', np.mean(er_box1.data))
         print('File',suit_map.meta['DATE-OBS'])
-        Thresh_val= np.mean(er_box1.data)*3
+        Thresh_val= np.mean(er_box1.data)*2
         if fltr== 'NB08':
-            Thresh_val= np.mean(er_box1.data)*1.5
+            Thresh_val= np.mean(er_box1.data)*1.25
 
         Thresh_alned_data=np.where(alned_data>Thresh_val,alned_data,0)
         alignedMap=sunpy.map.Map(Thresh_alned_data,img_head)
+        '''
+        suit_map.plot(axes=ax, vmin=1000,vmax=16000)
+        fl_nm=jpg_fold+f'/{fltr}'+'/'+os.path.basename(files[i])[:-4]+'jpg'
+        plt.savefig(fl_nm,dpi=300)
+        plt.close()
 
-        #fl_nm=jpg_fold+f'/{fltr}'+'/'+os.path.basename(files[i])[:-4]+'jpg'
-
+        '''
         fl_nm='Threshold_box/'+fltr+'/'+os.path.basename(files[i])[:-4]+'jpg'
         alignedMap.plot(cmap='gray', vmin=Thresh_val-1, vmax=Tmax)
         plot_str=str(alignedMap.date)+' - '+str(suitMap.date)
         ax.text(50,50, plot_str, color='white', fontsize=10)
         plt.draw()
-
         plt.savefig(fl_nm,dpi=300)
         plt.close()
+        
+        
 
         plot_data.append(np.count_nonzero(Thresh_alned_data))
         tot_count.append(np.sum(Thresh_alned_data))
@@ -197,10 +200,10 @@ for fltr in Filters:
     date_stamp=dates[0].strftime('%Y-%m-%d')
     plt.title(f'AR and QS Box Light curve - {fltr} ({date_stamp})')
     #markers, caps, bars=ax.errorbar(dates, test_point,yerr=ar_er, marker='o',markersize=0.5,label='AR box Intensity')
-    ax.plot(dates, test_point, marker='o',markersize=0.5,label='AR box Intensity')
+    ax.plot(dates, test_point,marker='o',markersize=0.5,label='AR box Intensity')
     markers1, caps1, bars1=ax1.errorbar(dates, qs1,yerr=qs1_er,fmt='r-', marker='o',markersize=0.5,label='QS1 box Intensity')
-    markers2, caps2, bars2=ax1.errorbar(dates, qs2,yerr=qs2_er,fmt='r-', marker='o',markersize=0.5,label='QS2 box Intensity')
-    markers3, caps3, bars3=ax1.errorbar(dates, qs3,yerr=qs3_er,fmt='r-', marker='o',markersize=0.5,label='QS3 box Intensity')
+    markers2, caps2, bars2=ax1.errorbar(dates, qs2,yerr=qs2_er,fmt='c-', marker='o',markersize=0.5,label='QS2 box Intensity')
+    markers3, caps3, bars3=ax1.errorbar(dates, qs3,yerr=qs3_er,fmt='m-', marker='o',markersize=0.5,label='QS3 box Intensity')
     #[bar.set_alpha(0.3) for bar in bars]
     [bar.set_alpha(0.3) for bar in bars1]
     [bar.set_alpha(0.3) for bar in bars2]
@@ -219,8 +222,8 @@ for fltr in Filters:
     plt.figure(figsize=(10, 5))
     ax=plt.subplot(111)
     ax1=ax.twinx()
-    #markers, caps, bars=ax.errorbar(dates, test_point,yerr=ar_er, marker='o',markersize=0.5,label='AR box Intensity')
     ax.plot(dates, test_point, marker='o',markersize=0.5,label='AR box Intensity')
+    #markers, caps, bars=ax.errorbar(dates, test_point,yerr=ar_er, marker='o',markersize=0.5,label='AR box Intensity')
     markers1, caps1, bars1=ax1.errorbar(dates, qs1,yerr=qs1_er,fmt='r-', marker='o',markersize=0.5,label='QS1 box Intensity')
     #[bar.set_alpha(0.3) for bar in bars]
     [bar.set_alpha(0.3) for bar in bars1]

@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 import matplotlib
 from pylab import *
 from astropy.io import fits
-import scipy.misc
 import math as mt
 from datetime import datetime, timedelta
 import os
@@ -75,10 +74,10 @@ sl_Em_er=[float(eme) for eme in Solexs[4]]
 sltime=np.array([float(tp) for tp in Solexs[0]])
 
 #sl_time=[datetime.strptime(str(ts)[:19], "%Y-%m-%dT%H:%M:%S") for ts in sltime]
-base_time = datetime(2024, 10, 9, 0, 0, 0)  # Jun 1, 2025 07:00:00 UTC
+base_time = datetime(2024, 10, 9, 1, 0, 0)  # Jun 1, 2025 07:00:00 UTC
 time_seconds = sltime-sltime[0]  # Convert string times to float seconds
 # Convert seconds to datetime
-time_array2 = [base_time + timedelta(seconds=int(t)*60) for t in time_seconds]
+time_array2 = [base_time + timedelta(seconds=int(t)) for t in time_seconds]
 
 fig,axs=plt.subplots(1,1, figsize=(10,5))
 axs1=axs.twinx()

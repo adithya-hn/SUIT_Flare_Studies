@@ -41,17 +41,17 @@ log_.setLevel('WARNING')
 #-----------------Intial paths and params--------------------------
 
 Filters=['171','1600']
-suit_raw_files= '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case2_June02/data/raw/'
-aia_imgs_pth='/media/adithya/Adi_disk4/SUIT_flare_work/case2_Jun02/data/aia/cut_outs/'
-hmi_imgs_pth='/media/adithya/Adi_disk4/SUIT_flare_work/case2_Jun02/data/hmi/HMI_cutouts/'
+suit_raw_files= '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case5_July10/data/raw/'
+aia_imgs_pth='/media/adithya/Adi_disk4/SUIT_flare_work/case5_Jul10/data/aia/cut_outs/'
+hmi_imgs_pth='/media/adithya/Adi_disk4/SUIT_flare_work/case5_Jul10/data/hmi/HMI_cutouts/'
 suit_filters=['NB03','NB08','NB04']
-ref_1600='/media/adithya/Adi_disk4/SUIT_flare_work/case2_Jun02/data/aia/cut_outs/1600_cutouts/aia.lev1_uv_24s.2024-06-02T022952Z.1600.image_lev1.fits'
-tx1,ty1=-395,-385
-tx2,ty2=-160,-225
+ref_1600='/media/adithya/Adi_disk4/SUIT_flare_work/case5_jul10/data/aia/cut_outs/1600_cutouts/aia.lev1_uv_24s.2024-07-10T132952Z.1600.image_lev1.fits'
+tx1,ty1=-330,-290
+tx2,ty2=-71,-130
 save_aligned='yes'
 save_pngs='no'
-save_aligned_pth='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case2_June02/data/1600_aligned/'
-alin_fltr='NB03' #Filter to align other SUIT filters to
+save_aligned_pth='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case5_July10/data/1600_aligned/'
+alin_fltr='NB04' #Filter to align other SUIT filters to
 # Threshold levels
 
 th_lvs2=[1800,3000,3250]  # Ca II H
@@ -184,7 +184,7 @@ for fltr2 in Filters:
     
     for i in range(len(ca_aln_maps)):
         alnMap=sunpy.map.Map(ca_aln_maps[i].data,ca_aln_maps[i].meta)
-        alnMap.meta['CRPIX1']=mg_aln_maps[0].meta['CRPIX1']
+        alnMap.meta['CRPIX1']=mg_aln_maps[0].meta['CRPIX1'] #Important to update all to same reference
         alnMap.meta['CRPIX2']=mg_aln_maps[0].meta['CRPIX2']
         alnMap.meta['CRVAL1']=mg_aln_maps[0].meta['CRVAL1']
         alnMap.meta['CRVAL2']=mg_aln_maps[0].meta['CRVAL2']

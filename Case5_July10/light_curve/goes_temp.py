@@ -14,11 +14,11 @@ set_pub_style()
 
 
 # 1. Define the time range
-start_time = '2024-11-13 00:00'
-end_time = '2024-11-13 00:30'
+start_time = '2024-06-02 06:30'
+end_time = '2024-06-02 09:30'
 
-ost="2024-11-13 00:00"
-est="2024-11-13 00:20"
+ost="2024-06-02 08:10"
+est="2024-06-02 08:50"
 
 # 2. Search GOES data
 #result = Fido.search(a.Time(start_time, end_time), a.Instrument('goes'))
@@ -54,8 +54,8 @@ for i in range(len(axs)):  # all but bottom panel
     axs[i].grid(True, which='major', linestyle='--', alpha=0.6)
 
 goes_flare.plot(axes=ax1)
-goes_temp_em.plot(columns=["temperature"],color='tab:green' ,axes=ax2)
-goes_temp_em.plot(columns=["emission_measure"], axes=ax3)
+goes_temp_em.plot(columns=["temperature"],color='tab:green' ,axes=ax2,label='Temperature')
+goes_temp_em.plot(columns=["emission_measure"], axes=ax3,label='Emission Measure')
 ax3.set_yscale("log")
 plt.savefig('GOES_temp_em.png',dpi=300)
 plt.close()
