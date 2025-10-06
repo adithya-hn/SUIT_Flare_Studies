@@ -27,9 +27,13 @@ data2=(np.loadtxt(f'csv_files/NB08_c{C_n}_lc_data.csv',delimiter=',',skiprows=1,
 #data3=(np.loadtxt(f'csv_files/NB04_c{C_n}_lc_data.csv',delimiter=',',skiprows=1,dtype='str')).transpose() 
 Solexs=(np.loadtxt(f'csv_files/AL1_SOLEXS_20241009_SDD2_L1_puc_tb_fit_results_TEMP_EM.txt',skiprows=1,dtype='str')).transpose()
 Helios=(np.load(f"csv_files/cdte_data_flare_{C_n}.npy", allow_pickle=True)).transpose()
+spikes_nb3=(np.loadtxt(f'csv_files/NB04_brightenings.csv',delimiter=',',skiprows=1,dtype='str')).transpose() 
+spikes_nb8=(np.loadtxt(f'csv_files/NB08_brightenings.csv',delimiter=',',skiprows=1,dtype='str')).transpose() 
 
-m_cls=datetime.fromisoformat('2024-06-02T04:41:00.000')
-m_cls_p=datetime.fromisoformat('2024-06-02T04:50:00.000')
+time_array5=np.array(spikes_nb3[0], dtype='datetime64')
+time_array6=np.array(spikes_nb8[0], dtype='datetime64')
+nb3_counts=np.array(spikes_nb3[1],dtype=float)
+nb8_counts=np.array(spikes_nb8[1],dtype=float)
 
 nb3_c1=73 #Data gap indicies
 nb8_c1=74
@@ -45,27 +49,11 @@ time_array2=np.array(data2[0], dtype='datetime64')
 #time_array3=np.array(data3[0], dtype='datetime64')
 date=str(time_array1[0])#[:10] #time_array1[0].strftime('%Y-%m-%d')
 
-lc1_mean = np.array(data1[1],dtype=float)/np.array(data1[5],dtype=float) # total/area
-qs1_mean = np.array(data1[3],dtype=float)/np.array(data1[6],dtype=float)
+lc1_mean = np.array(data1[1],dtype=float)
+lc1_mean_er= np.array(data1[2],dtype=float)
 
-lc1_mean_er= np.array(data1[2],dtype=float)/np.array(data1[5],dtype=float)
-qs1_mean_er= np.array(data1[4],dtype=float)/np.array(data1[6],dtype=float)
-n_lc1_er = (lc1_mean / qs1_mean) * np.sqrt( (lc1_mean_er / lc1_mean)**2 + (qs1_mean_er / qs1_mean)**2 )
-
-lc2_mean = np.array(data2[1],dtype=float)/np.array(data2[5],dtype=float) # total/area
-qs2_mean = np.array(data2[3],dtype=float)/np.array(data2[6],dtype=float)
-
-lc2_mean_er= np.array(data2[2],dtype=float)/np.array(data2[5],dtype=float)
-qs2_mean_er= np.array(data2[4],dtype=float)/np.array(data2[6],dtype=float)
-n_lc2_er = (lc2_mean / qs2_mean) * np.sqrt( (lc2_mean_er / lc2_mean)**2 + (qs2_mean_er / qs2_mean)**2 )
-
-
-#lc3_mean = np.array(data3[1],dtype=float)/np.array(data3[5],dtype=float) # total/area
-#qs3_mean = np.array(data3[3],dtype=float)/np.array(data3[6],dtype=float)
-
-#lc3_mean_er= np.array(data3[2],dtype=float)/np.array(data3[5],dtype=float)
-#qs3_mean_er= np.array(data3[4],dtype=float)/np.array(data3[6],dtype=float)
-
+lc2_mean = np.array(data2[1],dtype=float)
+lc2_mean_er= np.array(data2[2],dtype=float)
 
 cdte=Helios[1]+Helios[2]
 cdte1_er=np.sqrt(np.array(Helios[1], dtype=np.float64))
@@ -101,9 +89,7 @@ time_array4 = [base_time + timedelta(seconds=int(t)) for t in time_seconds]
 
 '''
 
-#-------------------
-plt.plot(time_array1,qs1_mean)
-plt.show()
+
 
 #fig, axs = plt.subplots(5, 1, sharex=True, figsize=(12,10))
 fig, axs = plt.subplots(5, 1, sharex=True, figsize=(10,14),
@@ -122,19 +108,26 @@ for i in range(len(axs)):  # all but bottom panel
     axs[i].grid(True, which='major', linestyle='--', alpha=0.6)
 
 soLen=len(time_array4)
-qs1_mean_=np.mean(qs1_mean)
-qs2_mean_=np.mean(qs2_mean)
 
 #axs1_=axs[1].twinx()
-axs[0].errorbar(time_array1[:nb3_c1], (lc1_mean/qs1_mean_)[:nb3_c1],yerr=n_lc1_er[:nb3_c1],fmt='tab:blue', marker="o",capsize=2,markersize=2,linewidth=0.5, label="SUIT Mg II h"); axs[0].legend(loc='lower right')
-axs[0].errorbar(time_array1[nb3_c1:], (lc1_mean/qs1_mean_)[nb3_c1:],yerr=n_lc1_er[nb3_c1:],fmt='tab:blue', marker="o",capsize=2,markersize=2,linewidth=0.5); axs[0].legend(loc='lower right')
-axs[1].errorbar(time_array2[:nb8_c1], (lc2_mean/qs2_mean_)[:nb8_c1],yerr=n_lc2_er[:nb8_c1],fmt='black', marker="o",capsize=2,markersize=2,linewidth=0.5, label="SUIT Ca II H"); axs[1].legend(loc='lower right')
-axs[1].errorbar(time_array2[nb8_c1:nb8_c2], (lc2_mean/qs2_mean_)[nb8_c1:nb8_c2],yerr=n_lc2_er[nb8_c1:nb8_c2],fmt='black', marker="o",capsize=2,markersize=2,linewidth=0.5); axs[1].legend(loc='lower right')
-axs[1].errorbar(time_array2[nb8_c2:], (lc2_mean/qs2_mean_)[nb8_c2:],yerr=n_lc2_er[nb8_c2:],fmt='black', marker="o",capsize=2,markersize=2,linewidth=0.5); axs[1].legend(loc='lower right')
+axs[0].errorbar(time_array1[:nb3_c1], (lc1_mean)[:nb3_c1],yerr=lc1_mean_er[:nb3_c1],fmt='tab:blue', marker="o",capsize=2,markersize=2,linewidth=0.5, label="SUIT Mg II h"); axs[0].legend(loc='lower right')
+axs[0].errorbar(time_array1[nb3_c1:], (lc1_mean)[nb3_c1:],yerr=lc1_mean_er[nb3_c1:],fmt='tab:blue', marker="o",capsize=2,markersize=2,linewidth=0.5); axs[0].legend(loc='lower right')
+axs[1].errorbar(time_array2[:nb8_c1], (lc2_mean)[:nb8_c1],yerr=lc2_mean_er[:nb8_c1],fmt='black', marker="o",capsize=2,markersize=2,linewidth=0.5, label="SUIT Ca II H"); axs[1].legend(loc='lower right')
+axs[1].errorbar(time_array2[nb8_c1:nb8_c2], (lc2_mean)[nb8_c1:nb8_c2],yerr=lc2_mean_er[nb8_c1:nb8_c2],fmt='black', marker="o",capsize=2,markersize=2,linewidth=0.5); axs[1].legend(loc='lower right')
+axs[1].errorbar(time_array2[nb8_c2:], (lc2_mean)[nb8_c2:],yerr=lc2_mean_er[nb8_c2:],fmt='black', marker="o",capsize=2,markersize=2,linewidth=0.5); axs[1].legend(loc='lower right')
 #axs[1].errorbar(time_array3, float_array3/10e6,yerr=float_array_er3/10e6,fmt='gray', marker="o",capsize=2,markersize=2,linewidth=0.5, label="SUIT Mg II h"); axs[1].legend()
 axs[2].errorbar(helio_time_array, cdte,yerr=cdte_er,fmt='tab:red', marker="o",capsize=2,markersize=2,linewidth=0.5, label="HEL1OS (CdTe1+CdTe2)"); axs[2].legend(loc='lower right')
 axs[4].errorbar(time_array4,sl_Em,yerr=sl_Em_er,fmt='gray', marker="o",capsize=2,markersize=2,linewidth=0.5, label='SoLEXS Emission Measure'); axs[4].legend(loc='lower right')
 axs[3].errorbar(time_array4,sl_temp,yerr=sl_temp_er,fmt='g-', marker="o",capsize=2,markersize=2,linewidth=0.5, label='SoLEXS Temperature'); axs[3].legend(loc='lower right')
+
+axs1=axs[0].twinx()
+axs2=axs[1].twinx()
+axs1.plot(time_array5[:nb3_c1],nb3_counts[:nb3_c1],'y')
+axs1.plot(time_array5[nb3_c1:],nb3_counts[nb3_c1:],'y')
+
+axs2.plot(time_array6[:nb8_c1],nb8_counts[:nb8_c1],'y')
+axs2.plot(time_array6[nb8_c1:nb8_c2],nb8_counts[nb8_c1:nb8_c2],'y')
+axs2.plot(time_array6[nb8_c2:],nb8_counts[nb8_c2:],'y')
 
 
 
@@ -145,8 +138,8 @@ axs[2].set_ylabel('HEL1OS counts/min')
 axs[4].set_ylabel('EM(x$10^{43}cm^{-3}$)')
 axs[3].set_ylabel('Temperature (MK)')
 
-#axs[1].set_yscale('log')
-
+axs[0].set_yscale('log')
+axs[1].set_yscale('log')
 axs[2].set_yscale('log')
 axs[4].set_yscale('log')
 #axs1_.ticklabel_format(style='plain', axis='y', scilimits=(0,0))
@@ -168,4 +161,5 @@ for i, ax in enumerate(axs):
             fontsize=14, fontweight='bold',
             va='top', ha='left')
 plt.savefig(f'case{C_n}_lc.png',dpi=300)
-plt.show()
+plt.close()
+

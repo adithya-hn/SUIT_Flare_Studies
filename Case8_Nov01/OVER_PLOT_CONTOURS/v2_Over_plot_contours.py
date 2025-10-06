@@ -1,4 +1,6 @@
 import os
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import astropy.units as u
 import sunpy.map
@@ -35,54 +37,64 @@ import logging
 log_ = logging.getLogger('sunpy')
 log_.setLevel('WARNING')
 
-#Threshold values:
 
-nb3T=11000
-nb4T=11500
-nb8T=3900
-nb6T=86000
-nb7T=295000
-nb3Mx=14000
-nb4Mx=15000
-nb8Mx=4300
-nb6Mx=95000
-nb7Mx=310000
+#-----------------Intial paths and params--------------------------
 
-Filters=['1600','171']
+Filters=['171','1600']
+suit_raw_files= '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case8_Nov01/data/raw/'
+aia_imgs_pth='/media/adithya/Adi_disk4/SUIT_flare_work/case8_nov01/data/aia/cut_outs/'
+hmi_imgs_pth='/media/adithya/Adi_disk4/SUIT_flare_work/case8_nov01/data/hmi/HMI_cutouts/'
+suit_filters=['NB03','NB08','NB04']
+ref_1600='/media/adithya/Adi_disk4/SUIT_flare_work/case8_nov01/data/aia/cut_outs/1600_cutouts_suit/aia.lev1_uv_24s.2024-11-01T121304Z.1600.image_lev1.fits'
+tx1,ty1=-450,44
+tx2,ty2=-100,336
+save_aligned='yes'
+save_pngs='no'
+save_aligned_pth='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case8_Nov01/data/1600_aligned/'
+alin_fltr='NB04' #Filter to align other SUIT filters to
+# Threshold levels
 
-for fltr in Filters:
-    fltr2=fltr
+th_lvs2=[1800,3000,3250]  # Ca II H
+th_lvs=[2000,10000,14000] # Mg II h/k
+
+pathlib.Path(save_aligned_pth).mkdir(parents=True, exist_ok=True)
+
+
+#-------------------------------------------
+
+for fltr2 in Filters:
+    
     c1_data=[]
     c2_data=[]
     dates=[]
 
-    search_fold=f'/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case8_Nov01/data/onset_raw/' #Custom Folder
-    ref_baseMap=sunpy.map.Map('/media/adithya/Adi_disk4/SUIT_flare_work/case8_nov01/data/aia/cut_outs/1600_cutouts/aia.lev1_uv_24s.2024-11-01T133016Z.1600.image_lev1.fits')
+    search_fold=suit_raw_files #Custom Folder
+    product_fold=save_aligned_pth
     if fltr2=='HMI':
-        base_fold=f'/media/adithya/Adi_disk4/SUIT_flare_work/case8_nov01/data/HMI/{fltr2}_cutouts/'
-    
+        base_fold=hmi_imgs_pth
+
     else:
-        base_fold=f'/media/adithya/Adi_disk4/SUIT_flare_work/case8_nov01/data/aia/cut_outs/{fltr2}_cutouts/'
+        base_fold=aia_imgs_pth+f'{fltr2}_cutouts/'
         #base_fold=f'/media/adithya/Adi_disk4/SUIT_flare_work/case8_nov01/data/aia/cut_outs/{fltr2}_cutouts_suit/'
         #base_fold ='/media/adithya/Adi_disk4/SUIT_flare_work/case8_nov01/data/aia/aia_fd_data/'    
     
-    print(f'Searching for {fltr} images in {search_fold} folder')
+    print(f'Searching for {fltr2} images in {search_fold} folder')
     
     files2 = glob.glob(search_fold + '*3'+'NB08.fits')
     files2=sorted(files2, key=lambda file_name: datetime.datetime.strptime(os.path.basename(file_name).split('_')[5], "%Y-%m-%dT%H.%M.%S.%f"))
-    files = glob.glob(search_fold + '*3'+'NB04'+'.fits')
+    files = glob.glob(search_fold + '*3'+alin_fltr+'.fits')
     files =sorted(files, key=lambda file_name: datetime.datetime.strptime(os.path.basename(file_name).split('_')[5], "%Y-%m-%dT%H.%M.%S.%f"))
-
-    #b_files=glob.glob(base_fold + '*.fits')
+  
     b_files=glob.glob(base_fold + '*.fits')
-    #b_files=sorted(b_files, key=lambda file_name: datetime.datetime.strptime(os.path.basename(file_name).split('_')[5], "%Y-%m-%dT%H.%M.%S.%f"))
 
     print('Total SUIT NB08 files:',len(files2))
-    print('Total SUIT NB04 files:',len(files))
+    print(f'Total SUIT {alin_fltr} files:',len(files))
     print('Total AIA files:',len(b_files))
 
     ca_map_time=[]
     base_time_array=[]
+    mg_results=[]
+    ca_results=[]
     for f in range(len(b_files)):##    @
         if fltr2=='HMI':
             #hmi.m_45s.20240602_023000_TAI.2.magnetogram
@@ -106,9 +118,9 @@ for fltr in Filters:
     ref_mg_map.meta.update(get_observer_meta(suit_pos, rsun=suit_pos.rsun))
     rf_idx=np.argmin(np.abs(base_time_array - ref_time))
 
-    #ref_baseMap=sunpy.map.Map(b_files[rf_idx]) #or specific map
-    
-    rect_template=SkyCoord(Tx=(-450,-100 )* u.arcsec, Ty=(44,336 )* u.arcsec, frame=ref_baseMap.coordinate_frame)
+    ref_baseMap=sunpy.map.Map(ref_1600)
+
+    rect_template=SkyCoord(Tx=(tx1,tx2 )* u.arcsec, Ty=(ty1,ty2 )* u.arcsec, frame=ref_baseMap.coordinate_frame)
     aia_template=ref_baseMap.submap(rect_template)
     #aia_template.peek()
 
@@ -123,7 +135,7 @@ for fltr in Filters:
         mg_map_set.append(sunpy.map.Map(files[i]))
     mg_map_sq=sunpy.map.MapSequence(mg_map_set)
 
-    print('Ref img',ref_mg_map.date,ref_mg_map.meta.get('WAVELNTH'))
+    #print('Ref img',ref_mg_map.date,ref_mg_map.meta.get('WAVELNTH'))
     ca_map_set=[]
     for i in range(len(files2)):
         if i==0:
@@ -133,12 +145,12 @@ for fltr in Filters:
         
     ca_map_sq=sunpy.map.MapSequence(ca_map_set) #contains Mg ref_map
 
-    print('Ca 1 img',ca_map_sq[0].date)
+    #print('Ca 1 img',ca_map_sq[0].date)
 
     # Get Mg ref map layer index and update plate scale
     for i in range(len(ca_map_sq)):
         ca_map_sq[i].meta.update(get_observer_meta(suit_pos, rsun=suit_pos.rsun))
-        if ca_map_sq[i].meta['FTR_NAME']=='NB04':
+        if ca_map_sq[i].meta['FTR_NAME']==alin_fltr:
             mg_ca_ref_idx=i
     
     
@@ -146,8 +158,10 @@ for fltr in Filters:
         maps.meta.update(get_observer_meta(suit_pos, rsun=suit_pos.rsun))
 
     # Co-align maps
+    print('Aligning images...')
     mg_aln_maps=mc_coalign(mg_map_sq,layer_index=0,clip=False)
     ca_aln_maps=mc_coalign(ca_map_sq,layer_index=mg_ca_ref_idx,clip=False) #includes referce mg map
+    print('Done')
 
     Map_sq=[]
     caMap_sq=[]
@@ -157,26 +171,34 @@ for fltr in Filters:
         alnMap.meta['CRPIX2']=mg_aln_maps[0].meta['CRPIX2']
         alnMap.meta['CRVAL1']=mg_aln_maps[0].meta['CRVAL1']
         alnMap.meta['CRVAL2']=mg_aln_maps[0].meta['CRVAL2']
-        alnMap.plot()
+        
         Map_sq.append(alnMap)
         fname=str(maps.meta.get('F_NAME'))[:-5]+'.png'
         #print(fname)
-        plt.savefig(fname)
-        plt.close()
+        if save_aligned=='yes':
+            alnMap.save(save_aligned_pth+maps.meta.get('F_NAME'),overwrite=True)
+        if save_pngs =='yes':
+            alnMap.plot()
+            plt.savefig(fname)
+            plt.close()
     
     for i in range(len(ca_aln_maps)):
         alnMap=sunpy.map.Map(ca_aln_maps[i].data,ca_aln_maps[i].meta)
-        alnMap.meta['CRPIX1']=mg_aln_maps[0].meta['CRPIX1']
+        alnMap.meta['CRPIX1']=mg_aln_maps[0].meta['CRPIX1'] #Important to update all to same reference
         alnMap.meta['CRPIX2']=mg_aln_maps[0].meta['CRPIX2']
         alnMap.meta['CRVAL1']=mg_aln_maps[0].meta['CRVAL1']
         alnMap.meta['CRVAL2']=mg_aln_maps[0].meta['CRVAL2']
-        alnMap.plot()
+        
         if i != mg_ca_ref_idx:
             caMap_sq.append(alnMap)
-        fname=str(maps.meta.get('F_NAME'))[:-5]+'.png'
+        fname=str(alnMap.meta.get('F_NAME'))[:-5]+'.png'
         #print(fname)
-        plt.savefig(fname)
-        plt.close()
+        if save_aligned=='yes':
+            alnMap.save(save_aligned_pth+alnMap.meta.get('F_NAME'),overwrite=True)
+        if save_pngs =='yes':
+            alnMap.plot(vmin=3500,vmax=7000)
+            plt.savefig(fname)
+            plt.close()
 
     for maps in caMap_sq:
         ca_map_time.append(maps.date)
@@ -192,8 +214,7 @@ for fltr in Filters:
     #pathlib.Path(algn_dir).mkdir(parents=True, exist_ok=True)
     pathlib.Path(jpg_fold).mkdir(parents=True, exist_ok=True)
     pathlib.Path(jpg_fold+f'/{fltr2}').mkdir(parents=True, exist_ok=True)
-    ca_results=[]
-    mg_results=[]
+
     for i in tqdm (range(len(files))):
         #suitMap=sunpy.map.Map(files[i]) #mg IIk  image
         suitMap=Map_sq[i]
@@ -203,14 +224,6 @@ for fltr in Filters:
 
         CaII_Map=caMap_sq[idx2] #aligned Ca map   
         BaseMap=sunpy.map.Map(b_files[idx])
-        if fltr2 == 'HMI':
-            smoothed_data=gaussian_filter(BaseMap.data, sigma=2)
-            sign_map = np.sign(smoothed_data)
-            # Calculate where the sign changes between neighboring pixels
-            pil_mask = np.zeros_like(BaseMap.data, dtype=bool)
-            pil_mask[:-1, :] |= (sign_map[:-1, :] * sign_map[1:, :] < 0)  # vertical edges
-            pil_mask[:, :-1] |= (sign_map[:, :-1] * sign_map[:, 1:] < 0)  # horizontal edges
-            pil_mask=np.where(abs(BaseMap.data)>40,pil_mask,0)
    
         #-- Derotate aia maps --
         with propagate_with_solar_surface():
@@ -226,23 +239,18 @@ for fltr in Filters:
 
 
         #th_lvs2=[2000,3400,3800]
-        th_lvs2=[1500,3300,3800]
-        th_lvs=[3500,10000,12500]
         #th_lvs=[3000,8000]
 
         fl_nm=jpg_fold+f'/{fltr2}'+'/'+os.path.basename(files[i])[:-4]+'jpg'
         fig=plt.figure(figsize=(10,10))
         ax = fig.add_subplot(111, projection=Base_img)
         Base_img.plot(cmap='gray',autoalign=True,title=str(BaseMap.date))
-        if fltr2 == 'HMI':
-            plt.contour(pil_mask, colors='red', linewidths=0.8)
-        
        
         
         norm_mg_Map.draw_contours(axes=ax, levels=th_lvs,lws=0.5,colors=['blue','pink','green'])
         norm_ca_Map.draw_contours(axes=ax, levels=th_lvs2,lws=0.5,colors=['red','skyblue','yellow'],alpha=0.7)
 
-        plot_str='Mg II h: '+str(suitMap.date) +'\n'+ 'Ca II h: '+str(CaII_Map.date) 
+        plot_str='Mg II k: '+str(suitMap.date) +'\n'+ 'Ca II h: '+str(CaII_Map.date) 
         ax.text(50,50, plot_str, color='white', fontsize=10)
         plt.draw()
         #plt.colorbar()

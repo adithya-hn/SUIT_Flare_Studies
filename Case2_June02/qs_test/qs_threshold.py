@@ -32,6 +32,7 @@ for fltr in Filters:
     qs=[]
     dates=[]
     test_point=[]
+    qsstd=[]
     
 
     search_fold=f'/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case2_June02/data/processed/aligned_fits/{fltr}/' #Custom Folder
@@ -84,7 +85,7 @@ for fltr in Filters:
 
         fig = plt.figure(figsize=(6, 5))
         ax = fig.add_subplot(projection=suit_map)
-        suit_map.plot(axes=ax, vmin=1000,vmax=16000)
+        #suit_map.plot(axes=ax, vmin=1000,vmax=16000)
 
         rotation_angle=suit_map.meta["CROTA2"]
 
@@ -111,16 +112,16 @@ for fltr in Filters:
         test_box=suit_map.submap(coords)
         print('QS val: ', np.mean(er_box.data))
         print('File',suit_map.meta['DATE-OBS'])
-        Thresh_val= np.mean(er_box.data)*3
+        Thresh_val= 3700*4 #np.mean(er_box.data)*3
         if fltr== 'NB08':
             Thresh_val= np.mean(er_box.data)*1.5
 
         Thresh_alned_data=np.where(alned_data>Thresh_val,alned_data,0)
         alignedMap=sunpy.map.Map(Thresh_alned_data,img_head)
 
-        fl_nm=jpg_fold+f'/{fltr}'+'/'+os.path.basename(files[i])[:-4]+'jpg'
+        fl_nm=jpg_fold+f'/{fltr}'+'/Th'+os.path.basename(files[i])[:-4]+'jpg'
         
-        #alignedMap.plot(cmap='gray', vmin=Thresh_val-1, vmax=Tmax)
+        alignedMap.plot(cmap='gray', vmin=Thresh_val-1, vmax=Tmax)
         plot_data.append(np.count_nonzero(Thresh_alned_data))
         tot_count.append(np.sum(Thresh_alned_data))
         #plot_str=str(alignedMap.date)+' - '+str(suitMap.date)
@@ -131,11 +132,12 @@ for fltr in Filters:
         qs.append(np.mean(er_box.data))
         dates.append(suitMap.date.datetime)
         test_point.append(np.mean(test_box.data)) #test_box.meta.get("CMD_EXPT") test_box.meta.get("SHTR_STR"))#
+        qsstd.append(np.std(er_box.data))
 
     dates=np.array(dates)
     qs=np.array(qs)
     test_point=np.array(test_point)
-    np.savetxt(f'{fltr}_qs1_count.csv',np.c_[dates,qs,test_point],comments='',header='Time,QS_mean,AR_mean',delimiter=',',fmt='%s')
+    np.savetxt(f'{fltr}_qs1_count.csv',np.c_[dates,qs,test_point,qsstd],comments='',header='Time,QS_mean,AR_mean,qs_std',delimiter=',',fmt='%s')
     plt.figure(figsize=(10, 5))
     ax=plt.subplot(111)
     ax1=ax.twinx()
@@ -143,7 +145,9 @@ for fltr in Filters:
     date_stamp=dates[0].strftime('%Y-%m-%d')
     plt.title(f'AR and QS Box Light curve - {fltr} ({date_stamp})')
     ax.plot(dates, test_point, marker='o',markersize=0.5,label='AR box Intensity')
-    ax1.plot(dates, qs,'r', marker='o',markersize=0.5,label='QS1 box Intensity')
+    #ax1.errorbar(dates, qs,'r',yerr=qsstd, marker='o',markersize=0.5,label='QS1 box Intensity')
+    markers1, caps1, bars1=ax1.errorbar(dates, qs,yerr=qsstd,fmt='r-', marker='o',markersize=0.5,label='QS1 box Intensity')
+    [bar.set_alpha(0.3) for bar in bars1]
     plt.gcf().autofmt_xdate()
     plt.xlabel("Time")
     ax1.set_ylabel("QS Intensity")

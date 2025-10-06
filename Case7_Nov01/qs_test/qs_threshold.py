@@ -21,23 +21,23 @@ from astropy.coordinates import SkyCoord, SkyOffsetFrame
 
 #---------Input parameters-----------------
 
-ArTx= -105
-ArTy= -230 
+ArTx= -375
+ArTy= 215 
 
-arW=273
-arH=180
+arW=260
+arH=140
 
-qs1Tx=70
-qs1Ty=-75
+qs1Tx=-500
+qs1Ty=380
 
-qs2Tx=-25
-qs2Ty=-95
+qs2Tx=-480
+qs2Ty=80
 
-qs3Tx=-190
-qs3Ty=-325
+qs3Tx=-250
+qs3Ty=400
 
 Filters=['NB04','NB08']
-search_fold=f'/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case5_July10/data/1600_aligned/' #Custom Folder
+search_fold=f'/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case7_Nov01/data/1600_aligned/' #Custom Folder
 
 #------------------------------------------
 
@@ -158,7 +158,7 @@ for fltr in Filters:
 
         Thresh_alned_data=np.where(alned_data>Thresh_val,alned_data,0)
         alignedMap=sunpy.map.Map(Thresh_alned_data,img_head)
-        '''
+        
         suit_map.plot(axes=ax, vmin=1000,vmax=16000)
         fl_nm=jpg_fold+f'/{fltr}'+'/'+os.path.basename(files[i])[:-4]+'jpg'
         plt.savefig(fl_nm,dpi=300)
@@ -172,6 +172,7 @@ for fltr in Filters:
         plt.draw()
         plt.savefig(fl_nm,dpi=300)
         plt.close()
+        '''
         
 
         plot_data.append(np.count_nonzero(Thresh_alned_data))
@@ -201,8 +202,8 @@ for fltr in Filters:
     #markers, caps, bars=ax.errorbar(dates, test_point,yerr=ar_er, marker='o',markersize=0.5,label='AR box Intensity')
     ax.plot(dates, test_point,marker='o',markersize=0.5,label='AR box Intensity')
     markers1, caps1, bars1=ax1.errorbar(dates, qs1,yerr=qs1_er,fmt='r-', marker='o',markersize=0.5,label='QS1 box Intensity')
-    markers2, caps2, bars2=ax1.errorbar(dates, qs2,yerr=qs2_er,fmt='r-', marker='o',markersize=0.5,label='QS2 box Intensity')
-    markers3, caps3, bars3=ax1.errorbar(dates, qs3,yerr=qs3_er,fmt='r-', marker='o',markersize=0.5,label='QS3 box Intensity')
+    markers2, caps2, bars2=ax1.errorbar(dates, qs2,yerr=qs2_er,fmt='c-', marker='o',markersize=0.5,label='QS2 box Intensity')
+    markers3, caps3, bars3=ax1.errorbar(dates, qs3,yerr=qs3_er,fmt='m-', marker='o',markersize=0.5,label='QS3 box Intensity')
     #[bar.set_alpha(0.3) for bar in bars]
     [bar.set_alpha(0.3) for bar in bars1]
     [bar.set_alpha(0.3) for bar in bars2]

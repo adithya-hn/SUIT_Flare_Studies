@@ -30,8 +30,16 @@ start = timeit.default_timer()
 
 fdir='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case3_June02/data/1600_aligned/'
 fol_nm = os.getcwd() + '/lc_images/'
-Filters = ['NB03','NB04','NB08','NB02','NB05']
+Filters = ['NB03'] #,'NB04','NB08'
 
+cTx1=-280
+cTy1=-290
+arW=250
+arH=160
+
+
+
+'''
 cTx1=-205
 cTy1=-310
 arW=405
@@ -41,6 +49,7 @@ Tx_er1=-140
 Ty_er1=-500
 qsH=40
 qsW=40
+'''
 
 #------------------------
 
@@ -99,14 +108,16 @@ for fltr in Filters:
         width1  = arW * u.arcsec
         height1 = arH * u.arcsec
         coords = SkyCoord(lon=[-1/2, 1/2] * width1, lat=[-1/2, 1/2] * height1, frame=offset_frame1)
-
+        suit_map.draw_quadrangle(coords,axes=ax,edgecolor="red",linestyle="-",linewidth=2,label='Region of interest')
+        '''
         center_coord4 = SkyCoord(Tx_er1 * u.arcsec, Ty_er1 * u.arcsec, frame=suit_map.coordinate_frame)
         offset_frame4 = SkyOffsetFrame(origin=center_coord4, rotation=-rotation_angle*u.deg)
         width4  = qsW * u.arcsec
         height4 = qsH * u.arcsec
         er_coords=SkyCoord(lon=[-1/2, 1/2] * width4, lat=[-1/2, 1/2] * height4, frame=offset_frame4)
         suit_map.draw_quadrangle(er_coords,axes=ax,edgecolor="blue",linestyle="-",linewidth=2,label='Background')
-        suit_map.draw_quadrangle(coords,axes=ax,edgecolor="red",linestyle="-",linewidth=2,label='Region of interest')
+        '''
+        
         
         plt.colorbar()
         plt.savefig(F_name, dpi=300)
@@ -114,10 +125,9 @@ for fltr in Filters:
 
         # Plot submaps
         suit_box = suit_map.submap(coords)
-        er_box = suit_map.submap(er_coords)
-        er_area = np.prod(er_box.data.shape)
         L, H = suit_box.data.shape
-        
+        #er_box = suit_map.submap(er_coords)
+        #er_area = np.prod(er_box.data.shape)
         
 
         fig = plt.figure(figsize=(5, 5))
@@ -128,22 +138,25 @@ for fltr in Filters:
 
         # Light curve values
         exposure = Sequence[i].meta.get('CMD_EXPT')
-        fltr_count.append(np.sum(suit_box.data * 1000 / exposure))
+        img=suit_box.data * 1000 / exposure
+        IMG=np.where(img>6000,img,0)
+        fltr_count.append(np.sum(IMG))
         fltr_count_err.append(np.sqrt(np.sum(suit_box.data))*1000/exposure)
 
-        qs_box.append(np.sum(er_box.data * 1000 / exposure))
+        '''qs_box.append(np.sum(er_box.data * 1000 / exposure))
         qs_box_err.append(np.sqrt(np.sum(er_box.data))*1000/exposure)
+        er_bx_area.append(er_area)'''
 
         #fltr_count_err.append(np.sum(er_box.data * 1000 / exposure) / er_area)
         date_array.append(Sequence[i].date)
         bx_area.append(L * H)
-        er_bx_area.append(er_area)
+        
    
 
     # Save light curve
-    np.savetxt(f'csv_files/{fltr}_c3_lc_data.csv',
-               np.c_[date_array, fltr_count, fltr_count_err,qs_box,qs_box_err, bx_area,er_bx_area],
-               delimiter=',',header='Time,AR_total,AR_count_Er,QS_total,QS_count_Er,AR_area,QS_area',comments='' ,fmt='%s')
+    np.savetxt(f'csv_files/{fltr}_c3_lc.csv',
+               np.c_[date_array, fltr_count, fltr_count_err, bx_area],
+               delimiter=',',header='Time,AR_total,AR_count_Er,AR_area',comments='' ,fmt='%s')
 
 stop = timeit.default_timer()
 print('Run Time: ', (stop - start)/60, 'Mins')

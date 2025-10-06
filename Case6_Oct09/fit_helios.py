@@ -18,7 +18,7 @@ import sunkit_spex
 from sunkit_spex.legacy.fitting.fitter import Fitter
 
 
-lc_filename = '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case6_Oct09/data/helios/lightcurve_cdte1.fits' #[i for i in os.listdir() if i.endswith('.lc.gz')][0]
+lc_filename = '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case6_Oct09/data/helios/lightcurve_cdte1.fits' 
 gti_filename = '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case6_Oct09/data/helios/gticdte1.fits'
 
 # Loading light curve (LC) file
@@ -74,7 +74,7 @@ plt.show()
 
 #-------------------------
 
-pi_filename = '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case6_Oct09/data/helios/hel1os_cdte_spectra_cdte1.fits'
+pi_filename  = '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case6_Oct09/data/helios/hel1os_cdte_spectra_cdte1.fits'
 gti_filename = '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case6_Oct09/data/helios/gticdte1.fits'
 pi_hdul = fits.open(pi_filename)
 pi_hdul.info()

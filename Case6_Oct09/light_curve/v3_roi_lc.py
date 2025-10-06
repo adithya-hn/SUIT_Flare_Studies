@@ -32,11 +32,11 @@ fdir='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case6_Oct09/data/160
 fol_nm = os.getcwd() + '/lc_images/'
 Filters = ['NB03','NB04','NB08','NB02','NB05']
 
-ArTx= 60
+ArTx= 65
 ArTy= 120 
 
-arW=310
-arH=220
+arW=315
+arH=230
 
 qs1Tx=260
 qs1Ty=290

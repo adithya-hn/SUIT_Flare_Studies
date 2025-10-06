@@ -105,8 +105,8 @@ for i in range(len(axs)):  # all but bottom panel
 
 soLen=len(time_array4)
 #axs1_=axs[1].twinx()
-axs[0].errorbar(time_array1, lc1_mean/qs1_mean,yerr=n_lc1_er,fmt='tab:blue', marker="o",capsize=2,markersize=2,linewidth=0.5, label="SUIT Mg II k"); axs[0].legend()
-axs[1].errorbar(time_array2, lc2_mean/qs2_mean,yerr=n_lc2_er,fmt='black', marker="o",capsize=2,markersize=2,linewidth=0.5, label="SUIT Ca II H"); axs[1].legend()
+axs[0].errorbar(time_array1, lc1_mean,yerr=n_lc1_er,fmt='tab:blue', marker="o",capsize=2,markersize=2,linewidth=0.5, label="SUIT Mg II k"); axs[0].legend()
+axs[1].errorbar(time_array2, lc2_mean,yerr=n_lc2_er,fmt='black', marker="o",capsize=2,markersize=2,linewidth=0.5, label="SUIT Ca II H"); axs[1].legend()
 #axs[1].errorbar(time_array3, float_array3/10e6,yerr=float_array_er3/10e6,fmt='gray', marker="o",capsize=2,markersize=2,linewidth=0.5, label="SUIT Mg II h"); axs[1].legend()
 axs[2].errorbar(helio_time_array[19:], cdte,yerr=cdte_er,fmt='gray', marker="o",capsize=2,markersize=2,linewidth=0.5, label="HEL1OS (CdTe1+CdTe2)"); axs[2].legend()
 axs[3].errorbar(time_array4[4:soLen-8],sl_Em[4:soLen-8],yerr=sl_Em_er[4:soLen-8],fmt='gray', marker="o",capsize=2,markersize=2,linewidth=0.5, label='SoLEXS Emission Measure'); axs[3].legend()

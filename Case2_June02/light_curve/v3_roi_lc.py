@@ -3,7 +3,6 @@
 
 #Script ti create light curves for different filters in a specified ROI and background box
 #The ROI and background box coordinates can be modified as per requirement
-
 #Implementing ROI counter rotation to keep account for submap issues.
 
 
@@ -32,10 +31,15 @@ fdir='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case2_June02/data/pr
 fol_nm = os.getcwd() + '/lc_images/'
 Filters = ['NB03','NB04','NB08','NB02','NB05']
 
-cTx1=-255
+cTx1=-220   
+cTy1=-385
+arW=400
+arH=380
+
+'''cTx1=-255
 cTy1=-310
 arW=365
-arH=240
+arH=240'''
 
 Tx_er1=-170
 Ty_er1=-500
@@ -141,7 +145,7 @@ for fltr in Filters:
    
 
     # Save light curve
-    np.savetxt(f'csv_files/{fltr}_c2_lc_data.csv',
+    np.savetxt(f'csv_files/{fltr}_c3_lc_data.csv',
                np.c_[date_array, fltr_count, fltr_count_err,qs_box,qs_box_err, bx_area,er_bx_area],
                delimiter=',',header='Time,AR_total,AR_count_Er,QS_total,QS_count_Er,AR_area,QS_area',comments='' ,fmt='%s')
 
