@@ -11,11 +11,11 @@ sys_path.append('/home/adithya/Adithya_repos')
 import suit_difference_image
 
 flt='NB04'
-p1,p2,p3,p4=130,690,20,560
-data_folder=f'/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case6_Oct09/data/1600_aligned/*{flt}.fits'
+p1,p2,p3,p4=0,530,0,580
+data_folder=f'/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case6_Oct09/data/aligned_crop/*{flt}.fits'
 clip_bar=False  #to remove the ccd quadrant
 c1,c2=80,120
-
+thresh_sig=4
 get_histograms=False
-suit_difference_image.diff_img(data_folder,flt,p1,p2,p3,p4,c1,c2,clip_bar)
+suit_difference_image.diff_img(data_folder,flt,c1,c2,thresh_sig,clip_bar)
 

@@ -18,5 +18,6 @@ clip_bar=False
 c1=70
 c2=130
 get_histograms=False
-suit_difference_image.diff_img(data_folder,flt,p1,p2,p3,p4,c1,c2,clip_bar)
+thresh_sig=4
+suit_difference_image.diff_img(data_folder,flt,c1,c2,thresh_sig,clip_bar)
 

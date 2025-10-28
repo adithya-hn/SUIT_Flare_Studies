@@ -28,10 +28,11 @@ start = timeit.default_timer()
 
 # ----------Input Parameters------
 
-fdir='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case8_Nov01/data/1600_aligned/'
+fdir='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case8_Nov01/data/aligned_crop/'
 fol_nm = os.getcwd() + '/lc_images/'
 Filters = ['NB03','NB04','NB08','NB02','NB05']
 
+'''
 ArTx= -270
 ArTy= 210 
 
@@ -42,7 +43,7 @@ qs1Tx=-450
 qs1Ty=380
 
 qsH=40
-qsW=40
+qsW=40'''
 
 #------------------------
 

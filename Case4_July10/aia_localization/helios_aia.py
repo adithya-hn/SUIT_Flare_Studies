@@ -15,12 +15,12 @@ aia_filtered = aia_df[aia_df["exposure"] >= 0.1]
 #aia_filtered = aia_filtered.drop(columns=["exposure"])
 
 # average values in 30s bins
-aia_binned = aia_filtered.resample("60s").mean().reset_index()
-# --- Normalize by exposure (elementwise); avoid divide-by-zero
-aia_norm = aia_binned.copy()
-region_cols = [c for c in aia_binned.columns if c.startswith("region_")]
-aia_norm[region_cols] = aia_norm[region_cols].div(aia_norm["exposure"].replace(0, np.nan), axis=0)
 
+# --- Normalize by exposure (elementwise); avoid divide-by-zero
+aia_norm = aia_filtered.copy()
+region_cols = [c for c in aia_filtered.columns if c.startswith("region_")]
+aia_norm[region_cols] = aia_filtered[region_cols].div(aia_norm["exposure"].replace(0, np.nan), axis=0)
+aia_binned = aia_norm.resample("60s").mean().reset_index()
 
 #print(aia_binned)
 

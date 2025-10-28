@@ -32,10 +32,15 @@ fdir='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case4_July10/data/16
 fol_nm = os.getcwd() + '/lc_images/'
 Filters = ['NB03','NB04','NB08','NB02','NB05']
 
+# cTx1=-200
+# cTy1=-220
+# arW=250
+# arH=195
+
 cTx1=-200
-cTy1=-220
-arW=250
-arH=195
+cTy1=-240
+arW=450
+arH=430
 
 Tx_er1=-50
 Ty_er1=-60

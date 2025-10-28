@@ -15,7 +15,7 @@ import os
 
 channel= 'HMI'  # Channel name for the output file
 
-files = sorted(glob(f"/media/adithya/Adi_disk4/SUIT_flare_work/case2_Jun02/data/hmi/HMI_cutouts/*.fits")) 
+files = sorted(glob(f"/media/adithya/Adi_disk4/SUIT_flare_work/case4_jul10/data/hmi/HMI_cutouts/*.fits")) 
 
 pathlib.Path('HMI_box/er_box').mkdir(parents=True, exist_ok=True) 
 

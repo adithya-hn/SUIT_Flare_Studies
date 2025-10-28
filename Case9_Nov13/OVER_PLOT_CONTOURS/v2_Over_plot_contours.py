@@ -1,6 +1,6 @@
 import os
 import matplotlib
-matplotlib.use('Agg')
+#matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import astropy.units as u
 import sunpy.map
@@ -40,14 +40,14 @@ log_.setLevel('WARNING')
 
 #-----------------Intial paths and params--------------------------
 
-Filters=['171','1600']
+Filters=['1600']
 suit_raw_files= '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case9_Nov13/data/raw/'
 aia_imgs_pth='/media/adithya/Adi_disk4/SUIT_flare_work/case9_nov13/data/aia/cut_outs/'
 hmi_imgs_pth='/media/adithya/Adi_disk4/SUIT_flare_work/case9_nov13/data/hmi/HMI_cutouts/'
 suit_filters=['NB03','NB08','NB04']
-ref_1600='/media/adithya/Adi_disk4/SUIT_flare_work/case9_nov13/data/aia/cut_outs/1600_cutouts/aia.lev1_uv_24s.2024-11-12T221504Z.1600.image_lev1.fits'
-tx1,ty1=-200,-350
-tx2,ty2=170,-100
+ref_1600='/media/adithya/Adi_disk4/SUIT_flare_work/case9_nov13/data/aia/aia_fd_data/aia.lev1_uv_24s.2024-11-12T221504Z.1600.image_lev1.fits'
+tx1,ty1=30,-270
+tx2,ty2=160,-150
 save_aligned='yes'
 save_pngs='no'
 save_aligned_pth='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case9_Nov13/data/1600_aligned/'
@@ -118,20 +118,32 @@ for fltr2 in Filters:
     ref_mg_map.meta.update(get_observer_meta(suit_pos, rsun=suit_pos.rsun))
     rf_idx=np.argmin(np.abs(base_time_array - ref_time))
 
-    ref_baseMap=sunpy.map.Map(ref_1600)
-
+    ref_fd=sunpy.map.Map(ref_1600)
+    ref_mg_rot=ref_mg_map #.rotate(angle=ref_mg_map.meta["CROTA2"] * u.deg)
+    scale=ref_fd.scale[0].value/ref_mg_rot.scale[0].value
+    fd_new_dem=[ref_fd.data.shape[1]*scale,ref_fd.data.shape[0]*scale]*u.pixel
+    ref_aia_resmp=ref_fd.resample(fd_new_dem)
+    
+    #suit_area=SkyCoord(Tx=(235,195 )* u.arcsec, Ty=(-440,-31 )* u.arcsec, frame=ref_mg_rot.coordinate_frame)
+    blo = SkyCoord(ref_mg_rot.bottom_left_coord.Tx, ref_mg_rot.bottom_left_coord.Ty, frame=ref_aia_resmp.coordinate_frame)
+    tro = SkyCoord(ref_mg_rot.top_right_coord.Tx, ref_mg_rot.top_right_coord.Ty, frame=ref_aia_resmp.coordinate_frame)
+    ref_baseMap=ref_aia_resmp.submap(ref_mg_rot.bottom_left_coord,top_right=ref_mg_rot.top_right_coord)
+    # ref_baseMap=ref_aia_resmp.submap(ref_mg_rot.bottom_left_coord,top_right=ref_mg_rot.top_right_coord, frame=ref_aia_resmp.coordinate_frame)
+    #ref_baseMap.peek()
     rect_template=SkyCoord(Tx=(tx1,tx2 )* u.arcsec, Ty=(ty1,ty2 )* u.arcsec, frame=ref_baseMap.coordinate_frame)
-    aia_template=ref_baseMap.submap(rect_template)
-    #aia_template.peek()
-
-    ref_sq=sunpy.map.MapSequence(ref_mg_map,ref_mg_map)
-    aln_mgMap=mc_coalign(ref_sq,template=aia_template)
-    fnm_=aln_mgMap[0].meta.get('F_NAME')
+    aia_template=ref_aia_resmp.submap(rect_template)
+    
+    #plt.imshow(ref_mg_map.data); plt.show()
+    ref_sq=sunpy.map.MapSequence(ref_mg_rot,ref_mg_rot)
+    
+    aln_mgMap=mc_coalign(ref_sq,template=aia_template.rotate(angle=-ref_mg_map.meta["CROTA2"] * u.deg),clip=False)
+    #plt.imshow(ref_sq[1].data); plt.show()
+    fnm_=aln_mgMap[1].meta.get('F_NAME')
     #aln_mgMap[0].save(f'sigle_{fnm_}',overwrite=True)
     mg_map_set=[]
     for i in range(len(files)):
         if i==0:
-            mg_map_set.append(aln_mgMap[0])
+            mg_map_set.append(aln_mgMap[1])
         mg_map_set.append(sunpy.map.Map(files[i]))
     mg_map_sq=sunpy.map.MapSequence(mg_map_set)
 
@@ -139,7 +151,7 @@ for fltr2 in Filters:
     ca_map_set=[]
     for i in range(len(files2)):
         if i==0:
-            ca_map_set.append(aln_mgMap[0])
+            ca_map_set.append(aln_mgMap[1])
         ca_map=sunpy.map.Map(files2[i])
         ca_map_set.append(ca_map)
         
@@ -207,7 +219,7 @@ for fltr2 in Filters:
     #--------------------
 
     fol_nm=os.getcwd()
-    print(fol_nm)
+    #print(fol_nm)
 
     jpg_fold=fol_nm+'/'+'Contour_imgs'
 
@@ -215,7 +227,7 @@ for fltr2 in Filters:
     pathlib.Path(jpg_fold).mkdir(parents=True, exist_ok=True)
     pathlib.Path(jpg_fold+f'/{fltr2}').mkdir(parents=True, exist_ok=True)
 
-    for i in tqdm (range(len(files))):
+    for i in tqdm (range(len(files[:5]))):
         #suitMap=sunpy.map.Map(files[i]) #mg IIk  image
         suitMap=Map_sq[i]
         base_time=Time(parse_time(suitMap.date))
@@ -223,19 +235,29 @@ for fltr2 in Filters:
         idx2=np.argmin(np.abs(ca_map_time_array - base_time))
 
         CaII_Map=caMap_sq[idx2] #aligned Ca map   
-        BaseMap=sunpy.map.Map(b_files[idx])
+        BaseMap_=sunpy.map.Map(b_files[idx])
+        scale=BaseMap_.scale[0].value/suitMap.scale[0].value
+        newdim=[BaseMap_.data.shape[1]*scale,BaseMap_.data.shape[0]*scale]*u.pixel
+        #print(newdim,'||',aia_template_.data.shape)
+        BaseMap = BaseMap_.resample(newdim)
+        #print(BaseMap.scale)
+        #print(BaseMap.data.shape,BaseMap_.data.shape)
    
         #-- Derotate aia maps --
         with propagate_with_solar_surface():
-            Base_img=BaseMap.reproject_to(ref_baseMap.wcs) 
+            Base_img=BaseMap.reproject_to(ref_baseMap.wcs,parallel=False, dask_method=None) 
+            aia_fnm=os.path.basename(b_files[idx])
+            Base_img.save('/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case9_Nov13/data/aia_1600_drot/'+aia_fnm,overwrite=True)
 
         #-- Make expo-normalised map--
 
         #img_head=suitMap.fits_header
         norm_data=suitMap.data*1000/int(suitMap.meta.get('CMD_EXPT'))
         CaII_data=CaII_Map.data*1000/int(CaII_Map.meta.get('CMD_EXPT'))
+        norm_data=np.where(norm_data==0,10000,norm_data)
         norm_ca_Map=sunpy.map.Map(gaussian_filter(CaII_data, sigma=1),CaII_Map.fits_header)
-        norm_mg_Map=sunpy.map.Map(gaussian_filter(norm_data, sigma=1),suitMap.fits_header)
+        norm_mg_Map=sunpy.map.Map(gaussian_filter(norm_data*-1, sigma=1),suitMap.fits_header)
+        
 
 
         #th_lvs2=[2000,3400,3800]
@@ -247,8 +269,11 @@ for fltr2 in Filters:
         Base_img.plot(cmap='gray',autoalign=True,title=str(BaseMap.date))
        
         
-        norm_mg_Map.draw_contours(axes=ax, levels=th_lvs,lws=0.5,colors=['blue','pink','green'])
-        norm_ca_Map.draw_contours(axes=ax, levels=th_lvs2,lws=0.5,colors=['red','skyblue','yellow'],alpha=0.7)
+        #norm_mg_Map.draw_contours(axes=ax, levels=th_lvs,lws=0.5,colors=['blue','pink','green'])
+        th_lvs3=[(np.max(norm_mg_Map.data[norm_mg_Map.data<-100])-2000),(np.max(norm_mg_Map.data[norm_mg_Map.data<-100])-1000),(np.max(norm_mg_Map.data[norm_mg_Map.data<-100])-100)]
+        print(th_lvs3)
+        norm_mg_Map.draw_contours(axes=ax, levels=th_lvs3,lws=0.5,colors=['blue','pink','green'])
+        #norm_ca_Map.draw_contours(axes=ax, levels=th_lvs2,lws=0.5,colors=['red','skyblue','yellow'],alpha=0.7)
 
         plot_str='Mg II k: '+str(suitMap.date) +'\n'+ 'Ca II h: '+str(CaII_Map.date) 
         ax.text(50,50, plot_str, color='white', fontsize=10)
