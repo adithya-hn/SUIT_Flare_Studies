@@ -15,13 +15,12 @@ Filters=['1600']
 suit_raw_files= '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case1_Jun01/data/raw/'
 aia_imgs_pth='/media/adithya/Adi_disk4/SUIT_flare_work/case1_Jun01/data/aia/cut_outs/'
 hmi_imgs_pth='/media/adithya/Adi_disk4/SUIT_flare_work/case1_Jun01/data/hmi/HMI_cutouts/'
-suit_filters=['NB03','NB08','NB04']
 ref_fd_1600_pth='/media/adithya/Adi_disk4/SUIT_flare_work/case1_Jun01/data/aia/aia_fd/aia.lev1_uv_24s.2024-06-01T070952Z.1600.image_lev1.fits'
 tx1,ty1=-475,-330
 tx2,ty2=-350,-230
 
 alin_fltr='NB04'
-save_aligned='yes'
+save_aligned_fits='yes'
 save_pngs='no'
 draw_contours='yes'
 fol_nm=os.getcwd() #Custom folder to save contour images

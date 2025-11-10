@@ -1,3 +1,10 @@
+
+'''
+Created on 14 oct 2025
+
+'''
+
+
 import glob
 import sunpy.map
 import astropy.units as u
@@ -6,11 +13,18 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
+import tqdm
 
+#-------------in put path------------------------
+
+files = sorted(glob.glob("/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case10_Nov13/data/1600_aligned/*.fits"))
+
+#-------------------------------------------------
 os.makedirs("aligned_crop", exist_ok=True)
 os.makedirs("aligned_crop_pngs", exist_ok=True)
-files = sorted(glob.glob("/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case10_Nov13/data/1600_aligned/*.fits"))
-x1, x2, y1, y2 = 110, 750, 110, 750
+os.makedirs("aligned_1600_pngs", exist_ok=True)
+print(f'Number of files: {len(files)}')
+
 
 trX=[]
 trY=[]
@@ -21,32 +35,43 @@ dates=[]
 for i in range(len(files)):
     img = sunpy.map.Map(files[i])
     data = img.data
-    nonzero = np.argwhere(data > 0)  # Find nonzero pixels
+    nonzero = np.argwhere(data > 100)  # Find nonzero pixels
     ymin, xmin = nonzero.min(axis=0) # Get bounding box
     ymax, xmax = nonzero.max(axis=0)
     trX.append(xmax)
-    trY.append(ymin)
+    trY.append(ymax)
     blX.append(xmin)
     blY.append(ymin)
     dates.append(img.date.datetime)
+    # plt.imshow(data,origin='lower')
+    # plt.scatter([xmin], [ymin], c='red', label='Top-right')
+    # plt.scatter([xmax], [ymax], c='blue', label='Bottom-right')
+    # plt.legend()
+    # plt.savefig(f'aligned_1600_pngs/{img.meta["F_NAME"][:-4]}.png',dpi=200)
+    # plt.close()
 
-plt.plot(dates, trX, label='Top Right X')
-plt.plot(dates, trY, label='Top Right Y')
-plt.plot(dates, blX, label='Bottom Left X')
-plt.plot(dates, blY, label='Bottom Left Y')
+fig,ax1=plt.subplots(1,1, figsize=(10,5))
+ax2=ax1.twinx()
+
+
+ax1.plot(dates, trX,color='C0', label='Top Right X')
+ax2.plot(dates, trY,color='C1',  label='Top Right Y')
+ax1.plot(dates, blX,color='C2',  label='Bottom Left X')
+ax2.plot(dates, blY,color='C3',  label='Bottom Left Y')
+
 plt.xlabel('Time')
 plt.ylabel('Pixel Coordinates')
 plt.title('Stability of Image Alignment Over Time')
-plt.legend()
+plt.figlegend(bbox_to_anchor=(0.001, 0.38, 0.4, 0.5))
 plt.xticks(rotation=45)
 plt.savefig('alignment_stability.png', dpi=200)
 plt.close()
 
-# Get bounding box
-ymin, xmin = nonzero.min(axis=0)
-ymax, xmax = nonzero.max(axis=0)
+print(f'Crop coordinates: x1 {max(blX)}, y1 {max(blY)}, x2 { min(trX)}, y2 { min(trY)}')
 
-print(f"Top-right corner:    (x={xmax}, y={ymin})")
+x1,y1,x2,y2=115,115,765,745
+
+#os._exit(0) #------------------
 
 for f in files:
     m = sunpy.map.Map(f)
@@ -54,10 +79,7 @@ for f in files:
     fig=plt.figure()
     ax=fig.add_subplot(111,projection=cropped)
     cropped.plot()
-    #plt.imshow(cropped.data,origin='lower')
     plt.savefig(f'aligned_crop_pngs/{cropped.meta["F_NAME"][:-4]}.png',dpi=200)
     plt.close()
-
-
     cropped.save(f"aligned_crop/{cropped.meta["F_NAME"]}",overwrite=True)
 

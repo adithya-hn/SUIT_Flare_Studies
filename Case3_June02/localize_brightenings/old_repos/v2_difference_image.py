@@ -18,7 +18,7 @@ from astropy.wcs import WCS
 
 
 
-flt='NB03'
+flt='NB08'
 nb3_maps=glob.glob(f'/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case3_June02/data/1600_aligned/*{flt}.fits')
 m_seq=sunpy.map.Map(nb3_maps,sequence=True)
 
@@ -63,7 +63,8 @@ for i in range(len(m_seq)-1):
     cutout=m_seq[i].data[p1:p2,p3:p4]
     diff_img=(cutout*1000/m_seq[i].meta.get('CMD_EXPT'))-(base_map.data)
     hist_data=diff_img.flatten()
-    diff_img=diff_img
+    diff_img[:,100:130]=0
+    diff_img[100:120,460:510]=0
     mean_val=np.mean(hist_data)
     sigma=np.std(hist_data)
     Thresh=mean_val+3*sigma

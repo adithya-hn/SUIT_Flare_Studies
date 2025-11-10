@@ -11,7 +11,7 @@ sys_path.append('/home/adithya/Adithya_repos')
 import suit_difference_image
 
 p1,p2,p3,p4=40,670,40,680
-flt='NB04' #NB04,NB08
+flt='NB05' #NB04,NB08
 data_folder=f'/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case4_July10/data/aligned_crop/*{flt}.fits'
 clip_bar=False
 c1=70

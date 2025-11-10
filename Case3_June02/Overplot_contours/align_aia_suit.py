@@ -23,7 +23,7 @@ tx2,ty2=-180,-230
 
 
 alin_fltr='NB04'   #Filter to align other SUIT filters 
-save_aligned_fits='no'
+save_aligned_fits='yes'
 save_pngs='no'     #aligned pngs
 draw_contours='yes'
 fol_nm=os.getcwd() #Custom folder to save contour images

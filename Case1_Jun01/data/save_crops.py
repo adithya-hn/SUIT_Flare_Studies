@@ -42,12 +42,12 @@ for i in range(len(files)):
     blX.append(xmin)
     blY.append(ymin)
     dates.append(img.date.datetime)
-    plt.imshow(data,origin='lower')
-    plt.scatter([xmin], [ymin], c='red', label='Top-right')
-    plt.scatter([xmax], [ymax], c='blue', label='Bottom-right')
-    plt.legend()
-    plt.savefig(f'aligned_1600_pngs/{img.meta["F_NAME"][:-4]}.png',dpi=200)
-    plt.close()
+    # plt.imshow(data,origin='lower')
+    # plt.scatter([xmin], [ymin], c='red', label='Top-right')
+    # plt.scatter([xmax], [ymax], c='blue', label='Bottom-right')
+    # plt.legend()
+    # plt.savefig(f'aligned_1600_pngs/{img.meta["F_NAME"][:-4]}.png',dpi=200)
+    # plt.close()
 
 fig,ax1=plt.subplots(1,1, figsize=(10,5))
 ax2=ax1.twinx()
@@ -68,9 +68,9 @@ plt.close()
 
 print(f'Crop coordinates: x1 {max(blX)}, y1 {max(blY)}, x2 { min(trX)}, y2 { min(trY)}')
 
-x1,y1,x2,y2=65,125,600,710
+x1,y1,x2,y2=100,145,670,650
 
-os._exit(0) #------------------
+#os._exit(0) #------------------
 
 for f in files:
     m = sunpy.map.Map(f)

@@ -13,6 +13,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import numpy as np
+from tqdm import tqdm
 
 #-------------in put path------------------------
 
@@ -31,7 +32,7 @@ blX=[]
 blY=[]
 dates=[]
 
-for i in range(len(files)):
+for i in tqdm (range(len(files))):
     img = sunpy.map.Map(files[i])
     data = img.data
     nonzero = np.argwhere(data > 100)  # Find nonzero pixels
@@ -68,8 +69,8 @@ plt.close()
 
 print(f'Crop coordinates: x1 {max(blX)}, y1 {max(blY)}, x2 { min(trX)}, y2 { min(trY)}')
 
-x1,y1,x2,y2=100,100,760,740
-
+x1,y1,x2,y2=100,100,690,740
+#x1 85, y1 98, x2 694, y2 749
 #os._exit(0) #------------------
 
 for f in files:

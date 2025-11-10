@@ -54,9 +54,9 @@ fig, ax = plt.subplots(figsize=(12, 6))
 ax2=ax.twinx()
 
 ax.scatter(nb3_date_array,nb3_count, label='NB3', color='blue', marker='o', s=1,linewidth=0.5)
-#ax.plot(date_array,iris_qs1, label='IRIS_qs1', color='blue', marker='o', markersize=1)
+ax.plot(date_array,iris_qs1, label='IRIS_qs1', color='blue', marker='o', markersize=1)
 
-#ax.plot(date_array,iris_qs2, label='IRIS_qs2', color='green', marker='o', markersize=1)
+ax.plot(date_array,iris_qs2, label='IRIS_qs2', color='green', marker='o', markersize=1)
 ax2.scatter(date_array,iris_count, label='IRIS', color='red', marker='o', s=1,linewidth=0.5)
 ax2.scatter(pf_iris_date,pf_iris_count, label='IRIS-preflare', color='red', marker='o', s=1,linewidth=0.5)
 #ax.set_ylabel('NB3 Counts')

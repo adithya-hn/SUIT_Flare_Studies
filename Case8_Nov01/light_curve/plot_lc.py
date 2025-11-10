@@ -23,7 +23,7 @@ set_pub_style()
 
 C_n=8 #case number
 data1=(np.loadtxt(f'csv_files/NB04_c{C_n}_lc_data.csv',delimiter=',',skiprows=1,dtype='str')).transpose() #'NB03_Light_curve_data.dat'
-data2=(np.loadtxt(f'csv_files/NB08_c{C_n}_lc_data.csv',delimiter=',',skiprows=1,dtype='str')).transpose() 
+#data2=(np.loadtxt(f'csv_files/NB08_c{C_n}_lc_data.csv',delimiter=',',skiprows=1,dtype='str')).transpose() 
 #data3=(np.loadtxt(f'csv_files/NB04_c{C_n}_lc_data.csv',delimiter=',',skiprows=1,dtype='str')).transpose() 
 Solexs=(np.loadtxt(f'csv_files/fit_results_AL1_SOLEXS_20241101_SDD2_L1_2411011100_2411011500_TEMP_EM.txt',skiprows=1,dtype='str')).transpose()
 Helios=(np.load(f"csv_files/cdte_data_flare_{C_n}.npy", allow_pickle=True)).transpose()
@@ -43,7 +43,7 @@ nb8_c2=88
 pathlib.Path("Figures").mkdir(parents=True, exist_ok=True) 
 
 time_array1=np.array(data1[0], dtype='datetime64')
-time_array2=np.array(data2[0], dtype='datetime64')
+#time_array2=np.array(data2[0], dtype='datetime64')
 #time_array3=np.array(data3[0], dtype='datetime64')
 
 time_array5=np.array(spikes_nb3[0], dtype='datetime64')
@@ -60,13 +60,13 @@ date=str(time_array1[0])#[:10] #time_array1[0].strftime('%Y-%m-%d')
 lc1_mean = np.array(data1[1],dtype=float)
 lc1_mean_er= np.array(data1[2],dtype=float)
 
-lc2_mean = np.array(data2[1],dtype=float)
-lc2_mean_er= np.array(data2[2],dtype=float)
+# lc2_mean = np.array(data2[1],dtype=float)
+# lc2_mean_er= np.array(data2[2],dtype=float)
 
 cdte=Helios[1]+Helios[2]
-cdte1_er=np.sqrt(np.array(Helios[1], dtype=np.float64))
-cdte2_er=np.sqrt(np.array(Helios[2], dtype=np.float64))
-cdte_er=cdte1_er+cdte2_er
+cdte1_er=(np.array(Helios[1], dtype=np.float64))**2
+cdte2_er=(np.array(Helios[2], dtype=np.float64))**2
+cdte_er=np.sqrt(cdte1_er+cdte2_er)
 
 datetime_objects = pd.to_datetime(Helios[0])
 helio_time_array=[datetime.strptime(str(ts)[:26], "%Y-%m-%d %H:%M:%S.%f") for ts in datetime_objects]
@@ -117,9 +117,9 @@ sole1=150
 #axs1_=axs[1].twinx()
 axs[0].errorbar(time_array1[:nb3_c1], (lc1_mean)[:nb3_c1],yerr=lc1_mean_er[:nb3_c1],fmt='tab:blue', marker="o",capsize=2,markersize=2,linewidth=0.5, label="SUIT Mg II h"); axs[0].legend(loc='lower right')
 axs[0].errorbar(time_array1[nb3_c1:], (lc1_mean)[nb3_c1:],yerr=lc1_mean_er[nb3_c1:],fmt='tab:blue', marker="o",capsize=2,markersize=2,linewidth=0.5); axs[0].legend(loc='lower right')
-axs[1].errorbar(time_array2[:nb8_c1], (lc2_mean)[:nb8_c1],yerr=lc2_mean_er[:nb8_c1],fmt='black', marker="o",capsize=2,markersize=2,linewidth=0.5, label="SUIT Ca II H"); axs[1].legend(loc='lower right')
-axs[1].errorbar(time_array2[nb8_c1:nb8_c2], (lc2_mean)[nb8_c1:nb8_c2],yerr=lc2_mean_er[nb8_c1:nb8_c2],fmt='black', marker="o",capsize=2,markersize=2,linewidth=0.5); axs[1].legend(loc='lower right')
-axs[1].errorbar(time_array2[nb8_c2:], (lc2_mean)[nb8_c2:],yerr=lc2_mean_er[nb8_c2:],fmt='black', marker="o",capsize=2,markersize=2,linewidth=0.5); axs[1].legend(loc='lower right')
+#axs[1].errorbar(time_array2[:nb8_c1], (lc2_mean)[:nb8_c1],yerr=lc2_mean_er[:nb8_c1],fmt='black', marker="o",capsize=2,markersize=2,linewidth=0.5, label="SUIT Ca II H"); axs[1].legend(loc='lower right')
+#axs[1].errorbar(time_array2[nb8_c1:nb8_c2], (lc2_mean)[nb8_c1:nb8_c2],yerr=lc2_mean_er[nb8_c1:nb8_c2],fmt='black', marker="o",capsize=2,markersize=2,linewidth=0.5); axs[1].legend(loc='lower right')
+#axs[1].errorbar(time_array2[nb8_c2:], (lc2_mean)[nb8_c2:],yerr=lc2_mean_er[nb8_c2:],fmt='black', marker="o",capsize=2,markersize=2,linewidth=0.5); axs[1].legend(loc='lower right')
 #axs[1].errorbar(time_array3, float_array3/10e6,yerr=float_array_er3/10e6,fmt='gray', marker="o",capsize=2,markersize=2,linewidth=0.5, label="SUIT Mg II h"); axs[1].legend()
 axs[2].errorbar(helio_time_array[hel1:], cdte[hel1:],yerr=cdte_er[hel1:],fmt='tab:red', marker="o",capsize=2,markersize=2,linewidth=0.5, label="HEL1OS (CdTe1+CdTe2)"); axs[2].legend(loc='lower right')
 axs[4].errorbar(time_array4[sole1:],sl_Em[sole1:],yerr=sl_Em_er[sole1:],fmt='gray', marker="o",capsize=2,markersize=2,linewidth=0.5, label='SoLEXS Emission Measure'); axs[4].legend(loc='lower right')
