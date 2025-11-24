@@ -5,7 +5,7 @@ sys_path.append('/home/adithya/Adithya_repos')
 from plots_styl import set_pub_style
 set_pub_style()
 
-df = pd.read_csv('NB04_ar_qs_th_count.csv', parse_dates=['Time'])
+df = pd.read_csv('NB05_ar_qs_th_count.csv', parse_dates=['Time'])
 drift=pd.read_csv('case10_crpix_values_2k.csv', parse_dates=['time'])
 
 # Sort and calculate time difference
@@ -27,12 +27,12 @@ for par in params:
     #ax1=ax.twinx()
     ax2=ax.twinx()
     for idx in gap_indices:
-        ax.plot(df['Time'][start:idx], df[par][start:idx], color='tab:blue',label=f'{par}')
+        ax.plot(df['Time'][start:idx], df[par][start:idx], color='tab:blue')
         #ax1.plot(df['Time'][start:idx], df['QS2mean'][start:idx], color='tab:red')
         start = idx
-    ax.plot(df['Time'][start:], df[par][start:], color='tab:blue')
+    ax.plot(df['Time'][start:], df[par][start:], color='tab:blue',label=f'{par}')
     #ax1.plot(df['Time'][start:], df['QS2mean'][start:], color='tab:red')
-    ax2.plot(drift['time'],drift['crpix1'],color='tab:green')
+    ax2.plot(drift['time'],drift['crpix1'],color='tab:green',label='2K Drift pattern')
     ax2.set_ylim(1270,1290)
     plt.xlabel('Time')
     plt.ylabel('Counts')

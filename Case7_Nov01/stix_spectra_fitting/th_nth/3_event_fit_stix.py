@@ -19,9 +19,9 @@ from datetime import datetime, timedelta
 
 #---------------Input parameters----------------
 
-spec_file="../data/stix/stx_spectrum_2410315184.fits"
-srm_file="../data/stix/stx_srm_2410315184.fits"
-Start_t="2024-11-01T01:44:30"
+spec_file="../../data/stix/stx_spectrum_2410315184.fits"
+srm_file="../../data/stix/stx_srm_2410315184.fits"
+Start_t="2024-11-01T01:44:50"
 End_t="2024-11-01T01:47:30"
 case='7_Nov01'
 event_id=3
@@ -55,29 +55,32 @@ plt.close()
 
 fitter = Fitter(stix_spec)
 
-fitter.model = "(f_vth)"
+fitter.model = "(f_vth+thick_fn)"
 fitter.loglikelihood = "cstat"
 fitter.show_params
 
+fitter.energy_fitting_range = [4,24]
 fitter.params["T1_spectrum1"] = {"Status":"free", "Value":10, "Bounds":(1, 100)}
-fitter.params["EM1_spectrum1"] = {"Status":"free", "Value":28100, "Bounds":(10, 100000)}
-fitter.energy_fitting_range = [5,20]
-fitter.params["T1_spectrum1"] = "free"
-fitter.params["EM1_spectrum1"] = "free"
-stix_spec_fit = fitter.fit(tol=tol, options={"maxiter": 5000})
+fitter.params["EM1_spectrum1"] = {"Status":"free", "Value":10, "Bounds":(1, 10000)}
+fitter.params["total_eflux1_spectrum1"] = {"Status": "free", "Value": 4, "Bounds": (1e-2, 1e1)}
+fitter.params["index1_spectrum1"] = {"Status": "free", "Value": 4, "Bounds": (1e-1, 10)}
+fitter.params["e_c1_spectrum1"] = {"Status": "free", "Value": 10, "Bounds": (1e-1, 1e2)}
 
-plt.figure()
+stix_spec_fit = fitter.fit(tol=tol) #, options={"maxiter": 5000}
+
+plt.figure(figsize=(12,8))
 axes, res_axes = fitter.plot()
-axes[0].set_xlim([9,30])
+axes[0].set_xlim([4,30])
 plt.savefig(f'{case}_stix_preflarePeak_{event_id}.png',dpi=300)
 plt.show()
 
-spec_mcmc = fitter.run_mcmc(number_of_walkers=4, steps_per_walker=1200,)
+spec_mcmc = fitter.run_mcmc(number_of_walkers=10, steps_per_walker=1200,)
 fitter.burn_mcmc = 250
 
+plt.figure(figsize=(12,8))
 axes, res_axes = fitter.plot()
 for a in axes:
-    a.set_xlim([9,20])
+    a.set_xlim([4,20])
 
 plt.savefig(f'{case}_peak_{event_id}_with_mcmc.png',dpi=300)
 plt.show()

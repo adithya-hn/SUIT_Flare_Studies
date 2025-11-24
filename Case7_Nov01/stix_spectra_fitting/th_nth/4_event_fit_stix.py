@@ -53,70 +53,32 @@ plt.xticks(rotation=45)
 plt.savefig(f"stix_event_{event_id}_{Start_t}_{End_t}.png", dpi=300)
 plt.close()
 
+
 fitter = Fitter(stix_spec)
 
-fitter.model = "(f_vth+f_vth+thick_fn)" #thick_fn f_vth
+fitter.model = "(f_vth+thick_fn)"
 fitter.loglikelihood = "cstat"
 fitter.show_params
 
-fitter.energy_fitting_range = [4,12]
-# sort model parameters
-fitter.params["T1_spectrum1"] = {"Value": 3, "Bounds": (2, 20)}
-fitter.params["EM1_spectrum1"] = {"Value": 2e1, "Bounds": (1e0, 800)}
-fitter.params["T2_spectrum1"] = {"Value": 12, "Bounds": (10, 60)}
-fitter.params["EM2_spectrum1"] = {"Value": 500, "Bounds": (400, 1200)}
-fitter.params["total_eflux1_spectrum1"] = {"Status": "fix", "Value": 1, "Bounds": (1e-2, 1e1)}
-fitter.params["index1_spectrum1"] = {"Status": "fix", "Value": 2, "Bounds": (1e-1, 10)}
-fitter.params["e_c1_spectrum1"] = {"Status": "fix", "Value": 0.1, "Bounds": (1e-1, 1e2)}
-stix_spec_fit = fitter.fit(tol=tol, options={"maxiter": 5000})
+fitter.energy_fitting_range = [4,24]
+fitter.params["T1_spectrum1"] = {"Status":"free", "Value":10, "Bounds":(1, 100)}
+fitter.params["EM1_spectrum1"] = {"Status":"free", "Value":10, "Bounds":(1, 10000)}
+fitter.params["total_eflux1_spectrum1"] = {"Status": "free", "Value": 4, "Bounds": (1e-2, 1e1)}
+fitter.params["index1_spectrum1"] = {"Status": "free", "Value": 4, "Bounds": (1e-1, 10)}
+fitter.params["e_c1_spectrum1"] = {"Status": "free", "Value": 10, "Bounds": (1e-1, 1e2)}
 
-plt.figure()
+stix_spec_fit = fitter.fit(tol=tol) #, options={"maxiter": 5000}
+
+plt.figure(figsize=(12,8))
 axes, res_axes = fitter.plot()
 axes[0].set_xlim([3,30])
-plt.show()
-
-
-fitter.energy_fitting_range = [12, 18]
-
-# sort model parameters
-fitter.params["T1_spectrum1"] = "fix"
-fitter.params["EM1_spectrum1"] = "fix"
-fitter.params["T2_spectrum1"] = "fix"
-fitter.params["EM2_spectrum1"] = "fix"
-fitter.params["total_eflux1_spectrum1"] = "free"
-fitter.params["index1_spectrum1"] = "free"
-fitter.params["e_c1_spectrum1"] = "free"
-stix_spec_fit = fitter.fit(tol=tol, options={"maxiter": 5000})
-
-plt.figure()
-axes, res_axes = fitter.plot()
-axes[0].set_xlim([10,30])
-plt.show()
-
-# define energy fitting range
-fitter.energy_fitting_range = [4, 18]
-
-# sort model parameters
-fitter.params["T1_spectrum1"] = "free"
-fitter.params["EM1_spectrum1"] = "free"
-fitter.params["T2_spectrum1"] = "free"
-fitter.params["EM2_spectrum1"] = "free"
-fitter.params["total_eflux1_spectrum1"] = "free"
-fitter.params["index1_spectrum1"] = "free"
-fitter.params["e_c1_spectrum1"] = "free"
-
-stix_spec_fit = fitter.fit(tol=tol, options={"maxiter": 5000})
-
-plt.figure()
-axes, res_axes = fitter.plot()
-axes[0].set_xlim([4,30])
 plt.savefig(f'{case}_stix_preflarePeak_{event_id}.png',dpi=300)
 plt.show()
 
-spec_mcmc = fitter.run_mcmc(number_of_walkers=14, steps_per_walker=1200,)
+spec_mcmc = fitter.run_mcmc(number_of_walkers=10, steps_per_walker=1200,)
 fitter.burn_mcmc = 250
 
-plt.figure()
+plt.figure(figsize=(12,8))
 axes, res_axes = fitter.plot()
 for a in axes:
     a.set_xlim([3,30])

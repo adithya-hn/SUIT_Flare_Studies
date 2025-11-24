@@ -173,7 +173,7 @@ for filter1_file in filter1_files:
     Norm_map.plot(axes=ax,autoalign=True,vmin=1000,vmax=16000)
     th_lv=[qs_thresh*1.5,(qs_thresh)*4]
     for pc in range(len(plg_cont)):
-        plg_hpc=ref_mg_map.pixel_to_world(plg_cont[pc][:, 1]*u.pixel, plg_cont[pc][:, 0]*u.pixel)
+        plg_hpc=Norm_map.pixel_to_world(plg_cont[pc][:, 1]*u.pixel, plg_cont[pc][:, 0]*u.pixel)
 
     Norm_map.draw_contours(axes=ax, levels=th_lv,zorder=1,colors=['yellow','red'])
     Norm_map.draw_quadrangle(qs_coords1,axes=ax,edgecolor='green',linestyle="-",linewidth=2,label='QS region 1')

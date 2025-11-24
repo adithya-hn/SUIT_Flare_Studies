@@ -8,8 +8,8 @@ sys_path.append('/home/adithya/Adithya_repos')
 from plot_goes_lightcurve import plot_goes_lightcurve
 
 # 1. Define the time range
-start_time = '2024-11-12 22:30'
-end_time = '2024-11-13 00:30'
+start_time = '2024-11-12 22:22'
+end_time = '2024-11-13 00:37'
 
 # 2. Search GOES data
 #result = Fido.search(a.Time(start_time, end_time), a.Instrument('goes'))

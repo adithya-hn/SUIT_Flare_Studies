@@ -27,10 +27,10 @@ ArTy= -235
 arW=420
 arH=240
 
-qs1Tx=-50
-qs1Ty=-370
+qs1Tx=-30
+qs1Ty=-390
 
-qs2Tx=0
+qs2Tx=5
 qs2Ty=-70
 
 qs3Tx=300
@@ -141,9 +141,9 @@ for fltr in Filters:
         qs_coords2=SkyCoord(lon=[-1/2, 1/2] * width4, lat=[-1/2, 1/2] * height4, frame=offset_frame2)
         qs_coords3=SkyCoord(lon=[-1/2, 1/2] * width4, lat=[-1/2, 1/2] * height4, frame=offset_frame3)
 
-        suit_map.draw_quadrangle(qs_coords1,axes=ax,edgecolor="blue",linestyle="-",linewidth=2,label='Background')
-        suit_map.draw_quadrangle(qs_coords2,axes=ax,edgecolor="blue",linestyle="-",linewidth=2,label='Background')
-        suit_map.draw_quadrangle(qs_coords3,axes=ax,edgecolor="blue",linestyle="-",linewidth=2,label='Background')
+        suit_map.draw_quadrangle(qs_coords1,axes=ax,edgecolor="blue",linestyle="-",linewidth=2,label='QS 1')
+        suit_map.draw_quadrangle(qs_coords2,axes=ax,edgecolor="green",linestyle="-",linewidth=2,label='QS 2')
+        suit_map.draw_quadrangle(qs_coords3,axes=ax,edgecolor="black",linestyle="-",linewidth=2,label='QS 3')
         
         
         er_box1=suit_map.submap(qs_coords1)
@@ -152,7 +152,7 @@ for fltr in Filters:
 
         test_box=suit_map.submap(coords)
         print('QS val: ', np.mean(er_box1.data))
-        print('File',suit_map.meta['DATE-OBS'])
+        #print('File',suit_map.meta['DATE-OBS'])
         Thresh_val= np.mean(er_box1.data)*2
         if fltr== 'NB08':
             Thresh_val= np.mean(er_box1.data)*1.25
@@ -162,6 +162,7 @@ for fltr in Filters:
        
         suit_map.plot(axes=ax, vmin=1000,vmax=16000)
         fl_nm=jpg_fold+f'/{fltr}'+'/'+os.path.basename(files[i])[:-4]+'jpg'
+        plt.legend(bbox_to_anchor=(1,1), loc="upper left")
         plt.savefig(fl_nm,dpi=300)
         plt.close()
 

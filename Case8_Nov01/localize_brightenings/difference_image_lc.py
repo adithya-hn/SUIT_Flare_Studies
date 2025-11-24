@@ -14,7 +14,7 @@ flt='NB04'
 data_folder=f'/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case8_Nov01/data/aligned_crop/*{flt}.fits'
 clip_bar=False  #to remove the ccd quadrant
 c1,c2=80,120
-thresh_sig=4
+thresh_sig=5
 get_histograms=False
 suit_difference_image.diff_img(data_folder,flt,c1,c2,thresh_sig,clip_bar)
 

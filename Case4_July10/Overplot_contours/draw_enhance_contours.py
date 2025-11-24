@@ -40,6 +40,10 @@ from astropy.coordinates import SkyCoord, SkyOffsetFrame
 from sunpy.visualization.animator import MapSequenceAnimator
 from sunpy.coordinates import Helioprojective, SphericalScreen, propagate_with_solar_surface
 from scipy import stats
+from skimage import filters, measure
+from skimage.measure import label, regionprops
+from skimage.morphology import disk, closing, opening,remove_small_objects
+
 
 import warnings
 import logging
@@ -78,7 +82,17 @@ def draw_suit_contours_on_sdo(suitMap,aia_map,base_map,thresh_sig,fltr,aia_dt,ba
     mad_sig=np.median(np.abs(hist_data-np.median(hist_data)))/0.6745
     v_Thresh=median_val+thresh_sig*mad_sig
     img=np.where(diff_img>v_Thresh,diff_img,0)
-    norm_mg_Map=Map(img,suitMap.fits_header)
+    binary_image = diff_img > v_Thresh# True where pixel value > threshold
+    labels = measure.label(binary_image,connectivity=2)
+    if labels.max()>1:
+        cleaned = remove_small_objects(labels, min_size=16)
+    else:
+        cleaned=labels
+    #cleaned=labels
+    mask=cleaned>0
+    th_diff_img=mask.astype(int)*diff_img
+
+    norm_mg_Map=Map(th_diff_img,suitMap.fits_header)
 
     fl_nm=jpg_fold+f'/{fltr}_{base_channel}'+'/'+os.path.basename(suitMap.meta['F_NAME'])[:-4]+'jpg'
     fig=plt.figure(figsize=(10,10))
@@ -108,7 +122,7 @@ if __name__=='__main__':
     jpg_fold=fol_nm+'/'+'Contour_imgs'
     fltr='NB04'
     thresh_sig=4
-    base_channel='171'
+    base_channel='HMI'
 
 
     save_aligned_fits='yes'
@@ -151,7 +165,7 @@ if __name__=='__main__':
 
 
 
-    for i in range(len(nb4_fls)):
+    for i in tqdm (range(len(nb4_fls))):
         suit_map=suit_sq[i]
         base_time=Time(parse_time(suit_map.date))
         idx1=np.argmin(np.abs(aia_dt_array - base_time))
@@ -170,8 +184,8 @@ if __name__=='__main__':
         aia_rebinned=get_suit_scale_rebined_map(aia_map,ref_suit_map)
         hmi_rebinned=get_suit_scale_rebined_map(hmi_map,ref_suit_map)
         with propagate_with_solar_surface():
-            aia_map_drot=(aia_rebinned.reproject_to(ref_aia_map.wcs,dask_method='none')) #,parallel=True,dask_method='memmap'
-            #hmi_map_drot=(hmi_rebinned.reproject_to(ref_hmi_map.wcs,dask_method='none')) 
+            #aia_map_drot=(aia_rebinned.reproject_to(ref_aia_map.wcs,dask_method='none')) #,parallel=True,dask_method='memmap'
+            hmi_map_drot=(hmi_rebinned.reproject_to(ref_hmi_map.wcs,dask_method='none')) 
 
         # fig=plt.figure()
         # ax=fig.add_subplot(111,projection=suit_map)
@@ -179,5 +193,5 @@ if __name__=='__main__':
         # suit_map.plot(axes=ax,alpha=0.2)
         # plt.show()
         #hmi_map_drot.peek()
-        draw_suit_contours_on_sdo(suit_map,aia_map_drot,base_map,thresh_sig,fltr,aia_dt,base_channel)
+        draw_suit_contours_on_sdo(suit_map,hmi_map_drot,base_map,thresh_sig,fltr,aia_dt,base_channel)
     

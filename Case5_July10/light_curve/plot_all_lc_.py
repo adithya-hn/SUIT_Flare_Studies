@@ -4,14 +4,14 @@ import matplotlib.dates as mdates
 
 files = {
    
-    "NB02": "csv_files/c5_NB02_lc_data.csv",
-    "NB03": "csv_files/c5_NB03_lc_data.csv",
-    "NB04": "csv_files/c5_NB04_lc_data.csv",
-    "NB05": "csv_files/c5_NB05_lc_data.csv",
-    "NB06": "csv_files/c5_NB06_lc_data.csv",
+    "NB02": "csv_files/c4_NB02_lc_data.csv",
+    "NB03": "csv_files/c4_NB03_lc_data.csv",
+    "NB04": "csv_files/c4_NB04_lc_data.csv",
+    "NB05": "csv_files/c4_NB05_lc_data.csv",
+    "NB06": "csv_files/c4_NB06_lc_data.csv",
     
-    "NB08": "csv_files/c5_NB08_lc_data.csv",
-    "HEL1OS":"csv_files/helios_CdTe_c5.csv"
+    "NB08": "csv_files/c4_NB08_lc_data.csv",
+    "HEL1OS":"csv_files/helios_CdTe_c4.csv"
 }
 #"NB07": "csv_files/c1_NB07_lc_data.csv", "NB01": "csv_files/c5_NB01_lc_data.csv",
 fig,ax1=plt.subplots(figsize=(12,5))
