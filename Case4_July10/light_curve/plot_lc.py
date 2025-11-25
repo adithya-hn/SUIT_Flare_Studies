@@ -74,7 +74,7 @@ slt=Solexs[0]
 time_array4=[datetime.strptime(str(ts)[:19], "%Y-%m-%dT%H:%M:%S") for ts in slt]
 
 
-fig, axs = plt.subplots(3, 1, sharex=True, figsize=(15,15),
+fig, axs = plt.subplots(3, 1, sharex=True, figsize=(12,18),
                          gridspec_kw={'hspace': 0})  # no vertical spacing 
 for i in range(len(axs)):  # all but bottom panel
     axs[i].ticklabel_format(style='plain', axis='y', scilimits=(0,0))
@@ -106,8 +106,8 @@ for idx in gap_indices:
     axs[0].errorbar(time_array1[start:idx+1], (lc1_tot)[start:idx+1]/10e8,yerr=lc1_mean_er[start:idx+1]/10e5,color='k', marker="o",capsize=2,markersize=2,linewidth=0.5)
     axs1.errorbar(time_array5[start:idx+1],nb3_counts[start:idx+1],yerr=nb3_counts_er[start:idx+1]*10000,color=scol[0], marker="o",capsize=2,markersize=2,linewidth=0.5)
     start = idx + 1
-axs[0].errorbar(time_array1[start:], (lc1_tot)[start:]/10e8,yerr=lc1_mean_er[start:]/10e5,color='k', marker="o",capsize=2,markersize=2,linewidth=0.5, label="SUIT Mg II h (errors are multiplid by 10-3)")
-axs1.errorbar(time_array5[start:],nb3_counts[start:],yerr=nb3_counts_er[start:]*10000,color=scol[0], marker="o",capsize=2,markersize=2,linewidth=0.5,label=r'Difference image intensity above 5 $\sigma$ (errors multiplied by $\times 10^4$)')
+axs[0].errorbar(time_array1[start:], (lc1_tot)[start:]/10e8,yerr=lc1_mean_er[start:]/10e5,color='k', marker="o",capsize=2,markersize=2,linewidth=0.5, label=r"SUIT Mg II h (errors are multiplied by $10^3$)")
+axs1.errorbar(time_array5[start:],nb3_counts[start:],yerr=nb3_counts_er[start:]*10000,color=scol[0], marker="o",capsize=2,markersize=2,linewidth=0.5,label=r'Difference image intensity (errors multiplied by $ 10^4$)')
 axs[1].errorbar(helio_time_array[hel1:hel2], cdte[hel1:hel2],yerr=cdte_er[hel1:hel2],color=scol[2], marker="o",capsize=2,markersize=2,linewidth=0.5, label="HEL1OS (CdTe1+CdTe2)"); axs[1].legend(loc='upper center')
 axs[2].errorbar(time_array4[sole1:sole2],sl_temp[sole1:sole2],yerr=sl_temp_er[sole1:sole2],color=scol[3], marker="o",capsize=2,markersize=2,linewidth=0.5, label='SoLEXS Temperature')
 #axs[3].plot(goes_dt,xrs_a,color='b',markersize=2,linewidth=1, label='GOES: 0.5–4 Å'); axs[3].legend(loc='upper center')
@@ -150,7 +150,7 @@ time_formatter = mdates.DateFormatter('%H:%M')  # Format as HH:MM
 plt.gca().xaxis.set_major_formatter(time_formatter)
 
 # Add global title
-fig.suptitle(f"Flare Light Curves ({str(date)[:10]}) ", fontsize=20, weight='bold')
+fig.suptitle(f"Flare Light Curves (SOL2024-07-10T05:59) ", fontsize=20, weight='bold')
 # Adjust layout so title doesn’t overlap
 plt.subplots_adjust(top=0.95)
 # Add panel labels (a), b), c), ...)
