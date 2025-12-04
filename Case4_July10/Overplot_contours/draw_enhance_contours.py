@@ -10,7 +10,7 @@ Purpose: Modular version of overplot contours of SUIT Mg II k  images to AIA
 
 import os
 import matplotlib
-matplotlib.use('Agg')
+#matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import astropy.units as u
 from sunpy.map import Map
@@ -43,15 +43,22 @@ from scipy import stats
 from skimage import filters, measure
 from skimage.measure import label, regionprops
 from skimage.morphology import disk, closing, opening,remove_small_objects
+import seaborn as sns
+import pickle
+from skimage.morphology import disk, closing,opening,dilation
 
+from sys import path as sys_path
+sys_path.append('/home/adithya/Adithya_repos')
+from plots_styl import set_pub_style
+set_pub_style()
 
 import warnings
 import logging
-
 warnings.simplefilter('ignore')
 log_ = logging.getLogger('sunpy')
 log_.setLevel('WARNING')
 logging.getLogger('reproject').setLevel(logging.WARNING)
+logging.getLogger("matplotlib").setLevel(logging.ERROR)
 
 #------------------------------------------------------------------------------#
 
@@ -95,15 +102,56 @@ def draw_suit_contours_on_sdo(suitMap,aia_map,base_map,thresh_sig,fltr,aia_dt,ba
     norm_mg_Map=Map(th_diff_img,suitMap.fits_header)
 
     fl_nm=jpg_fold+f'/{fltr}_{base_channel}'+'/'+os.path.basename(suitMap.meta['F_NAME'])[:-4]+'jpg'
-    fig=plt.figure(figsize=(10,10))
+    fig=plt.figure(figsize=(16,16))
+    plt.rcParams["font.size"]=50
+    plt.rcParams["axes.labelsize"]=50
+    plt.rcParams["xtick.labelsize"]=50
+    plt.rcParams["ytick.labelsize"]=50
+    plt.rcParams["legend.fontsize"]=50
+    plt.rcParams["figure.titlesize"]=50
+    plt.rcParams["axes.titlesize"]=50
+
+
+    # sns_cl = sns.diverging_palette(240, 15,s=80,l=45,center="light",as_cmap=True)
+    sns_cl = sns.color_palette("coolwarm",as_cmap=True)
+    sns_cl2=sns.color_palette('colorblind')
+    sns_cl3=sns.color_palette('bright')
     ax = fig.add_subplot(111, projection=aia_map)
-    aia_map.plot(axes=ax,cmap='gray',title=str(aia_dt))
-    norm_mg_Map.draw_contours(axes=ax, levels=v_Thresh,lws=0.5,colors=['red'],alpha=0.5)
+    #aia_map.plot(axes=ax,cmap='gray',title=False)
+    im=ax.imshow(aia_map.data,cmap=sns_cl,alpha=1,vmin=-2000,vmax=2000)
+    
     if base_channel=='HMI':
-        aia_map.draw_contours(axes=ax,levels=0,colors='green',lw=0.5,alpha=0.4)
+        # masked_data = gaussian_filter(aia_map.data.copy(), sigma=4)
+        # masked_data[np.abs(masked_data) < 50] = np.nan
+        # masked_map = Map(masked_data, hmi_map.meta)
+        # print(masked_map.unit)
+        # #masked_map.peek()
+        # masked_map.draw_contours(axes=ax,levels=0* u.G,colors='black',linewidths=1.5,alpha=0.6)
+
+        mask = np.abs(aia_map.data)>500 
+        kernel=np.array([[1,1,1,1],[1,1,1,1],[1,1,1,1],[1,1,1,1]]) #disk(3) #
+        #print(kernel)
+        mask_=dilation(mask,kernel)
+        mask_=dilation(mask_,kernel)
+        mask_=dilation(mask_,kernel)
+        mask_=dilation(mask_,kernel)
+
+        inv=np.invert(mask_)
+        data = aia_map.data.astype(float)
+        data[inv] = np.nan                 # assign NaN where mask is True
+        masked_map = Map(data, aia_map.meta)
+        masked_map.draw_contours(axes=ax,levels=0,colors='k',linewidths=1.5,alpha=0.6)
+        
+    norm_mg_Map.draw_contours(axes=ax, levels=v_Thresh,linewidths=2,colors="#106D10",alpha=1)
+    # cf = ax.contourf(norm_mg_Map.data,levels=v_Thresh,cmap="seismic",origin="lower")
+    # plt.colorbar(cf, ax=ax)
+    ax.set_xlim(400,900)
+    ax.set_ylim(500,900)
+    ax.text(0.5, 0.95,str(aia_dt)[:-4],transform=ax.transAxes,ha="center", va="center",fontsize=42)
     #suitMap.draw_contours(axes=ax, levels=31000,lws=0.5,colors=['red'],alpha=0.5)
-    #plt.colorbar()
-    plt.savefig(fl_nm,dpi=300)
+    plt.colorbar(im, ax=ax)
+
+    plt.savefig(fl_nm,dpi=200)
     plt.close()  
 
     return  
@@ -112,9 +160,7 @@ def draw_suit_contours_on_sdo(suitMap,aia_map,base_map,thresh_sig,fltr,aia_dt,ba
 
 
 if __name__=='__main__':
-
 #-----------------Intial paths and params--------------------------
-
     suit_aligned_files= '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case4_July10/data/aligned_crop/'
     aia_imgs='/media/adithya/Adi_disk4/SUIT_flare_work/case4_Jul10/data/aia/cut_outs/171_cutouts/'
     hmi_imgs='/media/adithya/Adi_disk4/SUIT_flare_work/case4_jul10/data/HMI/HMI_cutouts/'
@@ -138,12 +184,11 @@ if __name__=='__main__':
     print('No of SUIT files:',len(nb4_fls))
     print('No of AIA images: ',len(aia_fls))
     print('No of HMI images: ',len(hmi_fls))
-
-    
-    #rebin aia image
     
     suit_sq=Map(nb4_fls,sequence=True)
     ref_suit_map=Map(suit_sq[0])
+    
+    
 
     data_stack = np.stack([(suit_sq[i].data*1000/suit_sq[i].meta.get('CMD_EXPT'))for i in range(5)])
     base_img=np.median(data_stack, axis=0)
@@ -152,6 +197,7 @@ if __name__=='__main__':
 
     aia_dt=[]
     hmi_dt=[]
+    fig_pickle=[]
 
     for j in range(len(aia_fls)):
         aia_map=Map(aia_fls[j])
@@ -163,8 +209,6 @@ if __name__=='__main__':
         hmi_dt.append(hmi_map.date.datetime)
     hmi_dt_array=Time(parse_time(hmi_dt))
 
-
-
     for i in tqdm (range(len(nb4_fls))):
         suit_map=suit_sq[i]
         base_time=Time(parse_time(suit_map.date))
@@ -173,7 +217,6 @@ if __name__=='__main__':
         aia_dt=aia_map.date
         idx=np.argmin(np.abs(hmi_dt_array - base_time))
         hmi_map_=Map(hmi_fls[idx])
-        #print(hmi_map.meta['CROTA2'])
         map_rot_angl=int(hmi_map_.meta.get('CROTA2'))
         if map_rot_angl>5:
             hmi_map=hmi_map_.rotate(angle=-map_rot_angl*u.deg)
@@ -181,17 +224,28 @@ if __name__=='__main__':
         if i==0:
             ref_aia_map=aia_map#Map(aia_fls[idx1])
             ref_hmi_map=hmi_map#Map(hmi_fls[idx])
+        #ref_hmi_map.peek()
         aia_rebinned=get_suit_scale_rebined_map(aia_map,ref_suit_map)
         hmi_rebinned=get_suit_scale_rebined_map(hmi_map,ref_suit_map)
+        #hmi_rebinned.peek()
         with propagate_with_solar_surface():
             #aia_map_drot=(aia_rebinned.reproject_to(ref_aia_map.wcs,dask_method='none')) #,parallel=True,dask_method='memmap'
             hmi_map_drot=(hmi_rebinned.reproject_to(ref_hmi_map.wcs,dask_method='none')) 
-
-        # fig=plt.figure()
-        # ax=fig.add_subplot(111,projection=suit_map)
-        # hmi_map_drot.plot(axes=ax)
-        # suit_map.plot(axes=ax,alpha=0.2)
-        # plt.show()
-        #hmi_map_drot.peek()
+        #suit_map.peek()
         draw_suit_contours_on_sdo(suit_map,hmi_map_drot,base_map,thresh_sig,fltr,aia_dt,base_channel)
-    
+        #fig_pickle.append(draw_suit_contours_on_sdo(suit_map,hmi_map_drot,base_map,thresh_sig,fltr,aia_dt,base_channel))
+    #     plt.close('all')
+    # filename="enhance_figures.pkl"
+
+    # with open(filename, "wb") as f:
+    #     pickle.dump(fig_pickle, f)
+
+    # with open(filename, 'rb') as f:
+    #     loaded_figures = pickle.load(f)
+    # print("🖼️ Displaying the loaded figures...")
+    # for i, fig in enumerate(loaded_figures):
+    #     # To keep track, you can print the title or any metadata
+    #     print(f"   - Preparing to show Figure {i+1}: '{fig.axes[0].get_title()}'")
+        
+    # # Important: This will display all the loaded figures simultaneously
+    # plt.show()

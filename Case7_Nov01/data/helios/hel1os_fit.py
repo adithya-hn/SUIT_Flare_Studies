@@ -50,9 +50,9 @@ idx3 = (plot_times_UTC3>plot_range[0]) & (plot_times_UTC3<plot_range[1])
 idx4 = (plot_times_UTC4>plot_range[0]) & (plot_times_UTC4<plot_range[1])
 idx5 = (plot_times_UTC5>plot_range[0]) & (plot_times_UTC5<plot_range[1])
 plt.errorbar(x=plot_times_UTC1[idx1], y=plot_lcurve1[idx1], yerr=np.sqrt(plot_lcurve1[idx1]), fmt='.', capsize=5, c='b', label='Light curve (5- 20 keV)')
-plt.errorbar(x=plot_times_UTC2[idx2], y=plot_lcurve2[idx2], yerr=np.sqrt(plot_lcurve2[idx2]), fmt='.', capsize=5, c='g', label='Light curve (20- 30 keV)')
-plt.errorbar(x=plot_times_UTC3[idx3], y=plot_lcurve3[idx3], yerr=np.sqrt(plot_lcurve3[idx3]), fmt='.', capsize=5, c='r', label='Light curve (30- 40 keV)')
-plt.errorbar(x=plot_times_UTC4[idx4], y=plot_lcurve4[idx4], yerr=np.sqrt(plot_lcurve4[idx4]), fmt='.', capsize=5, c='c', label='Light curve (40- 60 keV)')
+#plt.errorbar(x=plot_times_UTC2[idx2], y=plot_lcurve2[idx2], yerr=np.sqrt(plot_lcurve2[idx2]), fmt='.', capsize=5, c='g', label='Light curve (20- 30 keV)')
+#plt.errorbar(x=plot_times_UTC3[idx3], y=plot_lcurve3[idx3], yerr=np.sqrt(plot_lcurve3[idx3]), fmt='.', capsize=5, c='r', label='Light curve (30- 40 keV)')
+#plt.errorbar(x=plot_times_UTC4[idx4], y=plot_lcurve4[idx4], yerr=np.sqrt(plot_lcurve4[idx4]), fmt='.', capsize=5, c='c', label='Light curve (40- 60 keV)')
 #plt.errorbar(x=plot_times_UTC5[idx5], y=plot_lcurve5[idx5], yerr=np.sqrt(plot_lcurve5[idx5]), fmt='.', capsize=5, c='m', label='Light curve (80- 90 keV)',alpha=0.5)
 if(gti_filename is not None):
     for n,i,j in zip(np.arange(len(gti_start_arr_UTC)), gti_start_arr_UTC, gti_stop_arr_UTC):
@@ -125,8 +125,8 @@ fitter.loglikelihood = "cstat"
 # fitter.loglikelihood = "loglike"
 # fitter.energy_fitting_range = [8,15]
 
-fitter.params["T1_spectrum1"] = {"Status":"free", "Value":10, "Bounds":(1, 100)}
-fitter.params["EM1_spectrum1"] = {"Status":"free", "Value":28100, "Bounds":(10, 100000)}
+fitter.params["T1_spectrum1"] = {"Status":"free", "Value":6, "Bounds":(1, 20)}
+fitter.params["EM1_spectrum1"] = {"Status":"free", "Value":0.8, "Bounds":(0.1, 100)}
 
 # fitter.params["total_eflux1_spectrum1"] = {"Status": "fix", "Value": 0.9, "Bounds": (1e-1, 1e1)}
 # fitter.params["index1_spectrum1"] = {"Status": "fix", "Value": 6, "Bounds": (3, 1e2)}
@@ -145,7 +145,7 @@ fitter.params["EM1_spectrum1"] = {"Status":"free", "Value":28100, "Bounds":(10, 
 
 # hel1_spec_fit = fitter.fit(tol=tol, options={"maxiter": 1000})
 
-fitter.energy_fitting_range = [10, 15]
+fitter.energy_fitting_range = [9, 13]
 
 # sort model parameters
 fitter.params["T1_spectrum1"] = "free"
@@ -158,7 +158,7 @@ hel1_spec_fit = fitter.fit(tol=tol, options={"maxiter": 5000})
 
 plt.figure()
 axes, res_axes = fitter.plot()
-axes[0].set_xlim([9,20])
+axes[0].set_xlim([8,15])
 # axes[0].text(0.05, 0.95, f"Red. Chi2 = {red_chi2:.2f}", transform=axes[0].transAxes, fontsize=12, verticalalignment='top')
 plt.savefig('case7_nov1_preflarePeak.png',dpi=300)
 plt.show()
@@ -168,7 +168,7 @@ fitter.burn_mcmc = 250
 
 axes, res_axes = fitter.plot()
 for a in axes:
-    a.set_xlim([9,20])
+    a.set_xlim([8,16])
 
 plt.savefig('with_mcmc.png',dpi=300)
 plt.show()

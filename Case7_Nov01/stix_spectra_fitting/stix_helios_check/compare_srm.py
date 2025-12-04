@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 file='stx_srm_2410315184.fits'
 stixr= fits.open(file) #not sure why with open() as : syntax doesn't work here?
 stixr.info()
-print(stixr[1].header)
+#print(stixr[1].header)
 file='stx_spectrum_2410315184.fits'
 stixf= fits.open(file) #not sure why with open() as : syntax doesn't work here?
 #stixf.info()
@@ -32,12 +32,12 @@ ylabels=[f"{n:.0f}-{x:.0f}" for n,x in zip(emin,emax)]
 
 fig,ax=plt.subplots(figsize=[9,5])
 
-for i,chan in enumerate(ylabels):
-    ax.plot(tresp_lo,trmatrix[:,i],label=f"{chan} keV")
-ax.legend(loc=1, prop={'size': 6})
-ax.set_title('STIX response matrix')
-ax.set_xlabel('Lower Energy Bound (keV)')
-#ax.plot(inp_enes,cdte_arf_hdul[1].data['SPECRESP'], linewidth=1)
+# for i,chan in enumerate(ylabels):
+#     ax.plot(tresp_lo,trmatrix[:,i],label=f"{chan} keV")
+# ax.legend(loc=1, prop={'size': 6})
+# ax.set_title('STIX response matrix')
+# ax.set_xlabel('Lower Energy Bound (keV)')
+ax.plot(inp_enes,cdte_arf_hdul[1].data['SPECRESP'], linewidth=1)
 plt.show()
 
 cdte_srf_hdul=fits.open('hel1os_cdte_srf_v03.fits')

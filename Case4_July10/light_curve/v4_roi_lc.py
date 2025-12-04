@@ -85,7 +85,7 @@ for fltr in Filters:
     # Save light curve
     np.savetxt(f'csv_files/c4_{fltr}_lc_data.csv',
                np.c_[date_array, fltr_count,smoothed_count,area,exposure_times,meas_exp_times],
-               delimiter=',',header='Time,Total,Area,Exposure,Meas_exposure',comments='' ,fmt='%s')
+               delimiter=',',header='Time,Total,smoothed_count,Area,Exposure,Meas_exposure',comments='' ,fmt='%s')
     
 
 

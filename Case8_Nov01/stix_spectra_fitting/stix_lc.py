@@ -20,9 +20,9 @@ from datetime import datetime , timedelta
 
 spec_file="/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case8_Nov01/data/stix/stx_spectrum_2411012243.fits"
 srm_file="/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case8_Nov01/data/stix/stx_srm_2411012243.fits"
-Start_t="2024-11-01T11:00:30"
-End_t="2024-11-01T15:00:30"
-case='7_Nov01'
+Start_t="2024-11-01T12:30:30"
+End_t="2024-11-01T14:45:30"
+case='8_Nov01'
 
 #-----------------------------------------------
 
