@@ -10,11 +10,11 @@ from sys import path as sys_path
 sys_path.append('/home/adithya/Adithya_repos')
 import suit_difference_image
 
-flt='NB04'
-data_folder=f'/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case8_Nov01/data/aligned_crop/*{flt}.fits'
+flt='NB02'
+data_folder=f'/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case8_Nov01/data/aligned_crop_/*{flt}.fits'
 clip_bar=False  #to remove the ccd quadrant
 c1,c2=80,120
-thresh_sig=5
+thresh_sig=3
 get_histograms=False
 suit_difference_image.diff_img(data_folder,flt,c1,c2,thresh_sig,clip_bar)
 

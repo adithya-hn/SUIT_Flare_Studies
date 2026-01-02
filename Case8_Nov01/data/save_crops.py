@@ -68,7 +68,7 @@ plt.close()
 
 print(f'Crop coordinates: x1 {max(blX)}, y1 {max(blY)}, x2 { min(trX)}, y2 { min(trY)}')
 
-x1,y1,x2,y2=185,110,750,670
+x1,y1,x2,y2=250,130,730,600
 
 #os._exit(0) #------------------
 

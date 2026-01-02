@@ -134,6 +134,7 @@ def draw_suit_contours_on_sdo(suitMap,aia_map,base_map,thresh_sig,fltr,aia_dt,ba
     sns_cl2=sns.color_palette('colorblind')
     sns_cl3=sns.color_palette('bright')
     ax = fig.add_subplot(111, projection=aia_map)
+    
     reg_lc=[]
     dt_lc=[]
     width  = 1 * u.arcsec

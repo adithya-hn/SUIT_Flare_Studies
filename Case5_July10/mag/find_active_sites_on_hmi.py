@@ -46,7 +46,7 @@ suit_aligned_files= '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case5
 hmi_map_raw=Map('/media/adithya/Adi_disk4/SUIT_flare_work/case5_jul10/data/HMI/HMI_cutouts/hmi.m_45s.20240710_133730_TAI.2.magnetogram.fits')
 fol_nm=os.getcwd() #Custom folder to save contour images
 jpg_fold=fol_nm+'/'+'Contour_imgs'
-fltr='NB04'
+fltr='NB02'
 nb4_fls = glob.glob(suit_aligned_files + '*3'+f'{fltr}.fits')
 print('No of SUIT files:',len(nb4_fls))
 
@@ -121,7 +121,7 @@ suit_sq=Map(nb4_fls,sequence=True)
 data_stack = np.stack([(suit_sq[i].data*1000/suit_sq[i].meta.get('CMD_EXPT'))for i in range(5)])
 base_img=np.median(data_stack, axis=0)
 base_map=Map(base_img,suit_sq[0].meta)
-thresh_sig=5
+thresh_sig=3
 if hmi_map_raw.meta['CROTA2'] >5:
     hmi_map_raw=hmi_map_raw.rotate(angle=180*u.deg)
 

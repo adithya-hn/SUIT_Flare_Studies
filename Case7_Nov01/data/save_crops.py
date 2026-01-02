@@ -68,13 +68,15 @@ plt.close()
 
 print(f'Crop coordinates: x1 {max(blX)}, y1 {max(blY)}, x2 { min(trX)}, y2 { min(trY)}')
 
-x1,y1,x2,y2=85,125,620,760
+# x1,y1,x2,y2=85,125,620,760
+x1,y1,x2,y2=100,125,620,760 #modified for cont
 
 #os._exit(0) #------------------
 
 for f in files:
     m = sunpy.map.Map(f)
     cropped = m.submap(bottom_left = [x1,y1]*u.pix,top_right = [x2,y2]*u.pix)
+    
     fig=plt.figure()
     ax=fig.add_subplot(111,projection=cropped)
     cropped.plot()

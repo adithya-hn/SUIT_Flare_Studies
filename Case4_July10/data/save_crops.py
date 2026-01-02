@@ -43,12 +43,12 @@ for i in tqdm (range(len(files))):
     blX.append(xmin)
     blY.append(ymin)
     dates.append(img.date.datetime)
-    # plt.imshow(data,origin='lower')
-    # plt.scatter([xmin], [ymin], c='red', label='Top-right')
-    # plt.scatter([xmax], [ymax], c='blue', label='Bottom-right')
-    # plt.legend()
-    # plt.savefig(f'aligned_1600_pngs/{img.meta["F_NAME"][:-4]}.png',dpi=200)
-    # plt.close()
+    plt.imshow(data,origin='lower')
+    plt.scatter([xmin], [ymin], c='red', label='Top-right')
+    plt.scatter([xmax], [ymax], c='blue', label='Bottom-right')
+    plt.legend()
+    plt.savefig(f'aligned_1600_pngs/{img.meta["F_NAME"][:-4]}.png',dpi=200)
+    plt.close()
 
 fig,ax1=plt.subplots(1,1, figsize=(10,5))
 ax2=ax1.twinx()
@@ -69,7 +69,7 @@ plt.close()
 
 print(f'Crop coordinates: x1 {max(blX)}, y1 {max(blY)}, x2 { min(trX)}, y2 { min(trY)}')
 
-x1,y1,x2,y2=100,100,690,740
+x1,y1,x2,y2=100,100,690,730
 #x1 85, y1 98, x2 694, y2 749
 #os._exit(0) #------------------
 
@@ -79,7 +79,7 @@ for f in files:
     fig=plt.figure()
     ax=fig.add_subplot(111,projection=cropped)
     cropped.plot()
-    plt.savefig(f'aligned_crop_pngs/{cropped.meta["F_NAME"][:-4]}.png',dpi=200)
+    plt.savefig(f'aligned_crop_pngs/{cropped.meta["F_NAME"][:-5]}.png',dpi=200)
     plt.close()
     cropped.save(f"aligned_crop/{cropped.meta["F_NAME"]}",overwrite=True)
 

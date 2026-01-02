@@ -118,7 +118,7 @@ for file in tqdm(suit_files):
     th_lvs2=[-100,100]*u.G
     mask = np.abs(hmi_map.data)>50
     ar_mask=np.abs(hmi_map.data)>200 
-    kernel=disk(8) #np.array([[1,1,1,1,1,1],[1,1,1,1,1,1],[1,1,1,1,1,1]])#
+    kernel=disk(10) #np.array([[1,1,1,1,1,1],[1,1,1,1,1,1],[1,1,1,1,1,1]])#
     #print(kernel)
     mask_=dilation(mask,kernel)
     #mask_=dilation(mask_,kernel)

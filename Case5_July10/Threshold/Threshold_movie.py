@@ -20,22 +20,23 @@ from PIL import Image
 import pandas as pd
 from scipy.ndimage import shift
 from scipy.ndimage import gaussian_filter
+import matplotlib.dates as mdates
 
 #Threshold values:
 
 nb3T=12000
-nb4T=12500
+nb4T=5276*2.5
 nb8T=4000
 nb3Mx=14000
 nb4Mx=15000
 nb8Mx=4300
-Filters=['NB03','NB04','NB08']
+Filters=['NB04']
 for fltr in Filters:
     plot_data=[]
     tot_count=[]
     dates=[]
 
-    search_fold=f'/Analysis/Projects_Data/Flare_Data/July10_Flare_Data2/Processed/Aligned_images/{fltr}/' #Custom Folder
+    search_fold=f'/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case5_July10/data/aligned_crop/' #Custom Folder
 
     
     print(f'Searching for {fltr} images in {search_fold} folder')
@@ -75,7 +76,7 @@ for fltr in Filters:
         suitMap=sunpy.map.Map(files[i])
         img_head=suitMap.fits_header
         suit_data=suitMap.data#gaussian_filter(suitMap.data,sigma=sigma)
-        alned_data=suit_data*1000/suitMap.meta.get('MEAS_EXP')
+        alned_data=suit_data*1000/suitMap.meta.get('CMD_EXPT')
         Thresh_alned_data=np.where(alned_data>Thresh_val,alned_data,0)
         alignedMap=sunpy.map.Map(Thresh_alned_data,img_head)
         fl_nm=jpg_fold+f'/{fltr}'+'/'+os.path.basename(files[i])[:-4]+'jpg'
@@ -84,7 +85,7 @@ for fltr in Filters:
         alignedMap.plot(cmap='gray', vmin=Thresh_val-1, vmax=Tmax)
         plot_data.append(np.count_nonzero(Thresh_alned_data))
         tot_count.append(np.sum(Thresh_alned_data))
-        dates.append(suitMap.date)
+        dates.append(suitMap.date.datetime)
         #alignedMap.draw_limb(axes=ax)
         #alignedMap.draw_grid(axes=ax)
         plot_str=str(alignedMap.date)+' - '+str(suitMap.date)
@@ -101,6 +102,13 @@ for fltr in Filters:
     plot_data=np.array(plot_data)
     tot_count=np.array(tot_count)
     np.savetxt(f'{fltr}_threshold_count.csv',np.c_[dates,plot_data,tot_count],delimiter=',',fmt='%s')
+    plt.figure(figsize=(14,8))
+    plt.plot(dates,tot_count)
+    plt.ylabel('Threshold counts')
+    time_formatter = mdates.DateFormatter('%H:%M')  # Format as HH:MM
+    plt.gca().xaxis.set_major_formatter(time_formatter)
+    plt.savefig('Mag_2.5qs_threshold_.png',dpi=300)
+    plt.close()
 
 
 

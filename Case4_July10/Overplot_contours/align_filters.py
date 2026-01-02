@@ -15,13 +15,13 @@ import align_suit_fltr_to_aia
 
 
 Filters=['6173']
-suit_filters=['NB03']
-suit_raw_files= '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case4_July10/data/raw/'
+suit_filters=['NB02','NB05','NB06','NB07']
+suit_raw_files= '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case4_July10/data/Processed/contam_corr_data/'
 #ref_fd_img_pth='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case4_July10/data/aia/hmi.ic_45s.20240710_032915_TAI.2.continuum.fits'
-ref_fd_img_pth='/media/adithya/Adi_disk4/SUIT_flare_work/case4_jul10/data/aia/aia_fd/aia.lev1_uv_24s.2024-07-10T032952Z.1600.image_lev1.fits'
+ref_fd_img_pth='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case4_July10/data/aia/hmi.ic_45s.20240710_040000_TAI.2.continuum.fits'
 #Template cutout
 tx1,ty1=-200,-260 
-tx2,ty2=-120,-130
+tx2,ty2=-60,-120
 
 shift_x=0
 shift_y=0

@@ -15,8 +15,8 @@ import align_suit_fltr_to_aia
 
 
 Filters=['6173']
-suit_filters=['NB02','NB01','NB05','NB06','NB07']
-suit_raw_files= '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case5_July10/data/raw/'
+suit_filters=['NB02','NB05','NB06','NB07']
+suit_raw_files= '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case5_July10/data/Processed/contam_corr_data/'
 ref_fd_img_pth='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case5_July10/data/aia/hmi.ic_45s.20240710_132915_TAI.2.continuum.fits'
 #Template cutout
 tx1,ty1=-100,-250

@@ -71,7 +71,7 @@ def select_roi_with_mouse(sunpy_map, cmap=None, norm=None):
 
 
 def draw_suit_contours_on_sdo(suitMap,base_map,thresh_sig,clr):
-    
+
     diff_img=(suitMap.data*1000/int(suitMap.meta.get('CMD_EXPT')))-base_map.data
     hist_data=np.array(diff_img.flatten(),dtype='int')
     median_val=np.median(hist_data)
@@ -87,12 +87,18 @@ def draw_suit_contours_on_sdo(suitMap,base_map,thresh_sig,clr):
     mask=cleaned>0
     th_diff_img=mask.astype(int)*diff_img
     norm_mg_Map=Map(th_diff_img,suitMap.fits_header)
+    heat = np.zeros(base_map.data.shape)
+    contours = measure.find_contours(mask, 0.5)
+    for c in contours:
+        c = np.round(c).astype(int)
+        heat[c[:,0], c[:,1]] += 1 
     if clr=='green':
         norm_mg_Map.draw_contours(axes=ax, levels=v_Thresh,linewidths=2,colors="#106D10",alpha=0.1)
+        #ax.contour(heat, levels=v_Thresh, cmap='rainbow', linewidths=1.2)
     if clr=='red':
         norm_mg_Map.draw_contours(axes=ax, levels=v_Thresh,linewidths=2,colors="#ED2913",alpha=0.5)
-
-    return fig
+    #plt.colorbar(hm, ax=ax, label='Contour occurrence count')
+    return fig,heat
 
 #---------------------------------------------------------------------------------------------
 
@@ -140,7 +146,9 @@ sns_cl = sns.color_palette("coolwarm",as_cmap=True)
 
 for i in range(len(suit_sq)):
     suit_map=suit_sq[i]
-    pos.append(draw_suit_contours_on_sdo(suit_map,base_map,thresh_sig,'green'))
+    pos,heat=draw_suit_contours_on_sdo(suit_map,base_map,thresh_sig,'green')
+hm = ax.imshow(heat, origin='lower', alpha=0.6, cmap='rainbow')
+
 
 coords = []
 rects = [] 

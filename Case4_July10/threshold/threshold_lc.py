@@ -30,7 +30,7 @@ nb8Mx=4300
 nb6Mx=95000
 nb7Mx=230000
 
-Filters=['NB01','NB02','NB05','NB06','NB07']
+Filters=['NB04']
 search_fold=f'/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case4_July10/data/aligned_crop/' #Custom Folder
 
 for fltr in Filters:
@@ -52,7 +52,7 @@ for fltr in Filters:
     norm_data=ref_img.data*1000/ref_img.meta.get("CMD_EXPT")
     data=(norm_data.flatten()).astype(int)
     mode_val = stats.mode(data, keepdims=True).mode[0]
-    Thresh_val=mode_val*1.1
+    Thresh_val=5202*2.5 #mode_val*1.1
     print('Frist img mode',mode_val)
     
     fol_nm=os.getcwd()
@@ -133,7 +133,7 @@ for fltr in Filters:
     ax=plt.subplot(111)
     ax1=ax.twinx()
     ax.plot(dates, tot_count, marker='o',markersize=0.5)
-    ax1.plot(dates, qs,'r', marker='o',markersize=0.5)
+    #ax1.plot(dates, qs,'r', marker='o',markersize=0.5)
     plt.gcf().autofmt_xdate()
     plt.xlabel("Time")
     ax1.set_ylabel("QS (Mode) value")

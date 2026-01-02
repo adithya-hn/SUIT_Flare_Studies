@@ -13,15 +13,15 @@ from sys import path as sys_path
 sys_path.append('/home/adithya/Adithya_repos')
 import align_suit_fltr_to_aia
 
-suit_raw_files= '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case8_Nov01/data/raw/'
+suit_raw_files= '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case8_Nov01/data/Processed/contam_corr_data/'
 
 # Filters=['6173']
 # suit_filters=['NB02','NB01','NB05','NB06','NB07']
 # ref_fd_img_pth='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case8_Nov01/data/aia/hmi.ic_45s.20241101_121415_TAI.2.continuum.fits'
 
 Filters=['1600']
-suit_filters=['NB03','NB04','NB08']
-ref_fd_img_pth='/media/adithya/Adi_disk4/SUIT_flare_work/case8_nov01/data/aia/aia_fd_data/aia.lev1_uv_24s.2024-11-01T121304Z.1600.image_lev1.fits'
+suit_filters=['NB02','NB05','NB06','NB07']
+ref_fd_img_pth='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case8_Nov01/data/aia/hmi.ic_45s.20241101_121415_TAI.2.continuum.fits'
 
 #Template cutout
 tx1,ty1=-400,130

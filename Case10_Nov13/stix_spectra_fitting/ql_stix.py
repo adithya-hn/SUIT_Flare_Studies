@@ -17,10 +17,13 @@ from astropy.io import fits
 from stixdcpy import detector_view as dv
 from stixdcpy import spectrogram  as cspec
 from stixdcpy.imgspec import ImgSpecArchive as isar
+import datetime
 #from google.colab import data_table
 #data_table.enable_dataframe_formatter()
 
-lc = LightCurves.from_sdc(start_utc='2024-11-01T15:00:00', end_utc='2024-11-01T17:15:00', ltc=True)
+lc = LightCurves.from_sdc(start_utc='2024-11-13T15:08:00', end_utc='2024-11-13T17:23:00', ltc=True)
+
+start_dt,end_dt=datetime.datetime(2024,11,13,15,8),datetime.datetime(2024,11,13,17,23)
 
 lc.peek()
 plt.title('STIX_ql_lc')
@@ -34,6 +37,7 @@ plt.plot(lc.time, lc.counts[1,:],label='10-15 keV')
 plt.plot(lc.time, lc.counts[2,:],label='15-25 keV')
 plt.plot(lc.time, lc.counts[3,:],label='25-84 keV')
 plt.ylim(1e1,1e5)
+plt.xlim(start_dt,end_dt)
 plt.yscale('log')
 plt.legend()
 plt.tight_layout()

@@ -68,7 +68,7 @@ plt.close()
 
 print(f'Crop coordinates: x1 {max(blX)}, y1 {max(blY)}, x2 { min(trX)}, y2 { min(trY)}')
 
-x1,y1,x2,y2=70,130,595,710
+x1,y1,x2,y2=100,130,595,650
 
 #os._exit(0) #------------------
 
@@ -78,7 +78,7 @@ for f in files:
     fig=plt.figure()
     ax=fig.add_subplot(111,projection=cropped)
     cropped.plot()
-    plt.savefig(f'aligned_crop_pngs/{cropped.meta["F_NAME"][:-4]}.png',dpi=200)
+    plt.savefig(f'aligned_crop_pngs/{cropped.meta["F_NAME"][:-4]}png',dpi=200)
     plt.close()
     cropped.save(f"aligned_crop/{cropped.meta["F_NAME"]}",overwrite=True)
 

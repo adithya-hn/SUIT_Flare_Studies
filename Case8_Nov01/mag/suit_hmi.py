@@ -28,8 +28,8 @@ from reproject import reproject_exact
 channel= 'HMI'  # Channel name for the output file
 fltr='NB04'
 hmi_files = sorted(glob(f"/media/adithya/Adi_disk4/SUIT_flare_work/case8_nov01/data/HMI/HMI_cutouts/*.fits")) 
-suit_files=sorted(glob(f'/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case8_Nov01/data/aligned_crop/*{fltr}.fits'))
-
+suit_files=sorted(glob(f'/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case8_Nov01/data/aligned_crop_/*{fltr}.fits'))
+start_time=datetime.datetime(2024, 7,10 ,5,44, 0)
 #--------------------------------------------------------------------------
 hmi_time=[]
 mg_map_time=[]
@@ -39,7 +39,10 @@ for f in range(len(hmi_files)):
 
 for j in range(len(suit_files)):
     mg_map_time.append(datetime.datetime.strptime(os.path.basename(suit_files[j]).split('_')[5], "%Y-%m-%dT%H.%M.%S.%f"))
-    mg_map_time_array=Time(parse_time(mg_map_time))
+    mg_map_time_array_=Time(parse_time(mg_map_time))
+
+if (mg_map_time_array_ <= peak_time) :#& (timestamp>=start_time):
+        nb4_fls.append(f)
 
 jpg_fold=os.getcwd()
 pathlib.Path('qs_mask').mkdir(parents=True, exist_ok=True) 

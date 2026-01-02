@@ -309,11 +309,11 @@ if __name__=='__main__':
     suit_raw_files= '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case4_July10/data/raw/'
     aia_imgs_pth='/media/adithya/Adi_disk4/SUIT_flare_work/case4_jul10/data/aia/cut_outs/'
     hmi_imgs_pth='/media/adithya/Adi_disk4/SUIT_flare_work/case4_jul10/data/hmi/HMI_cutouts/'
-    ref_fd_1600_pth='/media/adithya/Adi_disk4/SUIT_flare_work/case4_jul10/data/aia/aia_fd/aia.lev1_uv_24s.2024-07-10T032952Z.1600.image_lev1.fits'
+    ref_fd_1600_pth='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case4_July10/data/aia/aia.lev1_uv_24s.2024-07-10T040016Z.1600.image_lev1.fits'
     
     #Template cutout
     tx1,ty1=-200,-260 
-    tx2,ty2=-120,-130
+    tx2,ty2=-60,-120
 
     
     alin_fltr='NB04'   #Filter to align other SUIT filters 

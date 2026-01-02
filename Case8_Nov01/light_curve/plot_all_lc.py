@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
 files = {
-    "NB01": "csv_files/c8_NB01_lc_data.csv",
+    
     "NB02": "csv_files/c8_NB02_lc_data.csv",
     "NB03": "csv_files/c8_NB03_lc_data.csv",
     "NB04": "csv_files/c8_NB04_lc_data.csv",
@@ -11,7 +11,7 @@ files = {
     "NB06": "csv_files/c8_NB06_lc_data.csv",
     
     "NB08": "csv_files/c8_NB08_lc_data.csv",
-    "HEL1OS":"csv_files/helios_CdTe_c8.csv"
+ 
 }
 #"NB07": "csv_files/c1_NB07_lc_data.csv", "NB01": "csv_files/c5_NB01_lc_data.csv",
 

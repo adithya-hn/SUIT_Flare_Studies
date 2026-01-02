@@ -1,0 +1,52 @@
+PRO stix_an
+
+;out_dir = '/home/adithya/'
+
+l4_filename = '/home/sreejith/adithya/idl_works/Stix_reproduce_cases/stix_t3/solo_L1_stix-sci-xray-spec_20211009T061404-$
+;l4_filename = '/suit2/soumya/2023-12-31/data/solo_L1_stix-sci-xray-spec_20231230T183513-20231231T004013_V02_2312300116-$
+bk_filename ='/home/sreejith/adithya/idl_works/Stix_reproduce_cases/stix_t3/solo_L1_stix-sci-xray-cpd_20211008T215225-20$
+fits_path_data_l4 = loc_file(l4_filename)
+fits_path_bk   = loc_file(bk_filename)
+help, fits_path_bk
+help, fits_path_data_l4
+
+!null = mrdfits(fits_path_data_l4, 0, primary_header)
+
+header_start_time = (sxpar(primary_header, 'DATE-BEG'))
+print, 'Event start time :  ',  header_start_time
+print, " "
+
+
+elut_filename = stx_date2elut_file(header_start_time)
+print, 'The ELUT applied at this time was : ', elut_filename
+print, " "
+
+;The procedure can be used to provide the ELUT given the date in any anytim compatible format
+print, stx_date2elut_file('2021-10-09')
+
+stx_get_header_corrections, fits_path_data_l4, distance = distance, time_shift = time_shift
+
+print, 'The Solar Orbiter distance to the Sun was :'
+print, distance, ' AU'
+print, 'The light travel time correction was :'
+print, time_shift,' s'
+print, " "
+print, "Press SPACE to continue"
+print, " "
+
+;For Reading the STIX specific spectrum and response matrix files
+spex_file_reader= 'stx_read_sp'
+
+;The names of the OSPEX compatible spectrum and corresponding response matrix file are based on the observation start ti$
+spex_specfile_l4= 'stx_spectrum.fits'
+spex_drmfile_l4= 'stx_srm.fits'
+
+;The main routine to convert the spectrogram (L4) data to an OSPEX compatible format is stx_convert_spectrogram
+  ;Several necessary corrections are also applied to the data here
+  ;After this is called the spectrum and srm FITS files will be generated.
+  ;The routine will load these files into an 
+
+s
+
+END
+

@@ -30,7 +30,7 @@ nb8Mx=4300
 nb6Mx=95000
 nb7Mx=230000
 
-Filters=['NB07','NB08']
+Filters=['NB04',]
 search_fold=f'/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case7_Nov01/data/aligned_crop/' #Custom Folder
 
 for fltr in Filters:
@@ -52,7 +52,7 @@ for fltr in Filters:
     norm_data=ref_img.data*1000/ref_img.meta.get("CMD_EXPT")
     data=(norm_data.flatten()).astype(int)
     mode_val = stats.mode(data, keepdims=True).mode[0]
-    Thresh_val=mode_val*1.05
+    Thresh_val=4764*2.5#mode_val*1.05
     print('Frist img mode',mode_val)
     
     fol_nm=os.getcwd()

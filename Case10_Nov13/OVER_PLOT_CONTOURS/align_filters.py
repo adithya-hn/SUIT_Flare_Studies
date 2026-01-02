@@ -13,9 +13,9 @@ from sys import path as sys_path
 sys_path.append('/home/adithya/Adithya_repos')
 import align_suit_fltr_to_aia
 
-suit_raw_files= '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case10_Nov13/data/raw/'
+suit_raw_files= '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case10_Nov13/data/Processed/contam_corr_data/'
 Filters=['6173']
-suit_filters=['NB01']#,'NB02','NB05','NB06','NB07']
+suit_filters=['NB02','NB05','NB06','NB07']
 ref_fd_img_pth='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case10_Nov13/data/aia/hmi.ic_45s.20241113_145915_TAI.2.continuum.fits'
 
 # Filters=['1600']
