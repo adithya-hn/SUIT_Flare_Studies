@@ -2,7 +2,7 @@ import imageio
 import os
 
 # Settings
-folder = "/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case7_Nov01/Overplot_contours/NB04/"
+folder = "/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case7_Nov01/data/aligned_crop_pngs/nb4_png/"
 output_file = "c7_nb04_video.mp4"
 fps = 10
 

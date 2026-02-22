@@ -4,24 +4,23 @@ import numpy as np
 import glob
 from matplotlib import rcParams
 #rcParams['font.family'] = 'Times New Roman'  
-plt.rcParams.update({
-        "text.usetex": True,})
+plt.rcParams.update({"text.usetex": True,})
 #-----------------------------------------------------------
 # USER INPUT
 #-----------------------------------------------------------
-image_folder = "nb8_imgs/"             # path to your image directory
+image_folder = "nb4_imgs/"             # path to your image directory
 pattern = "*.png"
 n_rows, n_cols = 3, 5
 
 # default crop (left, right, top, bottom)
-default_crop = (200,220,30,125)  
+default_crop = (200,220,8,125)  
 
 # special crop rules
-first_column_crop = (200,220,30,125) #(110,220,30,125)    # example: more crop on left for column-1
-last_row_crop    = (200,220,30,125) #(200,220,30,70)     # example: more crop on top for last row
+first_column_crop = (200,220,8,125)  #(110,220,30,125)    # example: more crop on left for column-1
+last_row_crop    = (200,220,8,125)  #(200,220,30,70)     # example: more crop on top for last row
 
 fig_size = (10,6)
-save_name = "nb08_panel.png"
+save_name = "c4_nb04_transients.pdf"
 #-----------------------------------------------------------
 
 def crop_image(im, crop):
@@ -61,7 +60,7 @@ def remove_axis(ax):
 
 # plotting
 fig, axes = plt.subplots(n_rows, n_cols, figsize=fig_size)
-plt.subplots_adjust(left=0, right=.5, top=0.54, bottom=0,wspace=0, hspace=0)   # reduce gaps
+plt.subplots_adjust(left=0, right=.5, top=0.49, bottom=0,wspace=0, hspace=0)   # reduce gaps
 
 for i, ax in enumerate(axes.flatten()):
     if i < len(images):
@@ -73,13 +72,14 @@ for i, ax in enumerate(axes.flatten()):
         ax.set_frame_on(False)      # <<< IMPORTANT
         ax.set_axis_off()           # <<< IMPORTANT
 
-        ax.text(0.14, 0.95, f"{i+1})",
+        ax.text(0.2, 0.94, f"{i+1})",
                 transform=ax.transAxes,
                 fontsize=6,
                 va='top',
                 ha='left',
-                fontfamily='Times New Roman',
-                color='white')
+                family= " serif",
+                font='Times New Roman',
+                color='k')
 
     else:
         ax.set_xticks([])

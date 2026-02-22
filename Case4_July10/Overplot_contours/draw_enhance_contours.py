@@ -88,6 +88,7 @@ def draw_suit_contours_on_sdo(suitMap,aia_map,base_map,thresh_sig,fltr,aia_dt,ba
     median_val=np.median(hist_data)
     mad_sig=np.median(np.abs(hist_data-np.median(hist_data)))/0.6745
     v_Thresh=median_val+thresh_sig*mad_sig
+    print(v_Thresh)
     img=np.where(diff_img>v_Thresh,diff_img,0)
     binary_image = diff_img > v_Thresh# True where pixel value > threshold
     labels = measure.label(binary_image,connectivity=2)
@@ -102,7 +103,7 @@ def draw_suit_contours_on_sdo(suitMap,aia_map,base_map,thresh_sig,fltr,aia_dt,ba
     norm_mg_Map=Map(th_diff_img,suitMap.fits_header)
 
     fl_nm=jpg_fold+f'/{fltr}_{base_channel}'+'/'+os.path.basename(suitMap.meta['F_NAME'])[:-4]+'jpg'
-    fig=plt.figure(figsize=(16,16))
+    fig=plt.figure(figsize=(20,16))
     plt.rcParams["font.size"]=50
     plt.rcParams["axes.labelsize"]=50
     plt.rcParams["xtick.labelsize"]=50
@@ -116,11 +117,13 @@ def draw_suit_contours_on_sdo(suitMap,aia_map,base_map,thresh_sig,fltr,aia_dt,ba
     sns_cl = sns.color_palette("coolwarm",as_cmap=True)
     sns_cl2=sns.color_palette('colorblind')
     sns_cl3=sns.color_palette('bright')
-    ax = fig.add_subplot(111, projection=aia_map)
-    #aia_map.plot(axes=ax,cmap='gray',title=False)
-    im=ax.imshow(aia_map.data,cmap=sns_cl,alpha=1,vmin=-2000,vmax=2000)
+    ax = fig.add_subplot(111, projection=base_map)
+    aiaMapRepro=aia_map.reproject_to(base_map.wcs)
+    aiaMapRepro.plot(axes=ax,title=False)
+    
     
     if base_channel=='HMI':
+        im=ax.imshow(aia_map.data,cmap=sns_cl,alpha=1,vmin=-2000,vmax=2000)
         # masked_data = gaussian_filter(aia_map.data.copy(), sigma=4)
         # masked_data[np.abs(masked_data) < 50] = np.nan
         # masked_map = Map(masked_data, hmi_map.meta)
@@ -142,14 +145,17 @@ def draw_suit_contours_on_sdo(suitMap,aia_map,base_map,thresh_sig,fltr,aia_dt,ba
         masked_map = Map(data, aia_map.meta)
         masked_map.draw_contours(axes=ax,levels=0,colors='k',linewidths=1.5,alpha=0.6)
         
-    norm_mg_Map.draw_contours(axes=ax, levels=v_Thresh,linewidths=2,colors="#106D10",alpha=1)
+    norm_mg_Map.draw_contours(axes=ax, levels=v_Thresh,linewidths=2,colors="#EC1010",alpha=.7)
     # cf = ax.contourf(norm_mg_Map.data,levels=v_Thresh,cmap="seismic",origin="lower")
     # plt.colorbar(cf, ax=ax)
-    ax.set_xlim(400,900)
-    ax.set_ylim(500,900)
-    ax.text(0.5, 0.95,str(aia_dt)[:-4],transform=ax.transAxes,ha="center", va="center",fontsize=42)
+    # ax.set_xlim(400,900)
+    # ax.set_ylim(500,900)
+    # ax.set_xlim(10,600) #aia
+    # ax.set_ylim(10,400)
+    ax.text(0.5, 0.95,str(aia_dt)[11:-4],color='w',transform=ax.transAxes,ha="center", va="center",fontsize=42)
     #suitMap.draw_contours(axes=ax, levels=31000,lws=0.5,colors=['red'],alpha=0.5)
-    plt.colorbar(im, ax=ax)
+    #plt.colorbar(im, ax=ax)
+    plt.colorbar()
 
     plt.savefig(fl_nm,dpi=200)
     plt.close()  
@@ -162,13 +168,13 @@ def draw_suit_contours_on_sdo(suitMap,aia_map,base_map,thresh_sig,fltr,aia_dt,ba
 if __name__=='__main__':
 #-----------------Intial paths and params--------------------------
     suit_aligned_files= '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case4_July10/data/aligned_crop/'
-    aia_imgs='/media/adithya/Adi_disk4/SUIT_flare_work/case4_Jul10/data/aia/cut_outs/171_cutouts/'
+    aia_imgs='/media/adithya/Adi_disk4/SUIT_flare_work/case4_jul10/data/aia/aia_fd/'#'/media/adithya/Adi_disk4/SUIT_flare_work/case4_Jul10/data/aia/cut_outs/171_cutouts/'
     hmi_imgs='/media/adithya/Adi_disk4/SUIT_flare_work/case4_jul10/data/HMI/HMI_cutouts/'
     fol_nm=os.getcwd() #Custom folder to save contour images
     jpg_fold=fol_nm+'/'+'Contour_imgs'
     fltr='NB04'
-    thresh_sig=4
-    base_channel='HMI'
+    thresh_sig=5
+    base_channel='1600'
 
 
     save_aligned_fits='yes'
@@ -177,7 +183,7 @@ if __name__=='__main__':
     draw_contours='yes'
     
     nb4_fls = glob.glob(suit_aligned_files + '*3'+f'{fltr}.fits')
-    aia_fls = glob.glob(aia_imgs + '*.fits')
+    aia_fls = glob.glob(aia_imgs + '*1600.image_lev1.fits')
     hmi_fls = glob.glob(hmi_imgs + '*.fits')
     
 
@@ -193,6 +199,7 @@ if __name__=='__main__':
     data_stack = np.stack([(suit_sq[i].data*1000/suit_sq[i].meta.get('CMD_EXPT'))for i in range(5)])
     base_img=np.median(data_stack, axis=0)
     base_map=Map(base_img,suit_sq[0].meta)
+    print([suit_sq[i].meta.get('DATE-OBS')for i in range(5)])
     
 
     aia_dt=[]
@@ -216,11 +223,12 @@ if __name__=='__main__':
         aia_map=Map(aia_fls[idx1])
         aia_dt=aia_map.date
         idx=np.argmin(np.abs(hmi_dt_array - base_time))
-        hmi_map_=Map(hmi_fls[idx])
-        map_rot_angl=int(hmi_map_.meta.get('CROTA2'))
-        if map_rot_angl>5:
-            hmi_map=hmi_map_.rotate(angle=-map_rot_angl*u.deg)
-        #hmi_dt=hmi_map.date
+        # hmi_map_=Map(hmi_fls[idx])
+        # if "CROTA2" in hmi_map_.meta:
+        #     map_rot_angl=int(hmi_map_.meta.get('CROTA2'))
+        #     if map_rot_angl>5:
+        #         hmi_map=hmi_map_.rotate(angle=-map_rot_angl*u.deg)
+        #     #hmi_dt=hmi_map.date
         if i==0:
             ref_aia_map=aia_map#Map(aia_fls[idx1])
             ref_hmi_map=hmi_map#Map(hmi_fls[idx])
@@ -229,23 +237,9 @@ if __name__=='__main__':
         hmi_rebinned=get_suit_scale_rebined_map(hmi_map,ref_suit_map)
         #hmi_rebinned.peek()
         with propagate_with_solar_surface():
-            #aia_map_drot=(aia_rebinned.reproject_to(ref_aia_map.wcs,dask_method='none')) #,parallel=True,dask_method='memmap'
-            hmi_map_drot=(hmi_rebinned.reproject_to(ref_hmi_map.wcs,dask_method='none')) 
+            aia_map_drot=(aia_rebinned.reproject_to(ref_aia_map.wcs,dask_method='none')) #,parallel=True,dask_method='memmap'
+            #hmi_map_drot=(hmi_rebinned.reproject_to(ref_hmi_map.wcs,dask_method='none')) 
         #suit_map.peek()
-        draw_suit_contours_on_sdo(suit_map,hmi_map_drot,base_map,thresh_sig,fltr,aia_dt,base_channel)
-        #fig_pickle.append(draw_suit_contours_on_sdo(suit_map,hmi_map_drot,base_map,thresh_sig,fltr,aia_dt,base_channel))
-    #     plt.close('all')
-    # filename="enhance_figures.pkl"
-
-    # with open(filename, "wb") as f:
-    #     pickle.dump(fig_pickle, f)
-
-    # with open(filename, 'rb') as f:
-    #     loaded_figures = pickle.load(f)
-    # print("🖼️ Displaying the loaded figures...")
-    # for i, fig in enumerate(loaded_figures):
-    #     # To keep track, you can print the title or any metadata
-    #     print(f"   - Preparing to show Figure {i+1}: '{fig.axes[0].get_title()}'")
-        
-    # # Important: This will display all the loaded figures simultaneously
-    # plt.show()
+        #draw_suit_contours_on_sdo(suit_map,hmi_map_drot,base_map,thresh_sig,fltr,aia_dt,base_channel)
+        draw_suit_contours_on_sdo(suit_map,aia_map_drot,base_map,thresh_sig,fltr,aia_dt,base_channel)
+    

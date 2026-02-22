@@ -15,7 +15,10 @@ from astropy.time import Time
 from sunkit_spex.extern.stix import STIXLoader
 from sunkit_spex.legacy.fitting.fitter import Fitter, load
 from datetime import datetime, timedelta
-
+from sys import path as sys_path
+sys_path.append('/home/adithya/Adithya_repos')
+from plots_styl import set_pub_style
+set_pub_style()
 
 #---------------Input parameters----------------
 
@@ -45,81 +48,83 @@ stix_spec.update_event_times(start=Time(Start_t), end=Time(End_t))
 # stix_spec.end_event_time = "2024-10-01T22:10:18"
 
 
-plot_range=[datetime.fromisoformat(Start_t)- timedelta(minutes=10),datetime.fromisoformat(End_t)+ timedelta(minutes=10)]
-plt.figure(layout="tight")
-stix_spec.lightcurve(energy_ranges=[[4, 15], [15, 30]])
+plot_range=[datetime.fromisoformat(Start_t)- timedelta(minutes=90),datetime.fromisoformat(End_t)+ timedelta(minutes=30)]
+plt.figure(layout="tight", figsize=(12,8))
+stix_spec.lightcurve(energy_ranges=[[10, 30]])
 plt.xlim(plot_range[0], plot_range[1])
-plt.xticks(rotation=45)
+# plt.xticks(rotation=45)
+plt.xlabel('Time (UT)')
+plt.title(f'STIX Lightcurve (2024-11-01)')
 plt.savefig(f"stix_event_{event_id}_{Start_t}_{End_t}.png", dpi=300)
 plt.close()
 
-fitter = Fitter(stix_spec)
+# fitter = Fitter(stix_spec)
 
-fitter.model = "(f_vth+f_vth+thick_fn)" #thick_fn f_vth
-fitter.loglikelihood = "cstat"
-fitter.show_params
+# fitter.model = "(f_vth+f_vth+thick_fn)" #thick_fn f_vth
+# fitter.loglikelihood = "cstat"
+# fitter.show_params
 
-fitter.energy_fitting_range = [4,12]
-# sort model parameters
-fitter.params["T1_spectrum1"] = {"Value": 5, "Bounds": (1, 20)}
-fitter.params["EM1_spectrum1"] = {"Value": 2e1, "Bounds": (1e0, 800)}
-fitter.params["T2_spectrum1"] = {"Value": 12, "Bounds": (10, 60)}
-fitter.params["EM2_spectrum1"] = {"Value": 500, "Bounds": (400, 1200)}
-fitter.params["total_eflux1_spectrum1"] = {"Status": "fix", "Value": 9, "Bounds": (1e-2, 1e1)}
-fitter.params["index1_spectrum1"] = {"Status": "fix", "Value": 8, "Bounds": (1e-1, 10)}
-fitter.params["e_c1_spectrum1"] = {"Status": "fix", "Value": 10, "Bounds": (1e-1, 1e2)}
-stix_spec_fit = fitter.fit(tol=tol)
+# fitter.energy_fitting_range = [4,12]
+# # sort model parameters
+# fitter.params["T1_spectrum1"] = {"Value": 5, "Bounds": (1, 20)}
+# fitter.params["EM1_spectrum1"] = {"Value": 2e1, "Bounds": (1e0, 800)}
+# fitter.params["T2_spectrum1"] = {"Value": 12, "Bounds": (10, 60)}
+# fitter.params["EM2_spectrum1"] = {"Value": 500, "Bounds": (400, 1200)}
+# fitter.params["total_eflux1_spectrum1"] = {"Status": "fix", "Value": 9, "Bounds": (1e-2, 1e1)}
+# fitter.params["index1_spectrum1"] = {"Status": "fix", "Value": 8, "Bounds": (1e-1, 10)}
+# fitter.params["e_c1_spectrum1"] = {"Status": "fix", "Value": 10, "Bounds": (1e-1, 1e2)}
+# stix_spec_fit = fitter.fit(tol=tol)
 
-plt.figure()
-axes, res_axes = fitter.plot()
-axes[0].set_xlim([3,30])
-plt.show()
+# plt.figure()
+# axes, res_axes = fitter.plot()
+# axes[0].set_xlim([3,30])
+# plt.show()
 
 
-fitter.energy_fitting_range = [12, 18]
+# fitter.energy_fitting_range = [12, 18]
 
-# sort model parameters
-fitter.params["T1_spectrum1"] = "fix"
-fitter.params["EM1_spectrum1"] = "fix"
-fitter.params["T2_spectrum1"] = "fix"
-fitter.params["EM2_spectrum1"] = "fix"
-fitter.params["total_eflux1_spectrum1"] = "free"
-fitter.params["index1_spectrum1"] = "free"
-fitter.params["e_c1_spectrum1"] = "free"
-stix_spec_fit = fitter.fit(tol=tol)
+# # sort model parameters
+# fitter.params["T1_spectrum1"] = "fix"
+# fitter.params["EM1_spectrum1"] = "fix"
+# fitter.params["T2_spectrum1"] = "fix"
+# fitter.params["EM2_spectrum1"] = "fix"
+# fitter.params["total_eflux1_spectrum1"] = "free"
+# fitter.params["index1_spectrum1"] = "free"
+# fitter.params["e_c1_spectrum1"] = "free"
+# stix_spec_fit = fitter.fit(tol=tol)
 
-plt.figure()
-axes, res_axes = fitter.plot()
-axes[0].set_xlim([10,30])
-plt.show()
+# plt.figure()
+# axes, res_axes = fitter.plot()
+# axes[0].set_xlim([10,30])
+# plt.show()
 
-# define energy fitting range
-fitter.energy_fitting_range = [4, 18]
+# # define energy fitting range
+# fitter.energy_fitting_range = [4, 18]
 
-# sort model parameters
-fitter.params["T1_spectrum1"] = "free"
-fitter.params["EM1_spectrum1"] = "free"
-fitter.params["T2_spectrum1"] = "free"
-fitter.params["EM2_spectrum1"] = "free"
-fitter.params["total_eflux1_spectrum1"] = "free"
-fitter.params["index1_spectrum1"] = "free"
-fitter.params["e_c1_spectrum1"] = "free"
+# # sort model parameters
+# fitter.params["T1_spectrum1"] = "free"
+# fitter.params["EM1_spectrum1"] = "free"
+# fitter.params["T2_spectrum1"] = "free"
+# fitter.params["EM2_spectrum1"] = "free"
+# fitter.params["total_eflux1_spectrum1"] = "free"
+# fitter.params["index1_spectrum1"] = "free"
+# fitter.params["e_c1_spectrum1"] = "free"
 
-stix_spec_fit = fitter.fit(tol=tol, options={"maxiter": 5000})
+# stix_spec_fit = fitter.fit(tol=tol, options={"maxiter": 5000})
 
-plt.figure()
-axes, res_axes = fitter.plot()
-axes[0].set_xlim([4,30])
-plt.savefig(f'{case}_stix_preflarePeak_{event_id}.png',dpi=300)
-plt.show()
+# plt.figure()
+# axes, res_axes = fitter.plot()
+# axes[0].set_xlim([4,30])
+# plt.savefig(f'{case}_stix_preflarePeak_{event_id}.png',dpi=300)
+# plt.show()
 
-spec_mcmc = fitter.run_mcmc(number_of_walkers=14, steps_per_walker=1200,)
-fitter.burn_mcmc = 250
+# spec_mcmc = fitter.run_mcmc(number_of_walkers=14, steps_per_walker=1200,)
+# fitter.burn_mcmc = 250
 
-plt.figure()
-axes, res_axes = fitter.plot()
-for a in axes:
-    a.set_xlim([3,30])
+# plt.figure()
+# axes, res_axes = fitter.plot()
+# for a in axes:
+#     a.set_xlim([3,30])
 
-plt.savefig(f'{case}_peak_{event_id}_with_mcmc.png',dpi=300)
-plt.show()
+# plt.savefig(f'{case}_peak_{event_id}_with_mcmc.png',dpi=300)
+# plt.show()

@@ -10,7 +10,7 @@ Purpose: co align SUIT Mg II h  image to image align with AIA1600
 
 import os
 import matplotlib
-#matplotlib.use('Agg')
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import astropy.units as u
 from sunpy.map import Map
@@ -44,7 +44,7 @@ from matplotlib.widgets import RectangleSelector
 from sunpy.coordinates import RotatedSunFrame
 import datetime
 from astropy.time import TimeDelta
-#from astropy.io import fits
+from astropy.io import fits
 
 import warnings
 import logging
@@ -103,8 +103,8 @@ def draw_contours_and_save(BaseMap,suit_aligned_map,suit_thresh_levs,save_path):
 
 #--------------------------------------------------------------------------------------------------------
 
-suit_raw_files= '/media/adithya/Adi_disk4/SUIT_flare_work/wavlet_analysis/data/Jul_2024/'
-aia_roi_files='/media/adithya/Adi_disk4/SUIT_flare_work/wavlet_analysis/data/AIA_1600/aia_1600/'
+suit_raw_files= '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case5_July10/data/raw/'
+aia_roi_files='/media/adithya/Adi_disk4/SUIT_flare_work/case5_jul10/data/aia/cut_outs/1600_cutouts_aln/'
 
 fltr='NB04'
 
@@ -113,11 +113,12 @@ fltr_fl=sorted(fltr_fl, key=lambda file_name: datetime.datetime.strptime(os.path
 
 aia1600s=glob.glob(aia_roi_files + '*.fits')#
 aia1600s.sort()
-times_str = np.genfromtxt('aia_times.csv', delimiter=',', dtype=str)
+#times_str = np.genfromtxt('aia_times.csv', delimiter=',', dtype=str)
 
 dt_list = []
-for t in times_str:
-    dt_list.append(datetime.datetime.fromisoformat(t))
+for t in aia1600s:
+    header=fits.getheader(t)
+    dt_list.append(datetime.datetime.fromisoformat(header['DATE-OBS']))
 times=Time(parse_time(dt_list))
 datetime_array = times#.to_datetime()
 #print(datetime_array)
@@ -128,7 +129,7 @@ print('No. of AIA 1600 images: ',len(aia1600s))
 suit_map=Map(fltr_fl[0])
 aia_map_=Map(aia1600s[0])
 
-for i in range(len(fltr_fl)):
+for i in tqdm(range(len(fltr_fl))):
     suit_map=Map(fltr_fl[i])
     suit_map_rot=suit_map.rotate(angle=suit_map.meta["CROTA2"] * u.deg,missing=0)
     base_time=Time(parse_time(suit_map_rot.date))
@@ -137,7 +138,7 @@ for i in range(len(fltr_fl)):
     # keep only times ≤ base_time
     dt[dt > 0] = -np.inf
     idx = np.argmax(dt)   # largest negative (or zero) offset
-    print(idx,i)
+    #print(idx,i)
     aia_map=Map(aia1600s[idx])
     aia_rebin_map=get_rebinned_crop_map(aia_map,suit_map_rot)
     sq=MapSequence([aia_rebin_map,suit_map_rot])
@@ -147,15 +148,16 @@ for i in range(len(fltr_fl)):
     mg_aln_maps=mc_coalign(sq,layer_index=0,clip=False)#,func=np.log)
 
     thresh_lvs=get_mg_threshold(suit_map_rot)
-    save_path='/media/adithya/Adi_disk4/SUIT_flare_work/wavlet_analysis/interim/aln_imgs'
-    fits_path='/media/adithya/Adi_disk4/SUIT_flare_work/wavlet_analysis/data/aligned_fits/'
-    png_path='/media/adithya/Adi_disk4/SUIT_flare_work/wavlet_analysis/data/aligned_png/'
+    save_path='../data/aln_1600_conts'
+    fits_path='../data/aligned_fits/'
+    png_path='../data/aligned_png/'
     draw_contours_and_save(aia_rebin_map,mg_aln_maps[1],thresh_lvs[1],save_path)
 
     alnMap=Map(mg_aln_maps[1].data,mg_aln_maps[1].meta)
     alnMap.meta['CRPIX1']=mg_aln_maps[0].meta['CRPIX1']
     alnMap.meta['CRPIX2']=mg_aln_maps[0].meta['CRPIX2']
     pathlib.Path(fits_path).mkdir(parents=True, exist_ok=True)
+    pathlib.Path(png_path).mkdir(parents=True, exist_ok=True)
     try:
 
         fname=png_path+str(mg_aln_maps[1].meta.get('F_NAME'))[:-5]+'.png'

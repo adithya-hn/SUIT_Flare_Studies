@@ -34,12 +34,12 @@ start = timeit.default_timer()
 
 
 # ----------Input Parameters------
-case_no=1
-fdir='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case1_Jun01/data/aligned_crop/'
+case_no=5
+fdir='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case5_July10/data/aligned_crop_fits/'
 
 fol_nm = os.getcwd() + '/lc_images/'
-Filters = ['NB01','NB02','NB03','NB04','NB05','NB06','NB07','NB08']
-#Filters = ['NB07']
+#Filters = ['NB01','NB02','NB03','NB04','NB05','NB06','NB07','NB08']
+Filters = ['NB04']
 
 for fltr in Filters:
 

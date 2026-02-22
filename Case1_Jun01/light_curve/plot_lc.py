@@ -17,21 +17,24 @@ sys_path.append('/home/adithya/Adithya_repos')
 from plots_styl import set_pub_style
 set_pub_style()
 scol =sns.color_palette("colorblind")
+#palette = sns.color_palette("deep")
 
 #----------------------Input-parameters------------------
 
 C_n=1 #case number
-data1=(np.loadtxt(f'csv_files/c{C_n}_NB04_lc_data.csv',delimiter=',',skiprows=1,dtype='str')).transpose() #'NB03_Light_curve_data.dat'
-data2=(np.loadtxt(f'csv_files/NB08_c{C_n}_lc.csv',delimiter=',',skiprows=1,dtype='str')).transpose() 
-#data3=(np.loadtxt(f'csv_files/NB04_c{C_n}_lc_data.csv',delimiter=',',skiprows=1,dtype='str')).transpose() 
+data1 =(np.loadtxt(f'csv_files/c{C_n}_NB04_lc_data.csv',delimiter=',',skiprows=1,dtype='str')).transpose() #'NB03_Light_curve_data.dat'
 Solexs=(np.loadtxt(f'csv_files/AL1_SOLEXS_20240601_SDD2_L1_puc_tb_fit_results_TEMP_EM.txt',skiprows=1,dtype='str')).transpose()
 Helios=(np.loadtxt(f'csv_files/helios_CdTe_c{C_n}.csv', delimiter=',',skiprows=1,dtype='str')).transpose()
 spikes_nb3=(np.loadtxt(f'csv_files/Diff_img_data_NB04.csv',delimiter=',',skiprows=1,dtype='str')).transpose() 
 goes  = (np.loadtxt('csv_files/goes_xray_lightcurve.csv',delimiter=',',skiprows=1,dtype='str')).transpose() 
 
+peaks_pos=(np.loadtxt('csv_files/helios_peaks.csv',delimiter=',',skiprows=1,dtype='str')).transpose() 
+peaks_dt =np.array(peaks_pos[0],dtype='datetime64')
+suit_pks_pos=(np.loadtxt('csv_files/suit_diff_peaks.csv',delimiter=',',skiprows=1,dtype='str')).transpose() 
+suit_pks_dt =np.array(suit_pks_pos[0],dtype='datetime64')
 
 #-------------------------------------------------------
-pathlib.Path("Figures").mkdir(parents=True, exist_ok=True) 
+pathlib.Path("Figures").mkdir(parents=True, exist_ok=True)
 
 goes_dt=np.array(goes[0],dtype='datetime64')
 xrs_a=np.array(goes[1],dtype=float)
@@ -40,6 +43,7 @@ xrs_b=np.array(goes[2],dtype=float)
 exposure= np.array(data1[3],dtype=float)
 
 time_array1=np.array(data1[0], dtype='datetime64')
+#print(time_array1)
 time_array5=np.array(spikes_nb3[0], dtype='datetime64')
 nb3_counts=np.array(spikes_nb3[3],dtype=float)
 nb3_counts_er=np.sqrt(nb3_counts*(exposure/1000))/(exposure/1000)
@@ -53,6 +57,9 @@ lc1_mean_er= np.sqrt(lc1_tot*(exposure/1000))/(exposure/1000)
 cdte=np.array(Helios[1],dtype=float)
 cdte_er=np.array(Helios[2],dtype=float)
 helio_time_array=np.array(Helios[0],dtype='datetime64[us]')
+
+#datetime_objects = pd.to_datetime(Helios[0])
+#[datetime.strptime(str(ts)[:26], "%Y-%m-%d %H:%M:%S.%f") for ts in datetime_objects]
 
 #---------------------------------------------------------%%%%%%%SOLEXS%%%%%%------------------------------------------#
 
@@ -68,8 +75,6 @@ slt=Solexs[0]
 sltime=np.array([float(tp) for tp in Solexs[0]])
 time_seconds = sltime-sltime[0]
 time_array4 = [base_time + timedelta(seconds=int(t)) for t in time_seconds]
-
-#-------------------
 
 fig, axs = plt.subplots(3, 1, sharex=True, figsize=(12,12),
                          gridspec_kw={'hspace': 0})  # no vertical spacing 
@@ -111,9 +116,17 @@ for idx in gap_indices:
 axs[0].errorbar(time_array1[start:], (lc1_tot)[start:]/10e8,yerr=lc1_mean_er[start:]/10e5,fmt='k', marker="o",capsize=2,markersize=2,linewidth=0.5, label=r"SUIT Mg II h (errors multiplied by $ 10^3$)")
 axs1.errorbar(time_array5[start:],nb3_counts[start:],yerr=nb3_counts_er[start:]*1e3,color=scol[0], marker="o",capsize=2,markersize=2,linewidth=0.5,label=r'Difference image intensity (errors multiplied by $ 10^3$)')
 axs[1].errorbar(helio_time_array, cdte,yerr=cdte_er,color=scol[2], marker="o",capsize=2,markersize=2,linewidth=0.5, label="HEL1OS (CdTe1+CdTe2)"); axs[1].legend(loc='upper center')
-axs[2].errorbar(time_array4,sl_temp,yerr=sl_temp_er,color=scol[3], marker="o",capsize=2,markersize=2,linewidth=0.5, label='SoLEXS Temperature'); axs[2].legend(loc='upper center')
+axs[2].errorbar(time_array4[3:-15],sl_temp[3:-15],yerr=sl_temp_er[3:-15],color=scol[3], marker="o",capsize=2,markersize=2,linewidth=0.5, label='SoLEXS Temperature'); axs[2].legend(loc='upper center')
 axs2.plot(goes_dt,xrs_b/1e-6,color=scol[9],markersize=2,linewidth=1, label='GOES: 1–8 Å')
 axs1.set_yscale('log')
+
+for pk in peaks_dt:
+    axs[0].axvline(pk,alpha=0.2,color='r')
+    axs[1].axvline(pk,alpha=0.2,color='r')
+    axs[2].axvline(pk,alpha=0.2,color='r')
+for pk in suit_pks_dt:
+    axs[0].axvline(pk,alpha=0.6,color='tab:purple')
+axs[1].axvline(pk,alpha=0.0,color='r',label='HEL1OS peaks')
 
 # ask matplotlib for the plotted objects and their labels
 lines, labels = axs[0].get_legend_handles_labels()
@@ -144,7 +157,7 @@ time_formatter = mdates.DateFormatter('%H:%M')  # Format as HH:MM
 plt.gca().xaxis.set_major_formatter(time_formatter)
 
 # Add global title
-fig.suptitle(f"Flare Light Curves (SOL2024-06-01T08:49) ", fontsize=20, weight='bold')
+fig.suptitle(f"Flare Light Curves (SOL2024-06-01T08:48) ", fontsize=20, weight='bold')
 # Adjust layout so title doesn’t overlap
 plt.subplots_adjust(top=0.95)
 # Add panel labels (a), b), c), ...)

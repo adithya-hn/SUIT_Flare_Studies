@@ -64,7 +64,7 @@ save_aligned_pth=str(pathlib.Path(suit_raw_files).parents[0])+'/1600_aligned/'  
 suit_filters=['NB03','NB08','NB04']
 alin_fltr='NB04' #Filter to align other SUIT filters to
 save_aligned='yes'
-save_pngs='no'
+save_pngs='yes'
 # Threshold levels
 
 th_lvs2=[2000,3300,3600]  # Ca II H
@@ -214,7 +214,7 @@ for fltr2 in Filters:
     for j in range(len(mg_aln_maps)):
         alnMap=Map(mg_aln_maps[j].data,mg_aln_maps[j].meta)
         alnMap.meta['CRPIX1']=mg_aln_maps[0].meta['CRPIX1']+10
-        alnMap.meta['CRPIX2']=mg_aln_maps[0].meta['CRPIX2']-5
+        alnMap.meta['CRPIX2']=mg_aln_maps[0].meta['CRPIX2']
         
 
         if alnMap.meta["WAVELNTH"]==1600:

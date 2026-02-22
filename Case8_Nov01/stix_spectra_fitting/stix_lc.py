@@ -38,7 +38,7 @@ plt.figure(layout="tight",figsize=(12,8))
 stix_spec = STIXLoader(spectrum_file=spec_file, srm_file=srm_file)
 stix_spec.update_event_times(start=Time(Start_t), end=Time(End_t))
 plot_range=[datetime.fromisoformat(Start_t)- timedelta(minutes=10),datetime.fromisoformat(End_t)+ timedelta(minutes=10)]
-stix_spec.lightcurve(energy_ranges=[[4, 8],[9,12],[13,15], [16, 30]])
+stix_spec.lightcurve(energy_ranges=[[4, 8],[9,12],[13,15], [22, 30]])
 plt.xlim(plot_range[0],plot_range[1])
 plt.xticks(rotation=45)
 plt.savefig(f"stix_{case}_{Start_t}_{End_t}.png", dpi=300)

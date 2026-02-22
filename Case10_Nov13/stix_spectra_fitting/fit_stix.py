@@ -10,7 +10,7 @@ from sunkit_spex.legacy.fitting.fitter import Fitter, load
 
 #---------------Input parameters----------------
 
-spec_file="../data/stix/stx_spectrum_2411138743.fits"
+spec_file="../data/stix/stx_spectrum_2411132589.fits"
 srm_file="../data/stix/stx_srm_2411138743.fits"
 
 
@@ -28,10 +28,12 @@ plt.rcParams["font.size"] = spec_font_size
 
 stix_spec = STIXLoader(spectrum_file=spec_file, srm_file=srm_file)
 plt.figure(layout="tight")
-
-# the line that actually plots
-stix_spec.lightcurve(energy_ranges=[[4, 15], [15, 30], [30, 60]])
-plt.xticks(rotation=45)
-#plt.xlabel("Time (UT)")
-plt.savefig("stix_lightcurve.png", dpi=300)
+plt.figure(layout="tight")
+stix_spec.spectrogram()
 plt.show()
+# the line that actually plots
+# stix_spec.lightcurve(energy_ranges=[[4, 15], [15, 30], [30, 60]])
+# # plt.xticks(rotation=45)
+# # #plt.xlabel("Time (UT)")
+# # plt.savefig("stix_lightcurve.png", dpi=300)
+# plt.show()

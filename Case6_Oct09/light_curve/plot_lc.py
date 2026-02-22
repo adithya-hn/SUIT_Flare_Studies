@@ -10,12 +10,14 @@ import pathlib
 import pandas as pd
 from subprocess import call
 from matplotlib import colors
+import astropy.io.fits as fits
+import datetime
 import matplotlib.dates as mdates
 import seaborn as sns
 from sys import path as sys_path
 sys_path.append('/home/adithya/Adithya_repos')
 from plots_styl import set_pub_style
-set_pub_style()
+#set_pub_style()
 scol =sns.color_palette("colorblind")
 
 #palette = sns.color_palette("deep")
@@ -24,10 +26,17 @@ scol =sns.color_palette("colorblind")
 
 C_n=6 #case number
 data1 =(np.loadtxt(f'csv_files/c{C_n}_NB04_lc_data.csv',delimiter=',',skiprows=1,dtype='str')).transpose() #'NB03_Light_curve_data.dat'
-Solexs=(np.loadtxt(f'csv_files/AL1_SOLEXS_20241009_SDD2_L1_puc_tb_fit_results_TEMP_EM.txt',skiprows=1,dtype='str')).transpose()
+#Solexs=(np.loadtxt(f'csv_files/AL1_SOLEXS_20241009_SDD2_L1_puc_tb_fit_results_TEMP_EM.txt',skiprows=1,dtype='str')).transpose()
 Helios=(np.loadtxt(f'csv_files/helios_CdTe_c{C_n}.csv', delimiter=',',skiprows=1,dtype='str')).transpose()
 spikes_nb3=(np.loadtxt(f'csv_files/Diff_img_data_NB04.csv',delimiter=',',skiprows=1,dtype='str')).transpose() 
 goes  = (np.loadtxt('csv_files/goes_xray_lightcurve.csv',delimiter=',',skiprows=1,dtype='str')).transpose() 
+
+Solexs=fits.open('/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case6_Oct09/light_curve/csv_files/AL1_SOLEXS_20241009_SDD2_L1_puc_tb_fit_results_T_EM.fits')
+
+peaks_pos=(np.loadtxt('csv_files/helios_peaks.csv',delimiter=',',skiprows=1,dtype='str')).transpose() 
+peaks_dt =np.array(peaks_pos[0],dtype='datetime64')
+suit_pks_pos=(np.loadtxt('csv_files/suit_diff_peaks.csv',delimiter=',',skiprows=1,dtype='str')).transpose() 
+suit_pks_dt =np.array(suit_pks_pos[0],dtype='datetime64')
 
 
 #-------------------------------------------------------
@@ -61,12 +70,22 @@ helio_time_array=np.array(Helios[0],dtype='datetime64[us]')
 
 time_array4=[]
 
-sl_temp=[float(tp) for tp in Solexs[1]]
-sl_temp_er=[float(tpe) for tpe in Solexs[2]]
-sl_Em=[float(em) for em in Solexs[3]]
-sl_Em_er=[float(eme) for eme in Solexs[4]]
-slt=Solexs[0]
-time_array4=np.array([datetime.fromtimestamp(float(tp)) for tp in Solexs[0]])
+# sl_temp=[float(tp) for tp in Solexs[1]]
+# sl_temp_er=[float(tpe) for tpe in Solexs[2]]
+# sl_Em=[float(em) for em in Solexs[3]]
+# sl_Em_er=[float(eme) for eme in Solexs[4]]
+# slt=Solexs[0]
+# time_array4=np.array([datetime.fromtimestamp(float(tp)) for tp in Solexs[0]])
+
+sl_temp = Solexs[1].data['temperature']
+sl_temp_er= Solexs[1].data['TEMPERATURE_ERR']
+
+
+time = Solexs[1].data['TIME']
+emission_measure = Solexs[1].data['em']
+for t in time:
+    time_array4.append(datetime.datetime.fromtimestamp(t)-datetime.timedelta(hours=5,minutes=30))
+
 
 fig, axs = plt.subplots(3, 1, sharex=True, figsize=(12,12),
                          gridspec_kw={'hspace': 0})  # no vertical spacing 
@@ -108,9 +127,16 @@ for idx in gap_indices:
 axs[0].errorbar(time_array1[start:], (lc1_tot)[start:]/10e8,yerr=lc1_mean_er[start:]/10e5,fmt='k', marker="o",capsize=2,markersize=2,linewidth=0.5, label=r"SUIT Mg II h (errors multiplied by $ 10^3$)")
 axs1.errorbar(time_array5[start:],nb3_counts[start:],yerr=nb3_counts_er[start:]*1e3,color=scol[0], marker="o",capsize=2,markersize=2,linewidth=0.5,label=r'Difference image intensity (errors multiplied by $ 10^3$)')
 axs[1].errorbar(helio_time_array, cdte,yerr=cdte_er,color=scol[2], marker="o",capsize=2,markersize=2,linewidth=0.5, label="HEL1OS (CdTe1+CdTe2)"); axs[1].legend(loc='upper center')
-axs[2].errorbar(time_array4[:-75],sl_temp[:-75],yerr=sl_temp_er[:-75],color=scol[3], marker="o",capsize=2,markersize=2,linewidth=0.5, label='SoLEXS Temperature'); axs[2].legend(loc='upper center')
+axs[2].errorbar(time_array4[:-9],sl_temp[:-9],yerr=sl_temp_er[:-10],color=scol[3], marker="o",capsize=2,markersize=2,linewidth=0.5, label='SoLEXS Temperature'); axs[2].legend(loc='upper center')
 axs2.plot(goes_dt,xrs_b/1e-6,color=scol[9],markersize=2,linewidth=1, label='GOES: 1–8 Å')
 axs1.set_yscale('log')
+for pk in peaks_dt:
+    axs[0].axvline(pk,alpha=0.2,color='r')
+    axs[1].axvline(pk,alpha=0.2,color='r')
+    axs[2].axvline(pk,alpha=0.2,color='r')
+for pk in suit_pks_dt:
+    axs[0].axvline(pk,alpha=0.6,color='tab:purple')
+axs[1].axvline(pk,alpha=0.0,color='r',label='HEL1OS peaks')
 
 # ask matplotlib for the plotted objects and their labels
 lines, labels = axs[0].get_legend_handles_labels()
@@ -153,4 +179,4 @@ for i, ax in enumerate(axs):
             va='top', ha='left')
 
 plt.savefig(f'case{C_n}_lc.pdf',dpi=300)
-plt.close()
+plt.show()

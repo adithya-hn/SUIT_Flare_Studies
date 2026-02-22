@@ -14,7 +14,7 @@ from scipy.optimize import curve_fit
 
 scol =sns.color_palette("colorblind")
 
-files = sorted(glob.glob("csv_files/*.csv"))
+files = sorted(glob.glob("csv_files/*NB04.csv"))
 norm =np.loadtxt('norm_vals.csv',delimiter=',')[1]
 
 
@@ -102,106 +102,149 @@ for f in files:
     plt.close()
 
 all_c = np.concatenate(all_ints)
-'''
-print(x.min(),x.max())
-bins=np.arange(x.min(),x.max(),10000000)
+# intensities=all_c
+# print('No of peaks: ',len(all_c))
 
-print(len(all_c))
-plt.figure(figsize=(12,5))
-counts, edges = np.histogram(x, bins=bins)
-bin_centers = 0.5 * (edges[1:] + edges[:-1])
-mask = counts > 0
-y = counts[mask]
-x_fit = bin_centers[mask]
-logx = np.log10(x_fit)
-logy = np.log10(y)
+# I = np.array(intensities)
+# I = np.sort(I)
 
-# slope, intercept = np.polyfit(logx, logy, 1)
+# # CCDF: P(I' >= I)
+# N = len(I)
+# print(N)
+# ccdf = 1 - np.arange(1, N+1) / N
 
-# alpha = -slope
-# A = 10**intercept
+# plt.loglog(I, ccdf, 'o', label='CCDF')
 
-def expo_func(x,a,c):
-    f=c*np.exp
+# # Overplot fitted power law
+# alpha = 1 + N / np.sum(np.log(I / I[0]))
+# C = ccdf[0] * I[0]**(alpha-1)
+# plt.loglog(I, C * I**(-(alpha-1)), label=f"Fit α={alpha:.2f}")
 
-
-
-# histogram
-plt.hist(x, bins=bins, alpha=0.5, label='data')
-
-# fitted curve
-# x_plot = np.logspace(np.log10(min(x_fit)), np.log10(max(x_fit)), 200)
-# y_plot = A * x_plot**(-alpha)
-
-# plt.plot(x_plot, y_plot, label=f'Power law fit: alpha={alpha:.2f}')
-plt.show()
-
-'''
-# from scipy.stats import linregress
-
-# # intensities = your list of intensities
-
-intensities=all_c
-print('No of peaks: ',len(all_c))
-# intensities = np.array(intensities)
-
-# # log-spaced bins
-# bins = np.logspace(np.log10(intensities.min()), np.log10(intensities.max()), 1000)
-
-# hist, bin_edges = np.histogram(intensities, bins=bins)
-# bin_centers = np.sqrt(bin_edges[:-1] * bin_edges[1:])
-
-# # remove empty bins
-# mask = hist > 0
-# x1 = np.log10(bin_centers[mask])
-# y1 = np.log10(hist[mask])
-
-# slope, intercept, r, p, stderr = linregress(x1, y1)
-# alpha = -slope
-
-# # Plot
-# plt.figure(figsize=(7, 5))
-
-# plt.scatter(bin_centers[mask], hist[mask], label="Data (binned)")
-# #plt.plot(bin_centers[mask],10**(intercept + slope * x),label=f"Fit: α = {alpha:.2f}",  linewidth=2)
-
-# plt.xscale("log")
-# plt.yscale("log")
-# plt.xlabel("Flare Intensity")
-# plt.ylabel("Number of Flares")
+# plt.xlabel("Intensity")
+# plt.ylabel("P(I' ≥ I)")
 # plt.legend()
 # plt.tight_layout()
+# plt.savefig('powerlaw.png',dpi=300)
 # plt.show()
 
-import numpy as np
-import matplotlib.pyplot as plt
 
-I = np.array(intensities)
-I = np.sort(I)
 
-# CCDF: P(I' >= I)
-N = len(I)
-ccdf = 1 - np.arange(1, N+1) / N
+# Imin = I.min()   # or your completeness threshold
 
-plt.loglog(I, ccdf, 'o', label='CCDF')
+# alpha = 1 + len(I) / np.sum(np.log(I / Imin))
+# print("Power-law index α =", alpha)
+E = np.array(all_c)
+E = E[E > 0]
+E = np.sort(E)
 
-# Overplot fitted power law
-alpha = 1 + N / np.sum(np.log(I / I[0]))
-C = ccdf[0] * I[0]**(alpha-1)
-plt.loglog(I, C * I**(-(alpha-1)), label=f"Fit α={alpha:.2f}")
+def mle_alpha(E, Emin):
+    return 1.0 + len(E) / np.sum(np.log(E / Emin))
 
-plt.xlabel("Intensity")
-plt.ylabel("P(I' ≥ I)")
+def empirical_ccdf(E):
+    n = len(E)
+    return np.arange(n, 0, -1) / n
+
+def model_ccdf(E, Emin, alpha):
+    return (E / Emin) ** (-(alpha - 1))
+
+def ks_distance(E, Emin):
+    Efit = E[E >= Emin]
+    n = len(Efit)
+
+    # Require enough statistics
+    if n < 30:
+        return np.nan, np.nan
+
+    alpha = mle_alpha(Efit, Emin)
+
+    ccdf_emp = empirical_ccdf(Efit)
+    ccdf_mod = model_ccdf(Efit, Emin, alpha)
+
+    D = np.max(np.abs(ccdf_emp - ccdf_mod))
+    return D, alpha
+Emins = np.unique(E)
+ks_vals = []
+alphas = []
+
+for Emin in Emins:
+    D, a = ks_distance(E, Emin)
+    ks_vals.append(D)
+    alphas.append(a)
+
+ks_vals = np.array(ks_vals)
+alphas = np.array(alphas)
+valid = ~np.isnan(ks_vals)
+
+Emins_valid = Emins[valid]
+ks_valid = ks_vals[valid]
+alphas_valid = alphas[valid]
+
+idx = np.argmin(ks_valid)
+
+Emin_opt = Emins_valid[idx]
+alpha_opt = alphas_valid[idx]
+
+print("Optimal Emin =", Emin_opt)
+print("MLE alpha =", alpha_opt)
+plt.figure(figsize=(6,5))
+plt.loglog(Emins_valid, ks_valid, 'o-')
+plt.axvline(Emin_opt, color='r', linestyle='--', label=r'Optimal $E_{\min}$')
+plt.xlabel(r'$E_{\min}$')
+plt.ylabel('KS distance')
 plt.legend()
+plt.grid(True, which='both', alpha=0.3)
+plt.show()
+
+Efit = E[E >= Emin_opt]
+alpha_final = mle_alpha(Efit, Emin_opt)
+
+print("Final alpha =", alpha_final)
+print("Number of events =", len(Efit))
+
+sigma_alpha = (alpha_final - 1) / np.sqrt(len(Efit))
+print("Alpha uncertainty ~", sigma_alpha)
+
+Efit = np.sort(Efit)
+ccdf_emp = empirical_ccdf(Efit)
+
+ccdf_model = model_ccdf(Efit, Emin_opt, alpha_final)
+E_all = np.sort(E)                     # all base-subtracted peak counts
+N_all = np.arange(len(E_all), 0, -1)
+N0 = len(Efit)  # number of events above Emin
+model_ccdf = N0 * (Efit / Emin_opt) ** (-(alpha_final - 1))
+
+plt.figure(figsize=(12,8))
+
+# Full CCDF (all events)
+plt.loglog(E_all, N_all, 'o', markersize=4,
+           label='All detected events')
+
+# Power-law fit (only above Emin)
+plt.loglog(Efit, model_ccdf, '-',
+           linewidth=2,
+           label=f'Power-law fit (α = {alpha_final:.2f})')
+
+# Emin marker
+plt.title('CCDF of all pre-flare transients',fontsize=24)
+plt.axvline(Emin_opt, color='k', linestyle='--',
+            label=r'$E_{\min}$')
+
+plt.xlabel('Peak Mg II h counts',fontsize=18)
+plt.ylabel('N(≥E)',fontsize=18)
+plt.legend(fontsize=18)
+plt.grid(True, which='both', alpha=0.3)
 plt.tight_layout()
-plt.savefig('powerlaw.png',dpi=300)
+plt.savefig('MLE_Power_law_fit.png',dpi=300)
 plt.show()
 
 
-I = np.array(intensities)
-I = I[I > 0]
+# plt.figure(figsize=(6,5))
+# plt.loglog(Efit, ccdf_emp, 'o', label='Data')
+# plt.loglog(Efit, ccdf_model, '-', label=f'MLE fit (α={alpha_final:.2f})')
 
-Imin = I.min()   # or your completeness threshold
-
-alpha = 1 + len(I) / np.sum(np.log(I / Imin))
-print("Power-law index α =", alpha)
+# plt.axvline(Emin_opt, color='k', linestyle='--', label=r'$E_{\min}$')
+# plt.xlabel('Peak excess Mg II h counts')
+# plt.ylabel('CCDF  P(E ≥ x)')
+# plt.legend()
+# plt.grid(True, which='both', alpha=0.3)
+# plt.show()

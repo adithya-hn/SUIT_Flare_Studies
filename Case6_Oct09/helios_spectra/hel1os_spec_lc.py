@@ -13,8 +13,8 @@ from sunkit_spex.legacy.fitting.fitter import Fitter
 
 #------------------------------------------------------------------------------------------------
 
-path = '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case9_Nov13/data/helios/'
-start_dt,end_dt=datetime.datetime(2024,11,13,0,22),datetime.datetime(2024,11,13,0,37)
+path = '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case6_Oct09/data/helios/'
+start_dt,end_dt=datetime.datetime(2024,10,9,0,0),datetime.datetime(2024,10,9,2,0)
 pi_filename1 = f'{path}hel1os_cdte_spectra_cdte1.fits'
 gti_filename1 = f'{path}gticdte1.fits'
 
@@ -40,11 +40,11 @@ out_chan_widths = np.ones(cdte_srf_hdul[1].data['MATRIX'].shape[1])*out_ene_binw
 inp_chan_widths = np.ones(cdte_srf_hdul[1].data['MATRIX'].shape[0])*inp_ene_binwidth
 
 photon_energy = np.mean(out_chan_bins, axis=1) 
-idx_gt12 =  (photon_energy >=12.0) & (photon_energy <=30.0 )
+idx_gt12 =  (photon_energy >=22.0) & (photon_energy <=30.0 )
 
 cdte1_counts = pi_hdul1[1].data['COUNTS']       # shape (Ntimes, Nchan)
 cdte2_counts = pi_hdul2[1].data['COUNTS']  
-lc_gt12 =np.sum((cdte1_counts[2:, idx_gt12]+cdte2_counts[1:, idx_gt12]), axis=1)
+lc_gt12 =np.sum((cdte1_counts[2:, idx_gt12]+cdte2_counts[2:, idx_gt12]), axis=1)
 lc_gt12_err = np.sqrt(lc_gt12)
 
 
@@ -69,5 +69,5 @@ plt.xlabel('Time(UT)')
 plt.ylabel('Counts')
 plt.title('HEL1OS counts')
 plt.yscale('log')
-plt.savefig('Helios_lc_from_spec_12_30.png',dpi=300)
+plt.savefig('Helios_lc_from_spec_22_30.png',dpi=300)
 plt.show()

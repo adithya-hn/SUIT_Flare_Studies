@@ -25,12 +25,15 @@ set_pub_style()
 #----------------------Input-parameters------------------
 
 C_n=4 #case number
-data1=(np.loadtxt(f'csv_files/c{C_n}_NB04_lc_data.csv',delimiter=',',skiprows=1,dtype='str')).transpose() #'NB03_Light_curve_data.dat'
+data1 =(np.loadtxt(f'csv_files/c{C_n}_NB04_lc_data.csv',delimiter=',',skiprows=1,dtype='str')).transpose() #'NB03_Light_curve_data.dat'
 Solexs=(np.loadtxt(f'csv_files/fit_results_AL1_SOLEXS_20240710_SDD2_L1_2407100330_2407100630_TEMP_EM.txt',skiprows=1,dtype='str')).transpose()
 Helios=(np.loadtxt(f'csv_files/helios_CdTe_c{C_n}.csv', delimiter=',',skiprows=1,dtype='str')).transpose()
 spikes_nb3=(np.loadtxt(f'csv_files/Diff_img_data_NB04.csv',delimiter=',',skiprows=1,dtype='str')).transpose() 
 goes = (np.loadtxt('csv_files/goes_xray_lightcurve.csv',delimiter=',',skiprows=1,dtype='str')).transpose() 
-
+peaks_pos=(np.loadtxt('csv_files/helios_peaks.csv',delimiter=',',skiprows=1,dtype='str')).transpose() 
+peaks_dt =np.array(peaks_pos[0],dtype='datetime64')
+suit_pks_pos=(np.loadtxt('csv_files/suit_diff_peaks.csv',delimiter=',',skiprows=1,dtype='str')).transpose() 
+suit_pks_dt =np.array(suit_pks_pos[0],dtype='datetime64')
 
 #-------------------------------------------------------
 pathlib.Path("Figures").mkdir(parents=True, exist_ok=True)
@@ -70,7 +73,7 @@ time_array4=[datetime.strptime(str(ts)[:19], "%Y-%m-%dT%H:%M:%S") for ts in slt]
 
 
 fig, axs = plt.subplots(3, 1, sharex=True, figsize=(12,12),
-                         gridspec_kw={'hspace': 0})  # no vertical spacing 
+                         gridspec_kw={'hspace': 0,'height_ratios': [1, 1, 1] })  # no vertical spacing 
 plt.rcParams["font.size"]=22
 plt.rcParams["axes.labelsize"]=22
 plt.rcParams["xtick.labelsize"]=22
@@ -109,13 +112,18 @@ for idx in gap_indices:
     axs1.errorbar(time_array5[start:idx+1],nb3_counts[start:idx+1],yerr=nb3_counts_er[start:idx+1]*1000,color=scol[0], marker="o",capsize=2,markersize=2,linewidth=0.5)
     start = idx + 1
 axs[0].errorbar(time_array1[start:], (lc1_tot)[start:]/10e8,yerr=lc1_mean_er[start:]/10e5,color='k', marker="o",capsize=2,markersize=2,linewidth=0.5, label=r"SUIT Mg II h (errors are multiplied by $10^3$)")
-axs1.errorbar(time_array5[start:],nb3_counts[start:],yerr=nb3_counts_er[start:]*1000,color=scol[0], marker="o",capsize=2,markersize=2,linewidth=0.5,label=r'Difference image intensity (errors multiplied by $ 10^3$)')
+axs1.errorbar(time_array5[start:],nb3_counts[start:],yerr=nb3_counts_er[start:]*1000,color=scol[0], marker="o",capsize=2,markersize=2,linewidth=0.5,label=r'Excess intensity (errors multiplied by $ 10^3$)')
 axs[1].errorbar(helio_time_array[hel1:hel2], cdte[hel1:hel2],yerr=cdte_er[hel1:hel2],color=scol[2], marker="o",capsize=2,markersize=2,linewidth=0.5, label="HEL1OS (CdTe1+CdTe2)"); axs[1].legend(loc='upper center')
 axs[2].errorbar(time_array4[sole1:sole2],sl_temp[sole1:sole2],yerr=sl_temp_er[sole1:sole2],color=scol[3], marker="o",capsize=2,markersize=2,linewidth=0.5, label='SoLEXS Temperature')
 #axs[3].plot(goes_dt,xrs_a,color='b',markersize=2,linewidth=1, label='GOES: 0.5–4 Å'); axs[3].legend(loc='upper center')
 axs2.plot(goes_dt,xrs_b/1e-6,color=scol[9],markersize=2,linewidth=1, label='GOES: 1–8 Å')
-
-
+for pk in peaks_dt:
+    axs[0].axvline(pk,alpha=0.2,color='r')
+    axs[1].axvline(pk,alpha=0.2,color='r')
+    axs[2].axvline(pk,alpha=0.2,color='r')
+for pk in suit_pks_dt:
+    axs[0].axvline(pk,alpha=0.6,color='tab:purple')
+axs[1].axvline(pk,alpha=0.0,color='r',label='HEL1OS peaks')
 axs1.set_yscale('log')
 
 # ask matplotlib for the plotted objects and their labels
@@ -129,10 +137,11 @@ axs[2].legend(ln1 + ln2, lbl1 + lbl2, loc='upper center')
 
 
 
-ul=np.power(10,7.7)
-ll=np.power(10,5.4)
-#axs1.set_ylim(ll,ul)
-axs1.set_ylabel('Difference image counts ', fontsize=20,color=scol[0])
+ul=np.power(10,8)
+ll=np.power(10,4.3)
+axs1.set_ylim(ll,ul)
+axs[0].set_ylim(2.37,2.42)
+axs1.set_ylabel('Excess intensity (DN/s) ', fontsize=20,color=scol[0])
 axs[0].set_ylabel(r'Mg II k counts ($\times 10^8$ DN) ',color='k')
 axs[1].set_ylabel('HEL1OS counts/min',color=scol[2])
 #axs[3].set_ylabel(r'EM($\mathrm{\times10^{43}cm^{-3}}$)')
@@ -144,6 +153,7 @@ axs2.yaxis.get_offset_text().set_visible(False)
 axs[1].set_yscale('log')
 #axs2.set_yscale('log')
 axs[-1].set_xlabel(f"Time (UT)") # Shared x-label
+
 
 time_formatter = mdates.DateFormatter('%H:%M')  # Format as HH:MM
 plt.gca().xaxis.set_major_formatter(time_formatter)
@@ -161,4 +171,4 @@ for i, ax in enumerate(axs):
             va='top', ha='left')
 
 plt.savefig(f'case{C_n}_lc.pdf',dpi=300)
-plt.show()
+plt.close()

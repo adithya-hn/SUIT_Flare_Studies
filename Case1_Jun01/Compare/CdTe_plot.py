@@ -28,6 +28,8 @@ set_pub_style()
 
 Helios=(np.load("cdte_data_flare_1.npy", allow_pickle=True)).transpose()
 
+print(Helios[0])
+
 fig4,ax43=plt.subplots(1,1, figsize=(12,5))
 fig4.subplots_adjust(right=0.85)
 

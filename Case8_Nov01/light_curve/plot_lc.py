@@ -28,6 +28,12 @@ Helios=(np.loadtxt(f'csv_files/helios_CdTe_c{C_n}.csv', delimiter=',',skiprows=1
 spikes_nb3=(np.loadtxt(f'csv_files/Diff_img_data_NB04.csv',delimiter=',',skiprows=1,dtype='str')).transpose() 
 goes  = (np.loadtxt('csv_files/goes_xray_lightcurve.csv',delimiter=',',skiprows=1,dtype='str')).transpose() 
 
+peaks_pos=(np.loadtxt('csv_files/helios_peaks.csv',delimiter=',',skiprows=1,dtype='str')).transpose() 
+peaks_dt =np.array(peaks_pos[0],dtype='datetime64')
+suit_pks_pos=(np.loadtxt('csv_files/suit_diff_peaks.csv',delimiter=',',skiprows=1,dtype='str')).transpose() 
+suit_pks_dt =np.array(suit_pks_pos[0],dtype='datetime64')
+
+
 
 #-------------------------------------------------------
 pathlib.Path("Figures").mkdir(parents=True, exist_ok=True)
@@ -87,7 +93,7 @@ for i in range(len(axs)):  # all but bottom panel
         #axs[i].label_outer()                     # hide x-labels
         axs[i].tick_params(axis="x", which="both", bottom=True, top=False) 
     #axs[i].yaxis.offsetText.set_position((-0.04,-0.1))  # adjust X,Y offset
-    axs[i].grid(True, which='major', linestyle='--', alpha=0.6)
+    #axs[i].grid(True, which='major', linestyle='--', alpha=0.6
 
 soLen=len(time_array4)
 
@@ -106,11 +112,18 @@ for idx in gap_indices:
     axs1.errorbar(time_array5[start:idx+1],nb3_counts[start:idx+1],yerr=nb3_counts_er[start:idx+1]*1e3,color=scol[0], marker="o",capsize=2,markersize=2,linewidth=0.5)
     start = idx + 1
 axs[0].errorbar(time_array1[start:], (lc1_tot)[start:]/10e8,yerr=lc1_mean_er[start:]/10e5,fmt='k', marker="o",capsize=2,markersize=2,linewidth=0.5, label=r"SUIT Mg II h (errors multiplied by $ 10^3$)")
-axs1.errorbar(time_array5[start:],nb3_counts[start:],yerr=nb3_counts_er[start:]*1e3,color=scol[0], marker="o",capsize=2,markersize=2,linewidth=0.5,label=r'Difference image intensity (errors multiplied by $ 10^3$)')
-axs[1].errorbar(helio_time_array, cdte,yerr=cdte_er,color=scol[2], marker="o",capsize=2,markersize=2,linewidth=0.5, label="HEL1OS (CdTe1+CdTe2)"); axs[1].legend(loc='upper center')
+axs1.errorbar(time_array5[start:],nb3_counts[start:],yerr=nb3_counts_er[start:]*1e3,color=scol[0], marker="o",capsize=2,markersize=2,linewidth=0.5,label=r'Excess intensity (errors multiplied by $ 10^3$)')
+axs[1].errorbar(helio_time_array, cdte,yerr=cdte_er,color=scol[2], marker="o",capsize=2,markersize=2,linewidth=0.5, label="HEL1OS (10-30 keV)"); axs[1].legend(loc='upper center')
 axs[2].errorbar(time_array4,sl_temp,yerr=sl_temp_er,color=scol[3], marker="o",capsize=2,markersize=2,linewidth=0.5, label='SoLEXS Temperature'); axs[2].legend(loc='upper center')
 axs2.plot(goes_dt,xrs_b/1e-6,color=scol[9],markersize=2,linewidth=1, label='GOES: 1–8 Å')
 axs1.set_yscale('log')
+for pk in peaks_dt:
+    axs[0].axvline(pk,alpha=0.2,color='r')
+    axs[1].axvline(pk,alpha=0.2,color='r')
+    axs[2].axvline(pk,alpha=0.2,color='r')
+for pk in suit_pks_dt:
+    axs[0].axvline(pk,alpha=0.6,color='tab:purple')
+axs[1].axvline(pk,alpha=0.0,color='r',label='HEL1OS peaks')
 
 # ask matplotlib for the plotted objects and their labels
 lines, labels = axs[0].get_legend_handles_labels()
@@ -124,9 +137,9 @@ axs[2].legend(ln1 + ln2, lbl1 + lbl2, loc='upper center')
 ul=np.power(10,7.7)
 ll=np.power(10,5.4)
 #axs1.set_ylim(ll,ul)
-axs1.set_ylabel('Difference image counts ', fontsize=20,color=scol[0])
-axs[0].set_ylabel(r'Mg II k counts ($\times 10^8$ DN) ',color='k')
-axs[1].set_ylabel('HEL1OS counts/min',color=scol[2])
+axs1.set_ylabel('Excess intensity (DN/s) ', fontsize=20,color=scol[0])
+axs[0].set_ylabel(r'Mg II k counts ($\times 10^8$ DN/s) ',color='k')
+axs[1].set_ylabel('HEL1OS counts/s',color=scol[2])
 #axs[3].set_ylabel(r'EM($\mathrm{\times10^{43}cm^{-3}}$)')
 axs2.set_ylabel(r'X-ray flux ($\times 10^-6$  W/m²)',color=scol[9])
 axs[2].set_ylabel('Temperature (MK)',color=scol[3])

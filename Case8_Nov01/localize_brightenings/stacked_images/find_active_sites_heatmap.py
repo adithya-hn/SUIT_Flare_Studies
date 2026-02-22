@@ -106,8 +106,8 @@ start_time=datetime.datetime(2024, 11,1 ,14,18, 0)
 suit_aligned_files= '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case8_Nov01/data/aligned_crop/'
 pk_img="/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case8_Nov01/data/aligned_crop/SUT_T24_1592_000636_Lev1.0_2024-11-01T14.28.46.392_0973NB04.fits"
 aia_fl='/media/adithya/Adi_disk4/SUIT_flare_work/case8_nov01/data/aia/cut_outs/171_cutouts/aia.lev1_euv_12s.2024-11-01T113110Z.171.image_lev1.fits'
-fltr='NB05'
-thresh_sig=3
+fltr='NB04'
+thresh_sig=5
 
 #---------------------------------------------------------------------------------------------
 
@@ -118,7 +118,7 @@ suit_fls = glob.glob(suit_aligned_files + '*3'+f'{fltr}.fits')
 nb4_fls=[]
 for f in suit_fls:
     timestamp = datetime.datetime.strptime(os.path.basename(f).split('_')[5], "%Y-%m-%dT%H.%M.%S.%f")
-    if (timestamp <= peak_time) :#& (timestamp>=start_time):
+    if (timestamp <= start_time) :#& (timestamp>=start_time):
         nb4_fls.append(f)
 
 print('No of SUIT files:',len(nb4_fls))

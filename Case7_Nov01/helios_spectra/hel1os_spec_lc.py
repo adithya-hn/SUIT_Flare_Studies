@@ -40,7 +40,7 @@ out_chan_widths = np.ones(cdte_srf_hdul[1].data['MATRIX'].shape[1])*out_ene_binw
 inp_chan_widths = np.ones(cdte_srf_hdul[1].data['MATRIX'].shape[0])*inp_ene_binwidth
 
 photon_energy = np.mean(out_chan_bins, axis=1) 
-idx_gt12 =  (photon_energy >=12.0) & (photon_energy <=30.0 )
+idx_gt12 =  (photon_energy >=22.0) & (photon_energy <=30.0 )
 
 cdte1_counts = pi_hdul1[1].data['COUNTS']       # shape (Ntimes, Nchan)
 cdte2_counts = pi_hdul2[1].data['COUNTS']  
@@ -59,7 +59,7 @@ times_utc = t.to_datetime()
 df = pd.DataFrame({'counts': lc_gt12.astype(float)}, index=pd.to_datetime(times_utc))
 df_1min = df.resample('1min').sum()
 df_cut = df_1min.loc[start_dt:end_dt]
-df_cut.to_csv('binned_counts_12_30kev_lc.csv')
+df_cut.to_csv('binned_counts_10_30kev_lc.csv')
 
 
 plt.figure(figsize=(14,8))
@@ -69,5 +69,5 @@ plt.xlabel('Time(UT)')
 plt.ylabel('Counts')
 plt.title('HEL1OS counts')
 plt.yscale('log')
-plt.savefig('Helios_lc_from_spec_12_30.png',dpi=300)
+plt.savefig('Helios_lc_from_spec_10_30.png',dpi=300)
 plt.show()

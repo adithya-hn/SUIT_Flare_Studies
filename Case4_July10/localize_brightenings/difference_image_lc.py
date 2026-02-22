@@ -13,7 +13,7 @@ import suit_difference_image
 
 p1,p2,p3,p4=40,670,40,680
 flt='NB04' #NB04,NB08
-data_folder=f'/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case4_July10/data/aligned_crop/*{flt}.fits'
+data_folder=f'/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case4_July10/data/aligned_crop_fits/*{flt}.fits'
 clip_bar=False
 c1=70
 c2=130
@@ -23,4 +23,4 @@ save_fits=True
 
 #suit_difference_image.diff_img(data_folder,flt,thresh_sig=thresh_sig,save_fits=False,text_col='k')
 
-suit_difference_image.diff_img(data_folder,flt,thresh_sig=thresh_sig,get_histograms=False,text_col='k') #,get_histograms=True,save_fits=True
+suit_difference_image.diff_img(data_folder,flt,thresh_sig=thresh_sig,save_fits=True,get_histograms=True,text_col='k',shut_pos_filetring=False,shut_pos=180) #,get_histograms=True,save_fits=True

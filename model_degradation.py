@@ -93,7 +93,7 @@ plt.setp(ax1[0].get_xticklabels(), visible=False)
 plt.savefig('plot.png',dpi=300)
 plt.close()
 
-obs_time_stps1=np.array(["2024-07-10T03:59:00","2024-07-10T13:37:00"],dtype='datetime64')
+obs_time_stps1=np.array(["2024-06-02T02:50:00","2024-06-02T06:50:00","2024-07-10T03:59:00","2024-07-10T13:37:00"],dtype='datetime64')
 obs_time_stps2=np.array(["2024-10-08T23:56:00","2024-11-01T00:16:00","2024-11-01T12:31:00","2024-11-12T22:22:00","2024-11-13T15:08:00"],dtype='datetime64')
 
 

@@ -28,6 +28,12 @@ Helios=(np.loadtxt(f'csv_files/helios_CdTe_c{C_n}.csv', delimiter=',',skiprows=1
 spikes_nb3=(np.loadtxt(f'csv_files/Diff_img_data_NB04.csv',delimiter=',',skiprows=1,dtype='str')).transpose() 
 goes  = (np.loadtxt('csv_files/goes_xray_lightcurve.csv',delimiter=',',skiprows=1,dtype='str')).transpose() 
 
+peaks_pos=(np.loadtxt('csv_files/helios_peaks.csv',delimiter=',',skiprows=1,dtype='str')).transpose() 
+peaks_dt =np.array(peaks_pos[0],dtype='datetime64')
+suit_pks_pos=(np.loadtxt('csv_files/suit_diff_peaks.csv',delimiter=',',skiprows=1,dtype='str')).transpose() 
+suit_pks_dt =np.array(suit_pks_pos[0],dtype='datetime64')
+
+
 
 #-------------------------------------------------------
 pathlib.Path("Figures").mkdir(parents=True, exist_ok=True)
@@ -112,6 +118,14 @@ axs[1].errorbar(helio_time_array, cdte,yerr=cdte_er,color=scol[2], marker="o",ca
 axs[2].errorbar(time_array4[:-16],sl_temp[:-16],yerr=sl_temp_er[:-16],color=scol[3], marker="o",capsize=2,markersize=2,linewidth=0.5, label='SoLEXS Temperature'); axs[2].legend(loc='upper center')
 axs2.plot(goes_dt,xrs_b/1e-6,color=scol[9],markersize=2,linewidth=1, label='GOES: 1–8 Å')
 axs1.set_yscale('log')
+for pk in peaks_dt:
+    axs[0].axvline(pk,alpha=0.2,color='r')
+    axs[1].axvline(pk,alpha=0.2,color='r')
+    axs[2].axvline(pk,alpha=0.2,color='r')
+for pk in suit_pks_dt:
+    axs[0].axvline(pk,alpha=0.6,color='tab:purple')
+axs[1].axvline(pk,alpha=0.0,color='r',label='HEL1OS peaks')
+
 
 # ask matplotlib for the plotted objects and their labels
 lines, labels = axs[0].get_legend_handles_labels()

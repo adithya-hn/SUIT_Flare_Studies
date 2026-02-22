@@ -59,13 +59,14 @@ def draw_suit_contours_on_sdo(suitMap,base_map,thresh_sig,heat,clr):
 
 #---------------------------------------------------------------------------------------------
 
-suit_aligned_files= '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case9_Nov13/data/aligned_crop_/'
-peak_time=datetime.datetime(2024, 11,13 ,0,22, 0)
+suit_aligned_files= '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case9_Nov13/data/aligned_crop/'
+#peak_time=datetime.datetime(2024, 11,13 ,0,22, 0)
+start_time=datetime.datetime(2024, 11,13 ,0,10, 0)
 
     
 fol_nm=os.getcwd() #Custom folder to save contour images
 jpg_fold=fol_nm+'/'+'Contour_imgs'
-fltr='NB07'
+fltr='NB04'
 suit_fls = glob.glob(suit_aligned_files + '*3'+f'{fltr}.fits')
 #files =sorted(suit_fls, key=lambda file_name: datetime.datetime.strptime(os.path.basename(file_name).split('_')[5], "%Y-%m-%dT%H.%M.%S.%f"))
 
@@ -75,7 +76,7 @@ for f in suit_fls:
     # ts_str = name.split("_")[1] + name.split("_")[2].split(".")[0]
     timestamp = datetime.datetime.strptime(os.path.basename(f).split('_')[5], "%Y-%m-%dT%H.%M.%S.%f")
 
-    if timestamp <= peak_time:
+    if timestamp <= start_time:
         nb4_fls.append(f)
 
 print('No of SUIT files:',len(nb4_fls))

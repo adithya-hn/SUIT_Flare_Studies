@@ -18,15 +18,13 @@ import seaborn as sns
 import glob
 import os
 from scipy.optimize import curve_fit
-
+from scipy.ndimage import median_filter
 
 scol =sns.color_palette("colorblind")
 
-#files = sorted(glob.glob("csv_files/*.csv"))
-#norm =np.loadtxt('norm_vals.csv',delimiter=',')[1]
 
 suit_fl="Diff_img_data_NB04.csv"
-helios_fl="binned_counts_10_30kev_lc.csv"
+helios_fl="helios_CdTe_c4.csv"
 
 all_times = []
 all_ints = []
@@ -34,15 +32,16 @@ all_ints = []
 
 data = np.genfromtxt(suit_fl, delimiter=',', names=True, dtype=None)
 helios=np.genfromtxt(helios_fl, delimiter=',', names=True, dtype=None, encoding='utf-8')
+data_v2 = np.genfromtxt('v2_Diff_img_data_NB04.csv', delimiter=',', names=True, dtype=None)
 
 # Convert time to datetime64
 t = np.array(data['Date'], dtype='datetime64[ms]')
-ht= np.array(helios['Date'], dtype='datetime64[ms]')
-h_count=np.array(helios['counts'],dtype=float)
-h_er=np.sqrt(h_count)
+ht= np.array(helios['Time'], dtype='datetime64[ms]')
+h_count=np.array(helios['Total'],dtype=float)
+h_er=np.array(helios['CdTeEr'])#np.sqrt(h_count)
 area=np.array(data['area'],dtype=float)
 #x = np.array(data['diff_count'], dtype=float)#/area
-x = np.array(data['Img_count'], dtype=float)#/area
+x = np.array(data['diff_count'], dtype=float)#/area
 
 case_id=os.path.basename(suit_fl)[0:3]
 flt=os.path.basename(suit_fl)[-8:-4]
@@ -55,43 +54,57 @@ t_end   =  np.datetime64("2024-07-10T05:44:00")
 mask = (t >= t_start) & (t <= t_end)
 t_cut = t[mask]
 img_count_cut  = x[mask]#/norm_v
-mid_cut=np.median(img_count_cut)
+v2_count=(np.array(data_v2['diff_count'], dtype=float))
+v2_dt=np.array(data_v2['Date'], dtype='datetime64[ms]')
+
+window = 30  # choose based on timescale over which you expect NO flares
+bkg = median_filter(h_count, size=window)
+
+# Avoid zeros in background to prevent division by zero
+bkg_safe = np.clip(bkg, 1e-6, None)
+sigma = np.sqrt(bkg_safe)
+z = (h_count - bkg_safe) / (sigma/np.sqrt(window))    # "Gaussian-equivalent" significance per bin
+sigma_thresh = 2  # or 4, 5, etc.
+min_separation_bins = 2  # minimum distance between distinct peaks
+
+peaks, props = find_peaks(z,height=sigma_thresh, distance=min_separation_bins)
+
+
+peak_times_ = (ht[peaks].astype('datetime64[s]')).astype(str)
+peak_times = ht[peaks]
+peak_counts = h_count[peaks]
 
 fig,ax=plt.subplots(figsize=(14,6))
 ax2=plt.twinx()
 threshold=1.0e5 #5661*4 #2.5e6 #
 peaks2=find_peaks(img_count_cut)
-dt2=np.array(t_cut[peaks2[0]])
+dt2=(t_cut[peaks2[0]].astype('datetime64[s]')).astype(str)
 pk2=np.array(img_count_cut[peaks2[0]])
 
-hlog=np.log(h_count)
-#print(hlog)
-peaks=find_peaks(h_count)
 dt=np.array(ht[peaks[0]])
 pk=np.array(h_count[peaks[0]])
 
 all_times.append(dt)
 all_ints.append(pk)
 
-
-
-df = pd.DataFrame({"Peak time": dt,  "Peak total count": pk})
-df.to_csv(f"pks/{case_id}_{flt}_peaks.csv", index=False)
-#ax.plot(t_cut,img_count_cut)
 ax.errorbar(ht,h_count,yerr=h_er)
 ax2.plot(t_cut,img_count_cut,'r')
+ax2.plot(v2_dt,v2_count,'g--')
 
-for i in range(len(peaks[0])):
-    plt.axvline(ht[peaks[0][i]], color='b',alpha=0.2)
+for i in range(len(peaks)):
+    plt.axvline(ht[peaks[i]], color='b',alpha=0.2)
 
 for i in range(len(peaks2[0])):
     plt.axvline(t_cut[peaks2[0][i]], color='r',alpha=0.2)
-#plt.yscale('log')
+
+np.savetxt('helios_peaks.csv',np.c_[peak_times_,peak_counts],header='date_time,helio_count',comments='',delimiter=',',fmt='%s')
+np.savetxt('suit_diff_peaks.csv',np.c_[dt2,pk2],header='date_time,suit_coun',comments='',delimiter=',',fmt='%s')
+
+
+
 plt.title(f'{case_id}')
-#plt.axhline(mid_cut,color='r',linestyle='-',label='Median')
-#plt.axhline(threshold,color='g', linestyle=':',label='Threshold')
-#plt.legend()
 ax.set_yscale('log')
+ax2.set_yscale('log')
 plt.savefig(f'pks/{case_id}_{flt}_local_peaks.png',dpi=300)
 plt.show()
 

@@ -26,14 +26,15 @@ for x_arcsec, y_arcsec, _ in flare_data:
     r = np.sqrt((x_arcsec - sun_center_x)**2 + (y_arcsec - sun_center_y)**2) / R_sun_arcsec
     mu = np.sqrt(1 - r**2) if r <= 1 else 0
     flare_mu.append(mu)
-
+    
 # Plotting
 fig, ax = plt.subplots(figsize=(6, 6))
 
 # Solar disk
 circle = plt.Circle((sun_center_x, sun_center_y), R_sun_arcsec, color='orange', fill=False, linewidth=2)
+circle1 = plt.Circle((sun_center_x, sun_center_y), 575, color='orange', fill=False, linewidth=2)
 ax.add_patch(circle)
-
+ax.add_patch(circle1)
 # Scatter plot of flares
 sc = ax.scatter(
     [x for x, y, _ in flare_data], 
