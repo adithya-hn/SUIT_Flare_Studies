@@ -143,9 +143,9 @@ for i in tqdm(range(len(fltr_fl))):
     aia_rebin_map=get_rebinned_crop_map(aia_map,suit_map_rot)
     sq=MapSequence([aia_rebin_map,suit_map_rot])
 
-    template= tracked_sunspot(aia_map_,-300,-180,aia_rebin_map)
+    template= tracked_sunspot(aia_map_,10,0,aia_rebin_map)
 
-    mg_aln_maps=mc_coalign(sq,layer_index=0,clip=False)#,func=np.log)
+    mg_aln_maps=mc_coalign(sq,layer_index=0,template=template,clip=False)#,func=np.asinh)
 
     thresh_lvs=get_mg_threshold(suit_map_rot)
     save_path='../data/aln_1600_conts'

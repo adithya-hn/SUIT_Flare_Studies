@@ -16,6 +16,8 @@ from sys import path as sys_path
 sys_path.append('/home/adithya/Adithya_repos')
 from plots_styl import set_pub_style
 set_pub_style()
+# import scienceplots
+# plt.style.use('science')
 scol =sns.color_palette("colorblind")
 #palette = sns.color_palette("deep")
 
@@ -24,7 +26,7 @@ scol =sns.color_palette("colorblind")
 C_n=7 #case number
 data1 =(np.loadtxt(f'csv_files/c{C_n}_NB04_lc_data.csv',delimiter=',',skiprows=1,dtype='str')).transpose() #'NB03_Light_curve_data.dat'
 Solexs=(np.loadtxt(f'csv_files/fit_results_AL1_SOLEXS_20241101_SDD2_L1_2411010000_2411010230_TEMP_EM.txt',skiprows=1,dtype='str')).transpose()
-Helios=(np.loadtxt(f'csv_files/helios_CdTe_c{C_n}.csv', delimiter=',',skiprows=1,dtype='str')).transpose()
+Helios=(np.loadtxt(f'csv_files/Helios_LightCurve.csv', delimiter=',',skiprows=1,dtype='str')).transpose()
 spikes_nb3=(np.loadtxt(f'csv_files/Diff_img_data_NB04.csv',delimiter=',',skiprows=1,dtype='str')).transpose() 
 goes  = (np.loadtxt('csv_files/goes_xray_lightcurve.csv',delimiter=',',skiprows=1,dtype='str')).transpose() 
 rgn_lc = f'csv_files/aia131_region_lc.csv'
@@ -49,6 +51,7 @@ time_array1=np.array(data1[0], dtype='datetime64')
 time_array5=np.array(spikes_nb3[0], dtype='datetime64')
 nb3_counts=np.array(spikes_nb3[3],dtype=float)
 nb3_counts_er=np.sqrt(nb3_counts*(exposure/1000))/(exposure/1000)
+theresh_val=(np.array(spikes_nb3[1],dtype=float)+np.array(spikes_nb3[2],dtype=float))*np.array(spikes_nb3[6],dtype=float)
 
 date=str(time_array1[0])#[:10] #time_array1[0].strftime('%Y-%m-%d')
 
@@ -88,8 +91,7 @@ slt=Solexs[0]
 time_array4=[datetime.strptime(str(ts)[:19], "%Y-%m-%dT%H:%M:%S") for ts in slt]
 
 
-fig, axs = plt.subplots(4, 1, sharex=True, figsize=(12,16),
-                         gridspec_kw={'hspace': 0})  # no vertical spacing 
+fig, axs = plt.subplots(3, 1, sharex=True, figsize=(12,14), gridspec_kw={'hspace': 0})  # no vertical spacing 
 plt.rcParams["font.size"]=22
 plt.rcParams["axes.labelsize"]=22
 plt.rcParams["xtick.labelsize"]=22
@@ -101,11 +103,11 @@ plt.rcParams["axes.titlesize"]=22
 for i in range(len(axs)):  # all but bottom panel
     axs[i].ticklabel_format(style='plain', axis='y', scilimits=(0,0))
     
-    if i ==0:
-        axs[i].tick_params(axis="x", which="both", bottom=True, top=True) 
-    else:
-        #axs[i].label_outer()                     # hide x-labels
-        axs[i].tick_params(axis="x", which="both", bottom=True, top=False) 
+    # if i ==0:
+    axs[i].tick_params(axis="x", which="both", bottom=True, top=True) 
+    # else:
+    #     #axs[i].label_outer()                     # hide x-labels
+    #     axs[i].tick_params(axis="x", which="both", bottom=True, top=False) 
     #axs[i].yaxis.offsetText.set_position((-0.04,-0.1))  # adjust X,Y offset
     #axs[i].grid(True, which='major', linestyle='--', alpha=0.6)
 
@@ -120,26 +122,28 @@ gap_indices = np.where(dt > gap_threshold)[0]
 print("Gap indices:", gap_indices)
 axs1=axs[0].twinx()
 axs2=axs[2].twinx()
-axs3=axs[3].twinx()
+# axs3=axs[3].twinx()
 start = 0
 for idx in gap_indices:
-    axs[0].errorbar(time_array1[start:idx+1], (lc1_tot)[start:idx+1]/10e8,yerr=lc1_mean_er[start:idx+1]/10e5,fmt='k', marker="o",capsize=2,markersize=2,linewidth=0.5)
-    axs1.errorbar(time_array5[start:idx+1],nb3_counts[start:idx+1],yerr=nb3_counts_er[start:idx+1]*1e3,color=scol[0], marker="o",capsize=2,markersize=2,linewidth=0.5)
+    axs[0].errorbar(time_array1[start:idx+1], (lc1_tot)[start:idx+1]/10e8,yerr=lc1_mean_er[start:idx+1]/10e5,fmt='k', marker="s",linestyle='--',capsize=2,markersize=3,linewidth=1  )
+    # axs1.errorbar(time_array5[start:idx+1],nb3_counts[start:idx+1],yerr=nb3_counts_er[start:idx+1]*1e3,color=scol[0], marker="o",capsize=2,markersize=2,linewidth=0.5)
+    axs1.errorbar(time_array5[start:idx+1],nb3_counts[start:idx+1],yerr=nb3_counts_er[start:idx+1],color=scol[0], marker="o",capsize=2,markersize=2,linewidth=0.5)
     start = idx + 1
-axs[0].errorbar(time_array1[start:], (lc1_tot)[start:]/10e8,yerr=lc1_mean_er[start:]/10e5,fmt='k', marker="o",capsize=2,markersize=2,linewidth=0.5, label=r"SUIT Mg II h (errors multiplied by $ 10^3$)")
-axs1.errorbar(time_array5[start:],nb3_counts[start:],yerr=nb3_counts_er[start:]*1e3,color=scol[0], marker="o",capsize=2,markersize=2,linewidth=0.5,label=r'Excess intensity (errors multiplied by $ 10^3$)')
+axs[0].errorbar(time_array1[start:], (lc1_tot)[start:]/10e8,yerr=lc1_mean_er[start:]/10e5,fmt='k', marker="s",linestyle='--',capsize=2,markersize=3,linewidth=1, label=r"SUIT Mg II h (errors multiplied by $ 10^3$)")
+# axs1.errorbar(time_array5[start:],nb3_counts[start:],yerr=nb3_counts_er[start:]*1e3,color=scol[0], marker="o",capsize=2,markersize=2,linewidth=0.5,label=r'Excess intensity (errors multiplied by $ 10^3$)')
+axs1.errorbar(time_array5[start:],nb3_counts[start:],yerr=nb3_counts_er[start:],color=scol[0], marker="o",capsize=2,markersize=2,linewidth=0.5,label=r'Excess intensity (errors multiplied by $ 10^3$)')
 axs[1].errorbar(helio_time_array, cdte,yerr=cdte_er,color=scol[2], marker="o",capsize=2,markersize=2,linewidth=0.5, label="HEL1OS (10-30 keV)"); axs[1].legend(loc='upper center')
 axs[2].errorbar(time_array4,sl_temp,yerr=sl_temp_er,color=scol[3], marker="o",capsize=2,markersize=2,linewidth=0.5, label='SoLEXS Temperature'); axs[2].legend(loc='upper center')
 axs2.plot(goes_dt,xrs_b/1e-6,color=scol[9],markersize=2,linewidth=1, label='GOES: 1–8 Å')
-axs[3].plot(times, np.log10(int_full), label='AIA 131 Full-disk', color='tab:green',linestyle='dotted',linewidth=2); axs[3].legend(loc='upper center')
-axs3.plot(times, np.log10(int_roi), label='AIA 131 ROI only',color='k',linestyle='--',linewidth=2); axs[3].legend(loc='upper center')
+# axs[3].plot(times, np.log10(int_full), label='AIA 131 Full-disk', color='tab:green',linestyle='dotted',linewidth=2); axs[3].legend(loc='upper center')
+# axs3.plot(times, np.log10(int_roi), label='AIA 131 ROI only',color='k',linestyle='--',linewidth=2); axs[3].legend(loc='upper center')
 
 axs1.set_yscale('log')
 for pk in peaks_dt:
     axs[0].axvline(pk,alpha=0.2,color='r')
     axs[1].axvline(pk,alpha=0.2,color='r')
     axs[2].axvline(pk,alpha=0.2,color='r')
-    axs[3].axvline(pk,alpha=0.2,color='r')
+    # axs[3].axvline(pk,alpha=0.2,color='r')
 for pk in suit_pks_dt:
     axs[0].axvline(pk,alpha=0.6,color='tab:purple')
 axs[1].axvline(pk,alpha=0.0,color='r',label='HEL1OS peaks')
@@ -153,9 +157,9 @@ ln1, lbl1 = axs[2].get_legend_handles_labels()
 ln2, lbl2 = axs2.get_legend_handles_labels()
 axs[2].legend(ln1 + ln2, lbl1 + lbl2, loc='upper center')
 
-ln3, lbl3 = axs[3].get_legend_handles_labels()
-ln4, lbl4 = axs3.get_legend_handles_labels()
-axs[3].legend(ln3 + ln4, lbl3 + lbl4, loc='upper center')
+# ln3, lbl3 = axs[3].get_legend_handles_labels()
+# ln4, lbl4 = axs3.get_legend_handles_labels()
+# axs[3].legend(ln3 + ln4, lbl3 + lbl4, loc='upper center')
 
 ul=np.power(10,7.7)
 ll=np.power(10,5.4)
@@ -167,8 +171,8 @@ axs[1].set_ylabel('HEL1OS counts/s',color=scol[2])
 #axs[3].set_ylabel(r'EM($\mathrm{\times10^{43}cm^{-3}}$)')
 axs2.set_ylabel(r'X-ray flux ($\times 10^-6$  W/m²)',color=scol[9])
 axs[2].set_ylabel('Temperature (MK)',color=scol[3])
-axs[3].set_ylabel(r"$\log ~\mathrm{FD~ intensity ~(DN/s)}$",color='tab:green')  
-axs3.set_ylabel(r"$\log~ \mathrm{ROI~ intensity ~(DN/s)}$",color='k') 
+# axs[3].set_ylabel(r"$\log ~\mathrm{FD~ intensity ~(DN/s)}$",color='tab:green')  
+# axs3.set_ylabel(r"$\log~ \mathrm{ROI~ intensity ~(DN/s)}$",color='k') 
 
 
 
@@ -195,5 +199,5 @@ for i, ax in enumerate(axs):
             fontsize=20, fontweight='bold',
             va='top', ha='left')
 
-plt.savefig(f'case{C_n}_lc.pdf',dpi=300)
+plt.savefig(f'case{C_n}_lc.png',dpi=300)
 plt.close()

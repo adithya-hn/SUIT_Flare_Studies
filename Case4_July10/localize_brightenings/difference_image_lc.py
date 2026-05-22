@@ -23,4 +23,4 @@ save_fits=True
 
 #suit_difference_image.diff_img(data_folder,flt,thresh_sig=thresh_sig,save_fits=False,text_col='k')
 
-suit_difference_image.diff_img(data_folder,flt,thresh_sig=thresh_sig,save_fits=True,get_histograms=True,text_col='k',shut_pos_filetring=False,shut_pos=180) #,get_histograms=True,save_fits=True
+suit_difference_image.diff_img(data_folder,flt,thresh_sig=thresh_sig,save_fits=False,get_histograms=False,text_col='k',shut_pos_filetring=False,shut_pos=180) #,get_histograms=True,save_fits=True

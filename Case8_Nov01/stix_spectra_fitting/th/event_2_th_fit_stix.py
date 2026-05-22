@@ -56,7 +56,7 @@ fitter.energy_fitting_range = [6,14]
 fitter.params["T1_spectrum1"] = {"Status":"free", "Value":6, "Bounds":(1, 30)}
 fitter.params["EM1_spectrum1"] = {"Status":"free", "Value":0.8, "Bounds":(0.1, 100)}
 stix_spec_fit = fitter.fit(tol=tol)
-
+print('stat: ',stix_spec_fit.fun)
 plt.figure(figsize=(12,8))
 axes, res_axes = fitter.plot()
 axes[0].set_xlim([5,15])

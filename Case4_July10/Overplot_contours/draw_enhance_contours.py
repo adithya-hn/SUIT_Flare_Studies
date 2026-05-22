@@ -168,13 +168,13 @@ def draw_suit_contours_on_sdo(suitMap,aia_map,base_map,thresh_sig,fltr,aia_dt,ba
 if __name__=='__main__':
 #-----------------Intial paths and params--------------------------
     suit_aligned_files= '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case4_July10/data/aligned_crop/'
-    aia_imgs='/media/adithya/Adi_disk4/SUIT_flare_work/case4_jul10/data/aia/aia_fd/'#'/media/adithya/Adi_disk4/SUIT_flare_work/case4_Jul10/data/aia/cut_outs/171_cutouts/'
+    aia_imgs='/media/adithya/Adi_disk4/SUIT_flare_work/case4_jul10/data/aia/cut_outs/171_cutouts/' #'/media/adithya/Adi_disk4/SUIT_flare_work/case4_jul10/data/aia/aia_fd/'#
     hmi_imgs='/media/adithya/Adi_disk4/SUIT_flare_work/case4_jul10/data/HMI/HMI_cutouts/'
     fol_nm=os.getcwd() #Custom folder to save contour images
     jpg_fold=fol_nm+'/'+'Contour_imgs'
     fltr='NB04'
     thresh_sig=5
-    base_channel='1600'
+    base_channel='171'
 
 
     save_aligned_fits='yes'
@@ -183,7 +183,7 @@ if __name__=='__main__':
     draw_contours='yes'
     
     nb4_fls = glob.glob(suit_aligned_files + '*3'+f'{fltr}.fits')
-    aia_fls = glob.glob(aia_imgs + '*1600.image_lev1.fits')
+    aia_fls = glob.glob(aia_imgs + '*171.image_lev1.fits')
     hmi_fls = glob.glob(hmi_imgs + '*.fits')
     
 

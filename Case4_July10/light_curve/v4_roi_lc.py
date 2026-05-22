@@ -35,7 +35,7 @@ start = timeit.default_timer()
 
 fdir='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case4_July10/data/aligned_crop/'
 fol_nm = os.getcwd() + '/lc_images/'
-Filters = ['NB03','NB04','NB08']
+Filters = ['NB04']
 
 #----------------------------------
 

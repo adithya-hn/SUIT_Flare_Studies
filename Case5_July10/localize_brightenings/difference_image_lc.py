@@ -12,7 +12,7 @@ import suit_difference_image
 import suit_running_difference_image
 
 flt='NB04' #NB04,NB08
-data_folder=f'/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case5_July10/data/aligned_crop_fits/*{flt}.fits'
+data_folder=f'/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case5_July10/data/aligned_crop/*{flt}.fits'
 clip_bar=False  #to remove the ccd quadrant
 c1,c2=80,120
 thresh_sig=5

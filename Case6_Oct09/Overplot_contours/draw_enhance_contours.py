@@ -83,7 +83,7 @@ def draw_suit_contours_on_sdo(suitMap,aia_map,base_map,thresh_sig,fltr,aia_dt,ba
     fl_nm=jpg_fold+f'/{fltr}_{base_channel}'+'/'+os.path.basename(suitMap.meta['F_NAME'])[:-4]+'jpg'
     fig=plt.figure(figsize=(10,10))
     ax = fig.add_subplot(111, projection=aia_map)
-    aia_map.plot(axes=ax,cmap='gray',title=str(aia_dt))
+    aia_map.plot(axes=ax,title=str(aia_dt))
     norm_mg_Map.draw_contours(axes=ax, levels=v_Thresh,lws=0.5,colors=['red'],alpha=0.5)
     if base_channel=='HMI':
         aia_map.draw_contours(axes=ax,levels=0,colors='green',lw=0.5,alpha=0.4)

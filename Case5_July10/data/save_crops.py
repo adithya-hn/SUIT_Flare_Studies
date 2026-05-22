@@ -68,8 +68,8 @@ plt.close()
 
 print(f'Crop coordinates: x1 {max(blX)}, y1 {max(blY)}, x2 { min(trX)}, y2 { min(trY)}')
 
-#x1,y1,x2,y2=100,110,610,750
-x1,y1,x2,y2=100,130,610,750 #FOR CONTINUM CHANNELS
+x1,y1,x2,y2=100,130,610,750
+# x1,y1,x2,y2=100,130,610,750 #FOR CONTINUM CHANNELS
 
 #os._exit(0) #------------------
 

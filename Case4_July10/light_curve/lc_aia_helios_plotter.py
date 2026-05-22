@@ -14,7 +14,7 @@ scol =sns.color_palette("colorblind")
 from sys import path as sys_path
 sys_path.append('/home/adithya/Adithya_repos')
 from plots_styl import set_pub_style
-#set_pub_style()
+set_pub_style()
 
 # ----------------------------
 # CONFIGURE
@@ -25,7 +25,7 @@ Helios=(np.loadtxt("csv_files/helios_CdTe_c4.csv",skiprows=1,delimiter=',',dtype
 csv_file = f'csv_files/{channel}_lc.csv'
 nb4_csv  ='csv_files/Diff_img_data_NB04.csv'
 data1 =(np.loadtxt(f'csv_files/c4_NB04_lc_data.csv',delimiter=',',skiprows=1,dtype='str')).transpose()
-output_plot = f'c4_helios_aia_{channel}_fd_roi_lc.pdf'
+output_plot = f'c4_helios_aia_{channel}_fd_roi_lc.png'
 
 # ----------------------------
 # Load without header

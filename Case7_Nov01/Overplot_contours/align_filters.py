@@ -27,11 +27,22 @@ ref_fd_img_pth='/media/adithya/Adi_disk4/SUIT_flare_work/case7_nov01/data/aia/ai
 # tx1,ty1=-500,150
 # tx2,ty2=-390,250
 
-tx1,ty1=-320,160 #had to avoid the flaring region sunspot
-tx2,ty2=-220,260
+# tx1,ty1=-340,140 #had to avoid the flaring region sunspot
+# tx2,ty2=-420,80
 
-shift_x=10
-shift_y=-5
+# tx1,ty1=-320,270
+# tx2,ty2=-230,330
+
+tx1,ty1=-480,170
+tx2,ty2=-430,205
+
+
+# tx1,ty1=-430,50 #had to avoid the flaring region sunspot
+# tx2,ty2=-400,80
+# shift_x=10
+# shift_y=-5
+shift_x=5
+shift_y=0
 
 save_aligned_fits='yes'
 save_pngs='no'     #aligned pngs
@@ -49,5 +60,5 @@ for fltr in suit_filters:
     if len(fltr_fl)==0:
         print(f'No {fltr} filter files')
         continue
-    align_suit_fltr_to_aia.co_align_maps(suit_raw_files,jpg_fold,ref_fd_img_pth,fltr,fltr_fl,tx1,tx2,ty1,ty2,save_pngs=None,save_fits='yes',draw_contours='yes',cor_x=shift_x,cor_y=shift_y)
+    align_suit_fltr_to_aia.co_align_maps(suit_raw_files,jpg_fold,ref_fd_img_pth,fltr,fltr_fl,tx1,tx2,ty1,ty2,save_pngs=True,save_fits='yes',draw_contours='yes',cor_x=shift_x,cor_y=shift_y)
     print('-------------')

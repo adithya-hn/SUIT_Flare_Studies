@@ -19,7 +19,7 @@ from sunkit_image.coalignment import mapsequence_coalign_by_match_template as mc
 
 # files = sorted(glob.glob("/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case5_July10/data/1600_aligned/*NB02.fits"))
 
-files = sorted(glob.glob("/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case5_July10/data/aligned_crop/*NB04.fits"))
+files = sorted(glob.glob("/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case5_July10/data/aligned_fits/*NB04.fits"))
 
 #-------------------------------------------------
 os.makedirs("aligned_crop_", exist_ok=True)

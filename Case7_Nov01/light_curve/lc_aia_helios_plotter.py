@@ -25,7 +25,7 @@ Helios=(np.loadtxt("csv_files/helios_CdTe_c7.csv",skiprows=1,delimiter=',',dtype
 csv_file = f'csv_files/{channel}_lc.csv'
 nb4_csv  ='csv_files/Diff_img_data_NB04.csv'
 data1 =(np.loadtxt(f'csv_files/c7_NB04_lc_data.csv',delimiter=',',skiprows=1,dtype='str')).transpose()
-output_plot = f'c7_helios_aia_{channel}_fd_roi_lc.pdf'
+output_plot = f'c7_helios_aia_{channel}_fd_roi_lc.png'
 
 # ----------------------------
 # Load without header
@@ -41,7 +41,7 @@ int_roi = rgn_lc_data[:, 3].astype(float)/exposure #region 4
 #int_outside = data[:, 3].astype(float)
 
 cdte1=np.array(Helios[1],dtype=float)
-cdte_er=np.array(Helios[2],dtype=float)
+cdte_er=np.sqrt(cdte1*60)/60
 helio_time_array=np.array(Helios[0],dtype='datetime64')
 times = [datetime.strptime(d, "%Y-%m-%d %H:%M:%S.%f") if '.' in d else datetime.strptime(d, "%Y-%m-%dT%H:%M:%S") for d in dates_str]
 

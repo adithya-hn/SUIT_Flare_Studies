@@ -37,6 +37,7 @@ matches = find_cotemporal_peaks(suit_peak_times,
                                 helios_peak_times,
                                 tolerance_sec=91)
 
+
 print("Number of co-temporal peaks:", len(matches))
 # print(matches)
 def get_corresponding_counts(match_times, helios_times,suit_counts,helios_counts):
@@ -58,5 +59,5 @@ def get_corresponding_counts(match_times, helios_times,suit_counts,helios_counts
 hcounts, scounts = get_corresponding_counts(matches, helios_peak_times,suit_counts,helios_counts)
 print(hcounts,scounts)
 # print(type(matches))
-
-np.savetxt('suit_helios_time_count_c4.csv',np.c_[scounts,hcounts],delimiter=',')
+suit_dt_arr = np.array([(t1.iso) for t1, t2 in matches])
+np.savetxt('suit_helios_time_count_c4.csv',np.c_[suit_dt_arr,scounts,hcounts],header='date_time,suit_counts,helios_counts',comments='',delimiter=',',fmt='%s')

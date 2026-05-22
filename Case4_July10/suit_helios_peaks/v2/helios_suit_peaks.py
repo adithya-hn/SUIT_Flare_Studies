@@ -40,7 +40,7 @@ all_ints = []
 
 data = np.genfromtxt(suit_fl, delimiter=',', names=True, dtype=None)
 flux=np.array(data['diff_count'])   
-t = np.array(data['Date'], dtype='datetime64[ms]')
+t = np.array(data['DateTime'], dtype='datetime64[ms]')
 area=np.array(data['area'],dtype=float)
 
 x = np.array(data['diff_count'], dtype=float)#/area
@@ -99,13 +99,13 @@ pk=np.array(x[peaks])
 
 ax.errorbar(ht,h_count,yerr=h_er)
 ax.errorbar(ht,bkg,yerr=np.sqrt(bkg_safe*60)/(60*np.sqrt(window)),fmt='g--',label='Background')
-ax2.plot(t,x,'ro-',markersize=3) 
+ax2.plot(t,x,'bo-',markersize=3) 
 
 for i in range(len(h_peaks)):
-    plt.axvline(ht[h_peaks[i]], color='b',alpha=0.2)
+    plt.axvline(ht[h_peaks[i]], color='r',alpha=0.2)
 
 for i in range(len(peaks)):
-    plt.axvline(t[peaks[i]], color='r',alpha=0.2)
+    plt.axvline(t[peaks[i]], color='b',alpha=0.2)
 
 np.savetxt('helios_peaks.csv',np.c_[peak_times_,peak_counts],header='date_time,helio_count',comments='',delimiter=',',fmt='%s')
 np.savetxt('suit_diff_peaks.csv',np.c_[dt,pk],header='date_time,suit_count',comments='',delimiter=',',fmt='%s')

@@ -2,7 +2,7 @@
 Created on Oct 9 2025
 @Author: Adithya-hn
 
-- to cretae the olight curve of the aia active regions
+- to cretae the light curve of the aia active regions
 """
 
 import os
@@ -34,7 +34,7 @@ warnings.simplefilter('ignore')
 
 
 #--------------------
-data_folder=Path('/media/adithya/Adi_disk4/SUIT_flare_work/case9_nov13/data/aia/aia_fd_data')
+data_folder=Path('/media/adithya/Adi_disk4/SUIT_flare_work/case9_nov13/data/aia/aia_fd_data/1')
 regions_csv='aia131_regions.csv'
 out_csv='aia131_region_lc.csv'
 out_dir='AR_patches'

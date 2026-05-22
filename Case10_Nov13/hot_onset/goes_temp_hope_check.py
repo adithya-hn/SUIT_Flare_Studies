@@ -65,10 +65,15 @@ if trigger_time is not None:
     df2.loc[df2.index == trigger_time, "HOPE_trigger"] = True
     print("HOPE trigger at:", trigger_time)
 
+import pandas as pd    
+suit_diff=pd.read_csv('Diff_img_data_NB04.csv')
+dt   =pd.to_datetime(suit_diff['Date'], errors='coerce')
 # ts_modified = XRSTimeSeries(df2,meta=goes_ts.meta,units=goes_ts.units) 
 # df2 = ts_modified.to_dataframe()
 
-fig, (ax1, ax2, ax3) = plt.subplots(3,figsize=(16, 16), sharex=True)
+
+fig, (ax1, ax2, ax3,ax6) = plt.subplots(4, 1, sharex=True, figsize=(12,16), gridspec_kw={'hspace': 0})  # no vertical spacing 
+ax6.set_ylabel(r'Excess intensity (DN/s) ',color='k')
 #fig.suptitle("X5.8 Class Flare on 2024-05-11 01:10:00 UTC")
 ax4 = ax2.twinx()
 ax5 = ax3.twinx()
@@ -82,7 +87,7 @@ ax11.set_ylabel(r"$\Delta$ XRS Flux (MK) (W/m$^2$)",color='red')
 ax1.set_yscale("log")
 ax11.set_yscale("log")
 ax1.legend(loc="upper right")
-ax1.grid(True)
+# ax1.grid(True)
 ax2.plot(df1.index, df1["temperature"], color="k",markersize=4,marker='o', label="Temperature")
 ax4.plot(df2.index, df2["temperature"], color="r",markersize=4,marker='o', label=r"$\Delta$ Temperature")
 ax4.axhline(5, color="g", ls="--", lw=2)
@@ -94,6 +99,10 @@ if trigger_time is not None:
     ax2.axvline(impulsive_phase_start, color="b", ls="-", lw=1,label="Impulsive phase start time")
     ax3.axvline(trigger_time, color="b", ls="--", lw=2,label="HOPE trigger")
     ax3.axvline(impulsive_phase_start, color="b", ls="-", lw=1,label="Impulsive phase start time")
+    ax6.axvline(trigger_time, color="b", ls="--", lw=2)
+    ax6.axvline(impulsive_phase_start, color="b", ls="-", lw=1)
+ax6.errorbar(dt,suit_diff['diff_count'].values/1e7, yerr=suit_diff['Diff_error'].values/1e7,marker='o',markersize=4,color='k',label=r'SUIT Mg II h Excess intensity')
+ax6.legend()
 
 ax3.plot(df1.index, df1["emission_measure"]/1e48,markersize=4,marker='o', color="k",label="Emission Measure")
 ax5.plot(df2.index, df2["emission_measure"]/1e48,markersize=4,marker='o', color="r",label=r"$\Delta$ Emission Measure")
@@ -104,8 +113,8 @@ ax3.legend(loc="upper right")
 ax5.set_yscale("log")
 #ax2.set_ylim(3,20)
 #ax3.set_ylim(1e-3,1e1)
-ax2.grid(True)
-ax3.grid(True)
+# ax2.grid(True)
+# ax3.grid(True)
 ax4.set_ylabel(r"$\Delta$ Temperature (MK)",color='red')
 ax5.set_ylabel(r"$\Delta$ Emission Measure ($10^{48}$ cm$^{-3}$)",color='red')
 # ax3.axvline(datetime.datetime(2024, 5, 11, 1, 13), color="b", ls="-", lw=1)
@@ -123,6 +132,13 @@ ax3.legend(lines3 + lines4, labels3 + labels4, loc="upper left")
 lines11, labels11 = ax11.get_legend_handles_labels()
 lines12, labels12 = ax1.get_legend_handles_labels()
 ax1.legend(lines12 + lines11, labels12 + labels11, loc="upper left")
+panel_labels = ['a)', 'b)', 'c)', 'd)']
+
+ax1.text(0.03, 0.21,'a)',transform=ax1.transAxes, fontsize=24, fontweight='bold',va='top', ha='left')
+ax2.text(0.03, 0.21,'b)',transform=ax2.transAxes, fontsize=24, fontweight='bold',va='top', ha='left')
+ax3.text(0.03, 0.21,'c)',transform=ax3.transAxes, fontsize=24, fontweight='bold',va='top', ha='left')
+ax6.text(0.03, 0.21,'d)',transform=ax6.transAxes, fontsize=24, fontweight='bold',va='top', ha='left')
+ax6.set_xlabel(f"Time (UT)")
 
 
 time_formatter = mdates.DateFormatter('%H:%M')  # Format as HH:MM

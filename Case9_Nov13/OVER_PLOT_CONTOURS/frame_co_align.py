@@ -54,6 +54,9 @@ log_ = logging.getLogger('sunpy')
 log_.setLevel('WARNING')
 logging.getLogger('reproject').setLevel(logging.WARNING)
 
+fwhm = 8
+sigma = fwhm / 2.355
+
 #------------------------------------------------------------------------------#
 
 def tracked_sunspot(first_map,tx,ty,current_map):
@@ -69,14 +72,15 @@ def tracked_sunspot(first_map,tx,ty,current_map):
     return current_map.submap(blo,top_right=tro)  
 
 
-
-def get_rebinned_crop_map(ref_fd_1600,ref_mg_rot):
+def get_rebinned_crop_map(ref_fd_1600,ref_mg_rot,sigma):
     scale=ref_fd_1600.scale[0].value/ref_mg_rot.scale[0].value
     fd_new_dem=[ref_fd_1600.data.shape[1]*scale,ref_fd_1600.data.shape[0]*scale]*u.pixel
     ref_aia_resmp=ref_fd_1600.resample(fd_new_dem)
     blo = SkyCoord(ref_mg_rot.bottom_left_coord.Tx, ref_mg_rot.bottom_left_coord.Ty, frame=ref_aia_resmp.coordinate_frame)
     tro = SkyCoord(ref_mg_rot.top_right_coord.Tx, ref_mg_rot.top_right_coord.Ty, frame=ref_aia_resmp.coordinate_frame)
-    return ref_aia_resmp.submap(blo,top_right=tro)  
+    rebin_map=ref_aia_resmp.submap(blo,top_right=tro)
+    smoothed_aia=gaussian_filter(rebin_map.data, sigma=sigma)
+    return   Map(smoothed_aia,rebin_map.meta)
 
 def get_mg_threshold(ref_mg_rot):
     valid = ref_mg_rot.data[(ref_mg_rot.data > 100)]
@@ -140,12 +144,13 @@ for i in tqdm(range(len(fltr_fl))):
     idx = np.argmax(dt)   # largest negative (or zero) offset
     #print(idx,i)
     aia_map=Map(aia1600s[idx])
-    aia_rebin_map=get_rebinned_crop_map(aia_map,suit_map_rot)
+    aia_rebin_map=get_rebinned_crop_map(aia_map,suit_map_rot,sigma)
     sq=MapSequence([aia_rebin_map,suit_map_rot])
 
     template= tracked_sunspot(aia_map_,-300,-180,aia_rebin_map)
 
     mg_aln_maps=mc_coalign(sq,layer_index=0,clip=False)#,func=np.log)
+    #  mg_aln_maps=mc_coalign(sq,layer_index=0,clip=False)#,func=np.asinh)
 
     thresh_lvs=get_mg_threshold(suit_map_rot)
     save_path='../data/aln_1600_conts'

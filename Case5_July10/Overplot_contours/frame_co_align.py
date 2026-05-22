@@ -54,6 +54,9 @@ log_ = logging.getLogger('sunpy')
 log_.setLevel('WARNING')
 logging.getLogger('reproject').setLevel(logging.WARNING)
 
+fwhm = 8
+sigma = fwhm / 2.355
+
 #------------------------------------------------------------------------------#
 
 def tracked_sunspot(first_map,tx,ty,current_map):
@@ -64,19 +67,19 @@ def tracked_sunspot(first_map,tx,ty,current_map):
     durations = (t2 - t1).to('min')
     diffrot_point = SkyCoord(RotatedSunFrame(base=coord, duration=durations))
     diff_rotated=diffrot_point.transform_to(current_map.coordinate_frame)
-    blo = SkyCoord((diff_rotated.Tx.value-50)*u.arcsec, (diff_rotated.Ty.value-50)*u.arcsec, frame=current_map.coordinate_frame)
-    tro = SkyCoord((diff_rotated.Tx.value+50)*u.arcsec, (diff_rotated.Ty.value+50)*u.arcsec, frame=current_map.coordinate_frame)
+    blo = SkyCoord((diff_rotated.Tx.value-25)*u.arcsec, (diff_rotated.Ty.value-25)*u.arcsec, frame=current_map.coordinate_frame)
+    tro = SkyCoord((diff_rotated.Tx.value+25)*u.arcsec, (diff_rotated.Ty.value+25)*u.arcsec, frame=current_map.coordinate_frame)
     return current_map.submap(blo,top_right=tro)  
 
-
-
-def get_rebinned_crop_map(ref_fd_1600,ref_mg_rot):
+def get_rebinned_crop_map(ref_fd_1600,ref_mg_rot,sigma):
     scale=ref_fd_1600.scale[0].value/ref_mg_rot.scale[0].value
     fd_new_dem=[ref_fd_1600.data.shape[1]*scale,ref_fd_1600.data.shape[0]*scale]*u.pixel
     ref_aia_resmp=ref_fd_1600.resample(fd_new_dem)
     blo = SkyCoord(ref_mg_rot.bottom_left_coord.Tx, ref_mg_rot.bottom_left_coord.Ty, frame=ref_aia_resmp.coordinate_frame)
     tro = SkyCoord(ref_mg_rot.top_right_coord.Tx, ref_mg_rot.top_right_coord.Ty, frame=ref_aia_resmp.coordinate_frame)
-    return ref_aia_resmp.submap(blo,top_right=tro)  
+    rebin_map=ref_aia_resmp.submap(blo,top_right=tro)
+    smoothed_aia=gaussian_filter(rebin_map.data, sigma=sigma)
+    return   Map(smoothed_aia,rebin_map.meta)
 
 def get_mg_threshold(ref_mg_rot):
     valid = ref_mg_rot.data[(ref_mg_rot.data > 100)]
@@ -104,9 +107,9 @@ def draw_contours_and_save(BaseMap,suit_aligned_map,suit_thresh_levs,save_path):
 #--------------------------------------------------------------------------------------------------------
 
 suit_raw_files= '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case5_July10/data/raw/'
-aia_roi_files='/media/adithya/Adi_disk4/SUIT_flare_work/case5_jul10/data/aia/cut_outs/1600_cutouts_aln/'
-
+aia_roi_files='/media/adithya/Adi_disk4/SUIT_flare_work/case5_jul10/data/aia/cut_outs/1600_cutouts/'
 fltr='NB04'
+tx,ty= 175,200 #centre coordinate of spot
 
 fltr_fl = glob.glob(suit_raw_files + '*3'+f'{fltr}.fits')
 fltr_fl=sorted(fltr_fl, key=lambda file_name: datetime.datetime.strptime(os.path.basename(file_name).split('_')[5], "%Y-%m-%dT%H.%M.%S.%f"))
@@ -126,8 +129,8 @@ datetime_array = times#.to_datetime()
 print('No. of SUIT images: ',len(fltr_fl))
 print('No. of AIA 1600 images: ',len(aia1600s))
 
-suit_map=Map(fltr_fl[0])
-aia_map_=Map(aia1600s[0])
+# suit_map=Map(fltr_fl[0])
+# aia_map_=Map(aia1600s[0])
 
 for i in tqdm(range(len(fltr_fl))):
     suit_map=Map(fltr_fl[i])
@@ -140,12 +143,32 @@ for i in tqdm(range(len(fltr_fl))):
     idx = np.argmax(dt)   # largest negative (or zero) offset
     #print(idx,i)
     aia_map=Map(aia1600s[idx])
-    aia_rebin_map=get_rebinned_crop_map(aia_map,suit_map_rot)
+    aia_rebin_map=get_rebinned_crop_map(aia_map,suit_map_rot,sigma)
     sq=MapSequence([aia_rebin_map,suit_map_rot])
+    if i==0:
+        first_map=aia_rebin_map
 
-    template= tracked_sunspot(aia_map_,-300,-180,aia_rebin_map)
+    template= tracked_sunspot(first_map,0,-200,aia_rebin_map)
+    if i==0:
+        fig=plt.figure()
+        ax = fig.add_subplot(projection=aia_rebin_map)
+        aia_rebin_map.plot(axes=ax)
+        # ref_template.plot()
+        rect_template=SkyCoord(Tx=(tx-25,tx+25 )* u.arcsec, Ty=(ty-25,ty+25 )* u.arcsec, frame=aia_rebin_map.coordinate_frame)
+        ref_template=aia_rebin_map.submap(rect_template)
+        aia_rebin_map.draw_quadrangle(rect_template, axes=ax, edgecolor="red", linestyle="-", linewidth=2, label='Template')
+        plt.savefig('template_region.png')
+        plt.close()
 
-    mg_aln_maps=mc_coalign(sq,layer_index=0,clip=False)#,func=np.log)
+        fig=plt.figure()
+        ax = fig.add_subplot(projection=ref_template)
+        template.plot()
+        plt.savefig('template.png')
+        plt.close()
+
+
+    # mg_aln_maps=mc_coalign(sq,layer_index=0,clip=False,func=np.asinh)
+    mg_aln_maps=mc_coalign(sq,layer_index=0,template=template,clip=False)#,func=np.asinh)# not working
 
     thresh_lvs=get_mg_threshold(suit_map_rot)
     save_path='../data/aln_1600_conts'

@@ -15,7 +15,8 @@ import seaborn as sns
 from sys import path as sys_path
 import seaborn as sns
 scol =sns.color_palette("colorblind")
-
+import scienceplots
+plt.style.use('science')
 sys_path.append('/home/adithya/Adithya_repos')
 from plots_styl import set_pub_style
 set_pub_style()
@@ -34,7 +35,8 @@ peaks_pos=(np.loadtxt('csv_files/helios_peaks.csv',delimiter=',',skiprows=1,dtyp
 peaks_dt =np.array(peaks_pos[0],dtype='datetime64')
 suit_pks_pos=(np.loadtxt('csv_files/suit_diff_peaks.csv',delimiter=',',skiprows=1,dtype='str')).transpose() 
 suit_pks_dt =np.array(suit_pks_pos[0],dtype='datetime64')
-
+rgn_lc = f'csv_files/aia131_region_lc.csv'
+csv_file = f'csv_files/{131}_lc.csv'
 #-------------------------------------------------------
 pathlib.Path("Figures").mkdir(parents=True, exist_ok=True)
 
@@ -60,6 +62,22 @@ cdte=np.array(Helios[1],dtype=float)
 cdte_er=np.array(Helios[2],dtype=float)
 helio_time_array=np.array(Helios[0],dtype='datetime64[us]')
 
+#--------------------------131--------------------
+
+data = np.genfromtxt(csv_file, delimiter=',', dtype=str, skip_header=1)
+rgn_lc_data=np.genfromtxt(rgn_lc, delimiter=',', dtype=str, skip_header=1)
+
+# Extract columns
+exposure=rgn_lc_data[:, 1].astype(float)
+dates_str = data[:, 0]
+int_full = data[:, 1].astype(float)
+int_roi = rgn_lc_data[:, 2].astype(float)/exposure #region 1
+times = [datetime.strptime(d, "%Y-%m-%d %H:%M:%S.%f") if '.' in d else datetime.strptime(d, "%Y-%m-%dT%H:%M:%S") for d in dates_str]
+
+
+#---------------------------------------------------------%%%%%%%SOLEXS%%%%%%------------------------------------------#
+
+
 #---------------------------------------------------------%%%%%%%SOLEXS%%%%%%------------------------------------------#
 
 time_array4=[]
@@ -71,9 +89,7 @@ sl_Em_er=[float(eme) for eme in Solexs[4]]
 slt=Solexs[0]
 time_array4=[datetime.strptime(str(ts)[:19], "%Y-%m-%dT%H:%M:%S") for ts in slt]
 
-
-fig, axs = plt.subplots(3, 1, sharex=True, figsize=(12,12),
-                         gridspec_kw={'hspace': 0,'height_ratios': [1, 1, 1] })  # no vertical spacing 
+fig, axs = plt.subplots(4, 1, sharex=True, figsize=(12,16), gridspec_kw={'hspace': 0})  # no vertical spacing 
 plt.rcParams["font.size"]=22
 plt.rcParams["axes.labelsize"]=22
 plt.rcParams["xtick.labelsize"]=22
@@ -106,6 +122,7 @@ gap_indices = np.where(dt > gap_threshold)[0]
 print("Gap indices:", gap_indices)
 axs1=axs[0].twinx()
 axs2=axs[2].twinx()
+axs3=axs[3].twinx()
 start = 0
 for idx in gap_indices:
     axs[0].errorbar(time_array1[start:idx+1], (lc1_tot)[start:idx+1]/10e8,yerr=lc1_mean_er[start:idx+1]/10e5,color='k', marker="o",capsize=2,markersize=2,linewidth=0.5)
@@ -113,48 +130,61 @@ for idx in gap_indices:
     start = idx + 1
 axs[0].errorbar(time_array1[start:], (lc1_tot)[start:]/10e8,yerr=lc1_mean_er[start:]/10e5,color='k', marker="o",capsize=2,markersize=2,linewidth=0.5, label=r"SUIT Mg II h (errors are multiplied by $10^3$)")
 axs1.errorbar(time_array5[start:],nb3_counts[start:],yerr=nb3_counts_er[start:]*1000,color=scol[0], marker="o",capsize=2,markersize=2,linewidth=0.5,label=r'Excess intensity (errors multiplied by $ 10^3$)')
-axs[1].errorbar(helio_time_array[hel1:hel2], cdte[hel1:hel2],yerr=cdte_er[hel1:hel2],color=scol[2], marker="o",capsize=2,markersize=2,linewidth=0.5, label="HEL1OS (CdTe1+CdTe2)"); axs[1].legend(loc='upper center')
+axs[1].errorbar(helio_time_array[hel1:hel2], cdte[hel1:hel2],yerr=cdte_er[hel1:hel2],color=scol[2], marker="o",capsize=2,markersize=2,linewidth=0.5, label="HEL1OS (CdTe1+CdTe2)"); axs[1].legend(loc='upper center', frameon=True)
 axs[2].errorbar(time_array4[sole1:sole2],sl_temp[sole1:sole2],yerr=sl_temp_er[sole1:sole2],color=scol[3], marker="o",capsize=2,markersize=2,linewidth=0.5, label='SoLEXS Temperature')
 #axs[3].plot(goes_dt,xrs_a,color='b',markersize=2,linewidth=1, label='GOES: 0.5–4 Å'); axs[3].legend(loc='upper center')
 axs2.plot(goes_dt,xrs_b/1e-6,color=scol[9],markersize=2,linewidth=1, label='GOES: 1–8 Å')
+axs[3].plot(times, np.log10(int_full), label='AIA 131 Full-disk', color='tab:green',linestyle='dotted',linewidth=2); axs[3].legend(loc='upper center')
+axs3.plot(times, np.log10(int_roi), label='AIA 131 ROI only',color='k',linestyle='--',linewidth=2); axs[3].legend(loc='upper center')
+# axs3.set_ylim(6.775,6.794)
+print(time_array1[-1],time_array4[-1],time_array5[-1],times[-1])
+axs1.set_yscale('log')
 for pk in peaks_dt:
     axs[0].axvline(pk,alpha=0.2,color='r')
     axs[1].axvline(pk,alpha=0.2,color='r')
     axs[2].axvline(pk,alpha=0.2,color='r')
+    axs[3].axvline(pk,alpha=0.2,color='r')
 for pk in suit_pks_dt:
     axs[0].axvline(pk,alpha=0.6,color='tab:purple')
 axs[1].axvline(pk,alpha=0.0,color='r',label='HEL1OS peaks')
-axs1.set_yscale('log')
 
 # ask matplotlib for the plotted objects and their labels
 lines, labels = axs[0].get_legend_handles_labels()
 lines2, labels2 = axs1.get_legend_handles_labels()
-axs[0].legend(lines + lines2, labels + labels2, loc='upper center',bbox_to_anchor=(0.4, 0.999))
+axs[0].legend(lines + lines2, labels + labels2, loc='upper center',bbox_to_anchor=(0.4, 0.99),frameon=True )
 
 ln1, lbl1 = axs[2].get_legend_handles_labels()
 ln2, lbl2 = axs2.get_legend_handles_labels()
-axs[2].legend(ln1 + ln2, lbl1 + lbl2, loc='upper center')
+axs[2].legend(ln1 + ln2, lbl1 + lbl2, loc='upper center',frameon=True, )
 
+ln3, lbl3 = axs[3].get_legend_handles_labels()
+ln4, lbl4 = axs3.get_legend_handles_labels()
+axs[3].legend(ln3 + ln4, lbl3 + lbl4, loc='upper center',frameon=True, )
 
-
-ul=np.power(10,8)
-ll=np.power(10,4.3)
-axs1.set_ylim(ll,ul)
-axs[0].set_ylim(2.37,2.42)
-axs1.set_ylabel('Excess intensity (DN/s) ', fontsize=20,color=scol[0])
-axs[0].set_ylabel(r'Mg II k counts ($\times 10^8$ DN) ',color='k')
-axs[1].set_ylabel('HEL1OS counts/min',color=scol[2])
+ul=np.power(10,7.7)
+ll=np.power(10,5.4)
+#axs1.set_ylim(ll,ul)\
+axs[0].axvspan(xmin=datetime(2024,7,10,5,41,57),xmax=datetime(2024,7,10,5,48),color='r',alpha=0.2)
+axs1.set_ylabel('Excess intensity DN/s ', fontsize=20,color=scol[0])
+axs[0].set_ylabel(r'Mg II h counts ($\times 10^8$ DN/s) ',color='k')
+axs[1].set_ylabel('HEL1OS counts/s',color=scol[2])
 #axs[3].set_ylabel(r'EM($\mathrm{\times10^{43}cm^{-3}}$)')
 axs2.set_ylabel(r'X-ray flux ($\times 10^-6$  W/m²)',color=scol[9])
 axs[2].set_ylabel('Temperature (MK)',color=scol[3])
+axs[3].set_ylabel(r"$\log ~\mathrm{FD~ intensity ~(DN/s)}$",color='tab:green')  
+axs3.set_ylabel(r"$\log~ \mathrm{ROI~ intensity ~(DN/s)}$",color='k') 
+
+
+
 axs2.ticklabel_format(style='plain', axis='y')
 axs2.yaxis.get_major_formatter().set_scientific(False)
 axs2.yaxis.get_offset_text().set_visible(False)
 axs[1].set_yscale('log')
+
 #axs2.set_yscale('log')
 axs[-1].set_xlabel(f"Time (UT)") # Shared x-label
-
-
+from matplotlib.ticker import MaxNLocator
+plt.gca().xaxis.set_major_locator(MaxNLocator(5))
 time_formatter = mdates.DateFormatter('%H:%M')  # Format as HH:MM
 plt.gca().xaxis.set_major_formatter(time_formatter)
 

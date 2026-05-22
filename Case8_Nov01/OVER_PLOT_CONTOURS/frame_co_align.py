@@ -10,7 +10,7 @@ Purpose: co align SUIT Mg II h  image to image align with AIA1600
 
 import os
 import matplotlib
-matplotlib.use('Agg')
+# matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import astropy.units as u
 from sunpy.map import Map
@@ -45,6 +45,7 @@ from sunpy.coordinates import RotatedSunFrame
 import datetime
 from astropy.time import TimeDelta
 from astropy.io import fits
+from astropy.convolution import convolve, Gaussian2DKernel
 
 import warnings
 import logging
@@ -53,6 +54,10 @@ warnings.simplefilter('ignore')
 log_ = logging.getLogger('sunpy')
 log_.setLevel('WARNING')
 logging.getLogger('reproject').setLevel(logging.WARNING)
+
+fwhm = 8
+sigma = fwhm / 2.355
+
 
 #------------------------------------------------------------------------------#
 
@@ -70,19 +75,21 @@ def tracked_sunspot(first_map,tx,ty,current_map):
 
 
 
-def get_rebinned_crop_map(ref_fd_1600,ref_mg_rot):
+def get_rebinned_crop_map(ref_fd_1600,ref_mg_rot,sigma):
     scale=ref_fd_1600.scale[0].value/ref_mg_rot.scale[0].value
     fd_new_dem=[ref_fd_1600.data.shape[1]*scale,ref_fd_1600.data.shape[0]*scale]*u.pixel
     ref_aia_resmp=ref_fd_1600.resample(fd_new_dem)
     blo = SkyCoord(ref_mg_rot.bottom_left_coord.Tx, ref_mg_rot.bottom_left_coord.Ty, frame=ref_aia_resmp.coordinate_frame)
     tro = SkyCoord(ref_mg_rot.top_right_coord.Tx, ref_mg_rot.top_right_coord.Ty, frame=ref_aia_resmp.coordinate_frame)
-    return ref_aia_resmp.submap(blo,top_right=tro)  
+    rebin_map=ref_aia_resmp.submap(blo,top_right=tro)
+    smoothed_aia=gaussian_filter(rebin_map.data, sigma=sigma)
+    return   Map(smoothed_aia,rebin_map.meta)
 
 def get_mg_threshold(ref_mg_rot):
     valid = ref_mg_rot.data[(ref_mg_rot.data > 100)]
     valid_int = valid.astype(int)  
     mode_val = stats.mode(valid_int, keepdims=True).mode[0]/ref_mg_rot.meta.get('CMD_EXPT')*1000  #normalised mode value    
-    th_lvs=np.array([mode_val*0.7,mode_val*1.5,mode_val*3] )
+    th_lvs=np.array([mode_val*0.7,mode_val*1.5,mode_val*1.8,mode_val*3] )
     return mode_val,th_lvs
 
 def draw_contours_and_save(BaseMap,suit_aligned_map,suit_thresh_levs,save_path):
@@ -93,7 +100,7 @@ def draw_contours_and_save(BaseMap,suit_aligned_map,suit_thresh_levs,save_path):
     BaseMap.plot(axes=ax,cmap='gray',title=str(BaseMap.date))
     norm_data=suit_aligned_map.data*1000/int(suit_aligned_map.meta.get('CMD_EXPT'))
     norm_mg_Map=Map(gaussian_filter(norm_data, sigma=1),suit_aligned_map.fits_header)
-    norm_mg_Map.draw_contours(axes=ax, levels=suit_thresh_levs,lws=0.5,colors=['red','pink','green'])
+    norm_mg_Map.draw_contours(axes=ax, levels=suit_thresh_levs,lws=0.5,colors=['red','pink','magenta','green'])
     plot_str='AIA 1600: '+str(BaseMap.date) +'\n'+ 'Mg II h: '+str(suit_aligned_map.date) 
     ax.text(50,50, plot_str, color='white', fontsize=10)
     plt.draw()
@@ -140,12 +147,13 @@ for i in tqdm(range(len(fltr_fl))):
     idx = np.argmax(dt)   # largest negative (or zero) offset
     #print(idx,i)
     aia_map=Map(aia1600s[idx])
-    aia_rebin_map=get_rebinned_crop_map(aia_map,suit_map_rot)
+    aia_rebin_map=get_rebinned_crop_map(aia_map,suit_map_rot,sigma)
     sq=MapSequence([aia_rebin_map,suit_map_rot])
 
-    template= tracked_sunspot(aia_map_,-300,-180,aia_rebin_map)
+    template= tracked_sunspot(aia_map_,-460,330,aia_rebin_map)
 
-    mg_aln_maps=mc_coalign(sq,layer_index=0,clip=False)#,func=np.log)
+    # mg_aln_maps=mc_coalign(sq,layer_index=0,clip=False)#,func=np.log)
+    mg_aln_maps=mc_coalign(sq,layer_index=0,clip=False)#,func=np.asinh)
 
     thresh_lvs=get_mg_threshold(suit_map_rot)
     save_path='../data/aln_1600_conts'
@@ -161,18 +169,18 @@ for i in tqdm(range(len(fltr_fl))):
     pathlib.Path(png_path).mkdir(parents=True, exist_ok=True)
     try:
 
-        fname=png_path+str(mg_aln_maps[1].meta.get('F_NAME'))[:-5]+'.png'
+        # fname=png_path+str(mg_aln_maps[1].meta.get('F_NAME'))[:-5]+'.png'
         alnMap_=alnMap.rotate(angle=-alnMap.meta['p_angle']*u.deg,missing=0)
         alnMap_.save(fits_path+mg_aln_maps[1].meta.get('F_NAME'),overwrite=True)
     except:
         print('could not save file')
     
-    try:
-        alnMap.plot()
-        plt.savefig(fname)
-        plt.close()
-    except:
-        pass
+    # try:
+    #     alnMap.plot()
+    #     plt.savefig(fname)
+    #     plt.close()
+    # except:
+    #     pass
    
     
 

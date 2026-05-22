@@ -8,7 +8,7 @@ import matplotlib.dates as mdates
 import datetime
 from sunpy.timeseries.sources.goes import XRSTimeSeries
 import astropy.units as u
-
+import pandas as pd
 from sys import path as sys_path
 sys_path.append('/home/adithya/Adithya_repos')
 from plots_styl import set_pub_style
@@ -61,10 +61,16 @@ if trigger_time is not None:
     df2.loc[df2.index == trigger_time, "HOPE_trigger"] = True
     print("HOPE trigger at:", trigger_time)
 
+suit_diff=pd.read_csv('Diff_img_data_NB04.csv')
+suit_lc=pd.read_csv('c4_NB04_lc_data.csv')
+dt   =pd.to_datetime(suit_diff['Date'], errors='coerce')
+lc_dt=pd.to_datetime(suit_lc['Time'], errors='coerce')
+
 # ts_modified = XRSTimeSeries(df2,meta=goes_ts.meta,units=goes_ts.units) 
 # df2 = ts_modified.to_dataframe()
 
-fig, (ax1, ax2, ax3) = plt.subplots(3,figsize=(16, 16), sharex=True)
+fig, (ax1, ax2, ax3,ax6) = plt.subplots(4, 1, sharex=True, figsize=(12,16), gridspec_kw={'hspace': 0})  # no vertical spacing 
+ax6.set_ylabel(r'Excess intensity (DN/s) ',color='k')
 #fig.suptitle("X5.8 Class Flare on 2024-05-11 01:10:00 UTC")
 ax4 = ax2.twinx()
 ax5 = ax3.twinx()
@@ -75,6 +81,7 @@ ax1.plot(flare_df.index, flare_df["xrsa"], color="k",markersize=4,marker='o', la
 ax1.plot(flare_df.index, flare_df["xrsb"],markersize=4,marker='o', color="gray", label="XRS-B")
 ax1.set_ylabel("XRS Flux (W/m$^2$)")
 ax11.set_ylabel(r"$\Delta$ XRS Flux (MK) (W/m$^2$)",color='red')
+
 ax1.set_yscale("log")
 ax11.set_yscale("log")
 ax1.legend(loc="upper right")
@@ -90,7 +97,10 @@ if trigger_time is not None:
     ax2.axvline(impulsive_phase_start, color="b", ls="-", lw=1,label="Impulsive phase start time")
     ax3.axvline(trigger_time, color="b", ls="--", lw=1,label="HOPE trigger")
     ax3.axvline(impulsive_phase_start, color="b", ls="-", lw=1,label="Impulsive phase start time")
-
+    ax6.axvline(trigger_time, color="b", ls="--", lw=2)
+    ax6.axvline(impulsive_phase_start, color="b", ls="-", lw=1)
+ax6.errorbar(dt,suit_diff['diff_count'].values/1e7, yerr=suit_diff['Diff_error'].values/1e7,marker='o',markersize=4,color='k',label=r'SUIT Mg II h Excess intensity')
+ax6.legend()
 ax3.plot(df1.index, df1["emission_measure"]/1e50,markersize=4,marker='o', color="k",label="Emission Measure")
 ax5.plot(df2.index, df2["emission_measure"]/1e50,markersize=4,marker='o', color="r",label=r"$\Delta$ Emission Measure")
 ax3.set_ylabel("Emission Measure ($10^{50}$ cm$^{-3}$)")
@@ -120,7 +130,13 @@ lines11, labels11 = ax11.get_legend_handles_labels()
 lines12, labels12 = ax1.get_legend_handles_labels()
 ax1.legend(lines12 + lines11, labels12 + labels11, loc="upper left")
 
+panel_labels = ['a)', 'b)', 'c)', 'd)']
 
+ax1.text(0.03, 0.21,'a)',transform=ax1.transAxes, fontsize=24, fontweight='bold',va='top', ha='left')
+ax2.text(0.03, 0.21,'b)',transform=ax2.transAxes, fontsize=24, fontweight='bold',va='top', ha='left')
+ax3.text(0.03, 0.21,'c)',transform=ax3.transAxes, fontsize=24, fontweight='bold',va='top', ha='left')
+ax6.text(0.03, 0.21,'d)',transform=ax6.transAxes, fontsize=24, fontweight='bold',va='top', ha='left')
+ax6.set_xlabel(f"Time (UT)")
 time_formatter = mdates.DateFormatter('%H:%M')  # Format as HH:MM
 plt.gca().xaxis.set_major_formatter(time_formatter)
 plt.savefig('GOES_temp_em1.png',dpi=300)

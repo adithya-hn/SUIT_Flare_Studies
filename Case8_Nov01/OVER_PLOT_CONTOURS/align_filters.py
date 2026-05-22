@@ -13,22 +13,22 @@ from sys import path as sys_path
 sys_path.append('/home/adithya/Adithya_repos')
 import align_suit_fltr_to_aia
 
-suit_raw_files= '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case8_Nov01/data/Processed/contam_corr_data/'
+suit_raw_files= '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case8_Nov01/data/raw/'
 
 # Filters=['6173']
 # suit_filters=['NB02','NB01','NB05','NB06','NB07']
 # ref_fd_img_pth='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case8_Nov01/data/aia/hmi.ic_45s.20241101_121415_TAI.2.continuum.fits'
 
 Filters=['1600']
-suit_filters=['NB02','NB05','NB06','NB07']
-ref_fd_img_pth='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case8_Nov01/data/aia/hmi.ic_45s.20241101_121415_TAI.2.continuum.fits'
+suit_filters=['NB04']
+ref_fd_img_pth='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case8_Nov01/data/aia/aia.lev1_uv_24s.2024-11-01T123040Z.1600.image_lev1.fits'
 
 #Template cutout
-tx1,ty1=-400,130
-tx2,ty2=-150,270
+tx1,ty1=-260,90
+tx2,ty2=-210,150
 
-shift_x=10
-shift_y=-5
+shift_x=16
+shift_y=3
 
 save_aligned_fits='yes'
 save_pngs='no'     #aligned pngs

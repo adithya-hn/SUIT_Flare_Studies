@@ -15,19 +15,25 @@ import align_suit_fltr_to_aia
 
 
 
-suit_raw_files= '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case6_Oct09/data/Processed/contam_corr_data/'
+suit_raw_files= '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case6_Oct09/data/raw/'
 
 # Filters=['6173']
 # suit_filters=['NB02','NB01','NB05','NB06','NB07']
 # ref_fd_img_pth='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case6_Oct09/data/aia/hmi.ic_45s.20241008_232915_TAI.2.continuum.fits'
 
 Filters=['1600']
-suit_filters=['NB02','NB05','NB06','NB07']
-ref_fd_img_pth='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case6_Oct09/data/aia/hmi.ic_45s.20241008_235615_TAI.2.continuum.fits'
+suit_filters=['NB04']
+ref_fd_img_pth='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case6_Oct09/data/aia/aia.lev1_uv_24s.2024-10-08T235552Z.1600.image_lev1.fits'
 
 #Template cutout
-tx1,ty1=100,140
-tx2,ty2=200,250
+# tx1,ty1=100,140
+# tx2,ty2=200,250
+
+# tx1,ty1=-120,-350
+# tx2,ty2=-40,-270
+
+tx1,ty1=-40,60
+tx2,ty2=15,115
 
 shift_x=0
 shift_y=0

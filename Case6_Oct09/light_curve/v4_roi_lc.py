@@ -33,7 +33,7 @@ start = timeit.default_timer()
 
 # ----------Input Parameters------
 
-fdir='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case6_Oct09/data/aligned_crop/'
+fdir='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case6_Oct09/data/aligned_crop_fits/'
 fol_nm = os.getcwd() + '/lc_images/'
 Filters = ['NB03','NB04','NB08']
 

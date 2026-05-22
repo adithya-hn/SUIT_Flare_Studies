@@ -23,7 +23,7 @@ Helios=(np.loadtxt("csv_files/helios_CdTe_c10.csv",skiprows=1,delimiter=',',dtyp
 csv_file = f'csv_files/aia_131_all_lc.csv'
 nb4_csv  ='csv_files/Diff_img_data_NB04.csv'
 data1 =(np.loadtxt(f'csv_files/c10_NB04_lc_data.csv',delimiter=',',skiprows=1,dtype='str')).transpose()
-output_plot = f'c10_helios_aia_{channel}_fd_roi_lc.pdf'
+output_plot = f'c10_helios_aia_{channel}_fd_roi_lc.png'
 
 # ----------------------------
 # Load without header

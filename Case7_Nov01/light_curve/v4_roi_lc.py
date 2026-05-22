@@ -33,9 +33,9 @@ start = timeit.default_timer()
 
 # ----------Input Parameters------
 
-fdir='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case7_Nov01/data/aligned_crop/'
+fdir='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case7_Nov01/data/aligned_crop_fits/'
 fol_nm = os.getcwd() + '/lc_images/'
-Filters = ['NB03','NB04','NB08']
+Filters = ['NB04']
 
 #----------------------------------
 
@@ -53,6 +53,7 @@ for fltr in Filters:
         continue
 
     print('Processing filter:', fltr)
+    print('Number of files:',len(files))
     
     pathlib.Path(f'{fol_nm}/{fltr}').mkdir(parents=True, exist_ok=True)
     pathlib.Path('csv_files').mkdir(parents=True, exist_ok=True)

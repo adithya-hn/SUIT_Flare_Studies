@@ -14,13 +14,21 @@ sys_path.append('/home/adithya/Adithya_repos')
 import align_suit_fltr_to_aia
 
 
-Filters=['6173']
-suit_filters=['NB02','NB05','NB06','NB07']
-suit_raw_files= '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case5_July10/data/Processed/contam_corr_data/'
-ref_fd_img_pth='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case5_July10/data/aia/hmi.ic_45s.20240710_132915_TAI.2.continuum.fits'
+# Filters=['6173']
+# suit_filters=['NB02','NB05','NB06','NB07']
+# suit_raw_files= '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case5_July10/data/Processed/contam_corr_data/'
+# ref_fd_img_pth='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case5_July10/data/aia/hmi.ic_45s.20240710_132915_TAI.2.continuum.fits'
+Filters=['1600']
+suit_filters=['NB04']
+suit_raw_files= '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case5_July10/data/raw/'
+ref_fd_img_pth='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case5_July10/data/aia/aia.lev1_uv_24s.2024-07-10T133640Z.1600.image_lev1.fits'
+#Template cutout
 #Template cutout
 tx1,ty1=-100,-250
 tx2,ty2=20,-130
+
+# tx1,ty1=-80,-400
+# tx2,ty2=-20,-340
 
 shift_x=0
 shift_y=0

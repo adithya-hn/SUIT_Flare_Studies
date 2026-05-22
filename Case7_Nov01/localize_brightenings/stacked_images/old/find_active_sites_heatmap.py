@@ -36,49 +36,7 @@ import matplotlib.patches as patches
 import seaborn as sns
 from skimage.morphology import disk, closing,opening,dilation
 import numpy.ma as ma
-from sys import path as sys_path
-sys_path.append('/home/adithya/Adithya_repos')
-from plots_styl import set_pub_style
-#set_pub_style()
 
-
-def select_roi_with_mouse(sunpy_map, cmap=None, norm=None):
-    """
-    DESCRIPTION: To select RoI template.
-    INPUT: Sunpy map.
-    RETURNS: Sunpy submap. 
-    """
-    fig = plt.figure()
-    ax = fig.add_subplot(111, projection=sunpy_map)
-    ax.set_title("Select ROI (click and drag) then close the window")
-    sunpy_map.plot(axes=ax)
-    coords = []
-    def onselect(eclick, erelease):
-        coords.append((eclick.xdata, eclick.ydata, erelease.xdata, erelease.ydata))
-
-    toggle_selector = RectangleSelector(ax, onselect, useblit=True,
-                      button=[1], minspanx=5, minspany=5, spancoords='pixels',
-                      interactive=True)
-    plt.show()
-
-    if not coords:
-        raise RuntimeError("ROI selection cancelled or failed.")
-
-    x1, y1, x2, y2 = coords[0]
-    
-    bottom_left = (min(x1, x2), min(y1, y2)) * u.pix
-    top_right = (max(x1, x2), max(y1, y2)) * u.pix
-
-    submap = sunpy_map.submap(bottom_left=bottom_left, top_right=top_right)
-    return submap
-
-def rebin_suit_map(aia_map,ref_mg_rot):
-    scale=ref_mg_rot.scale[0].value/aia_map.scale[0].value
-    fd_new_dem=[aia_map.data.shape[1]*scale,aia_map.data.shape[0]*scale]*u.pixel
-    ref_aia_resmp=aia_map.resample(fd_new_dem)
-    blo = SkyCoord(ref_mg_rot.bottom_left_coord.Tx, ref_mg_rot.bottom_left_coord.Ty, frame=ref_aia_resmp.coordinate_frame)
-    tro = SkyCoord(ref_mg_rot.top_right_coord.Tx, ref_mg_rot.top_right_coord.Ty, frame=ref_aia_resmp.coordinate_frame)
-    return ref_aia_resmp.submap(blo,top_right=tro) 
 
 def draw_suit_contours_on_sdo(suitMap,base_map,thresh_sig,heat,clr):
     
@@ -96,67 +54,140 @@ def draw_suit_contours_on_sdo(suitMap,base_map,thresh_sig,heat,clr):
         cleaned=labels
     mask=cleaned>0
     heat=heat+mask.astype(int)
+
     return heat
 
 #---------------------------------------------------------------------------------------------
 
-
-peak_time=datetime.datetime(2024, 11,1 ,2,16, 0)
-start_time=datetime.datetime(2024, 11,1 ,0,16, 0)
 suit_aligned_files= '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case7_Nov01/data/aligned_crop/'
-pk_img="/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case7_Nov01/data/aligned_crop/SUT_T24_1592_000636_Lev1.0_2024-11-01T02.16.33.998_0983NB04.fits"
-aia_fl='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case7_Nov01/data/aia/aia.lev1_uv_24s.2024-11-01T002304Z.1600.image_lev1.fits'
-fltr='NB07'
-thresh_sig=3
+peak_time=datetime.datetime(2024, 11,1 ,2,16, 0)
 
-#---------------------------------------------------------------------------------------------
-
+    
 fol_nm=os.getcwd() #Custom folder to save contour images
 jpg_fold=fol_nm+'/'+'Contour_imgs'
+fltr='NB06'
 suit_fls = glob.glob(suit_aligned_files + '*3'+f'{fltr}.fits')
+#files =sorted(suit_fls, key=lambda file_name: datetime.datetime.strptime(os.path.basename(file_name).split('_')[5], "%Y-%m-%dT%H.%M.%S.%f"))
 
 nb4_fls=[]
 for f in suit_fls:
+    # # extract timestamp from your filename
+    # ts_str = name.split("_")[1] + name.split("_")[2].split(".")[0]
     timestamp = datetime.datetime.strptime(os.path.basename(f).split('_')[5], "%Y-%m-%dT%H.%M.%S.%f")
-    if (timestamp <= peak_time) :#& (timestamp>=start_time):
+
+    if timestamp <= peak_time:
         nb4_fls.append(f)
 
 print('No of SUIT files:',len(nb4_fls))
+
+
 
 suit_sq=Map(nb4_fls,sequence=True)
 data_stack = np.stack([(suit_sq[i].data*1000/suit_sq[i].meta.get('CMD_EXPT'))for i in range(5)])
 base_img=np.median(data_stack, axis=0)
 base_map=Map(base_img,suit_sq[0].meta)
-
+thresh_sig=5
 heat = np.zeros(base_map.data.shape)
 
+#for i in tqdm (range(len(nb4_fls))):
 tx_array=[]
 ty_array=[]
 pos=[]
-base_drot=base_map.rotate(angle=(int(base_map.meta.get('p_angle')))*u.deg)
+base_drot=base_map#.rotate(angle=(int(base_map.meta.get('p_angle')))*u.deg)
+fig=plt.figure(figsize=(16,16))
+ax = fig.add_subplot(111, projection=base_drot)
+base_drot.plot(axes=ax)
 
-peak_map_=Map(pk_img)
-peak_map=Map(peak_map_.data*1000/peak_map_.meta.get('CMD_EXPT'),peak_map_.meta)
-print(np.max(peak_map.data))
-
-aia_map_=Map(aia_fl)
-aia_map =rebin_suit_map(aia_map_,base_drot)
-fig=plt.figure(figsize=(8,8))
-ax = fig.add_subplot(111, projection=base_map)
-
-peak_map.draw_contours(axes=ax,levels=[np.max(peak_map.data)*.6],colors='k')
 sns_cl = sns.color_palette("coolwarm",as_cmap=True)
-#aia_map.plot(axes=ax)
-base_map.plot(axes=ax)
 
-for i in range(len(nb4_fls)): #nb4_fls
+
+for i in range(len(suit_sq)):
     suit_map=suit_sq[i]
     #pos.append(draw_suit_contours_on_sdo(suit_map,base_map,thresh_sig,'red'))
     heat=draw_suit_contours_on_sdo(suit_map,base_map,thresh_sig,heat,'red')
 heat_masked = ma.masked_where(heat == 0, heat)
-im=ax.imshow(heat_masked, origin='lower', cmap='rainbow', alpha=0.6,label='stacked contours')
 
-plt.colorbar(im,label='No. of stacked contours')
-plt.savefig(f'{fltr}_stacked_contours.png',dpi=300)#aia_171_
+# cf = ax.contourf(
+#     heat_masked,
+#     levels=np.linspace(1, heat.max(), 12),
+#     cmap='rainbow',
+#     alpha=0.6
+# )
+
+#plt.colorbar(cf)
+#plt.colorbar(hm, ax=ax, label='Contour occurrence count')
+im=ax.imshow(heat_masked, origin='lower', cmap='rainbow', alpha=0.6)
+plt.colorbar(im)
 plt.show()
+'''
+coords = []
+rects = [] 
+def onselect(eclick, erelease):
 
+    x1, y1 = eclick.xdata, eclick.ydata
+    x2, y2 = erelease.xdata, erelease.ydata
+
+    xmin, xmax = sorted([x1, x2])
+    ymin, ymax = sorted([y1, y2])
+
+    width  = xmax - xmin
+    height = ymax - ymin
+
+    # Store box coordinates
+    bottom_left = (min(x1, x2), min(y1, y2)) * u.pix
+    top_right = (max(x1, x2), max(y1, y2)) * u.pix
+    bl = base_drot.pixel_to_world(bottom_left[0], bottom_left[1] )
+    tr = base_drot.pixel_to_world(top_right[0] , top_right[1] )
+
+    coords.append([float(bl.Tx.value) ,float(bl.Ty.value),float(tr.Tx.value) ,float(tr.Ty.value)])
+
+    # Draw a permanent rectangle
+    rect = patches.Rectangle(
+        (xmin, ymin), width, height,
+        fill=False,
+        color='red',
+        linewidth=1.5)
+    ax.add_patch(rect)
+    rects.append(rect)
+    plt.draw()
+
+
+# Create the selector
+selector = RectangleSelector(
+    ax, onselect,
+    useblit=True,
+    button=[1],
+    minspanx=5, minspany=5,
+    spancoords='pixels',
+    interactive=True
+)
+# Keyboard shortcuts (optional):
+def on_key(event):
+    if event.key == 'd':   # delete last box
+        if rects:
+            r = rects.pop()
+            r.remove()
+            coords.pop()
+            plt.draw()
+
+    if event.key == 'c':   # clear all boxes
+        for r in rects:
+            r.remove()
+        rects.clear()
+        coords.clear()
+        plt.draw()
+
+
+fig.canvas.mpl_connect('key_press_event', on_key)
+
+plt.show()
+fig.savefig(f"{fltr}_boxed_figure.png", dpi=300, bbox_inches='tight')
+if not coords:
+    raise RuntimeError("ROI selection cancelled or failed.")
+
+print('-----------')
+for box in coords:
+    print(box)
+
+np.savetxt(f"{fltr}_boxes.csv", coords, fmt="%.6f",delimiter=',', header="xmin xmax ymin ymax")
+'''

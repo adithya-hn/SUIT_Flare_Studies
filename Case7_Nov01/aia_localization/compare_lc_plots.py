@@ -3,7 +3,11 @@ import matplotlib.pyplot as plt
 from scipy.stats import pearsonr
 import numpy as np
 from datetime import datetime, timedelta
-
+import matplotlib.dates as mdates
+from sys import path as sys_path
+sys_path.append('/home/adithya/Adithya_repos')
+from plots_styl import set_pub_style
+set_pub_style()
 
 
 
@@ -57,6 +61,10 @@ ax2.set_ylabel("aia reg counts")
 ax1.set_yscale("log")
 ax2.set_yscale("log")
 plt.title("HELIOS vs AIA Region Light Curves (1min cadence)")
+
+time_formatter = mdates.DateFormatter('%H:%M')  # Format as HH:MM
+plt.gca().xaxis.set_major_formatter(time_formatter)
+
 plt.tight_layout()
 plt.savefig('AIA-HEL1OS-lc.png',dpi=300)
 plt.show()

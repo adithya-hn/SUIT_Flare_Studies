@@ -28,65 +28,65 @@ import warnings
 warnings.filterwarnings("ignore")
 
 
-file='stx_spectrum_2410315184.fits'
-stixf= fits.open(file) 
-stixf.info()
-print(stixf[1].header)
+# file='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case7_Nov01/stix_spectra_fitting/pyxspec_fittings/stix_012230_012300.pha'
+# stixf= fits.open(file) 
+# stixf.info()
+# print(stixf[1].header)
 
-#mjd2any returns time in seconds from 1-jan-1979
-def mjd2any(timezero,spectime):
-    '''MJD in days to MJD in seconds, given reference time (timezero) and spectrum time (spectime)'''
-    return ((timezero)*86400.+spectime)/86400.
-
-
-reftime = stixf[1].header['MJDREF']
-timezero = stixf[1].header['TIMEZERO'] #this is 1-jan-1979 in MJD, so no need to add MJDREF to it as in COMMENT
-
-rate=stixf[1].data['RATE']
-#stat_err=stixf[1].data['STAT_ERR']
-#exp=stixf[1].data['EXPOSURE']
-#livetime=stixf[1].data['LIVETIME']
-spectime=stixf[1].data['TIME'] #COMMENT absTime[i] = mjd2any(MJDREF + TIMEZERO) + TIME[i]
-timedel=stixf[1].data['TIMEDEL'] #seconds
-rate.shape,spectime.shape
-
-tt=Time(mjd2any(timezero,spectime)+reftime,format='mjd')
-timevec=tt.to_value('datetime')
-
-#for plotting - get the energy bins from ENEBAND data (index 2)
-emin=stixf[2].data['E_MIN']
-emax=stixf[2].data['E_MAX']
-ylabels=[f"{n:.0f}-{x:.0f}" for n,x in zip(emin,emax)]
-
-np.empty(rate.T.shape).shape
-#matplotlib for nbviewer...
-fig,ax=plt.subplots(figsize=[9,5])
-cbar=ax.imshow(np.log10(rate.T),origin='lower')
-im_ratio=29./77.
-#plt.colorbar(cbar, label='Count Rate',fraction=0.046*im_ratio, pad=0.04)
-# ax.set_yticks(np.arange(len(ylabels)))
-# ax.set_yticklabels(ylabels)
-# ax.set_ylabel('Energy Bin (keV)')
-# ax.set_xlabel('Index')
-# ax.set_title(f"Spectrogram {timevec[0]:%Y-%m-%d %H:%M:%S}")
-# plt.close()
+# #mjd2any returns time in seconds from 1-jan-1979
+# def mjd2any(timezero,spectime):
+#     '''MJD in days to MJD in seconds, given reference time (timezero) and spectrum time (spectime)'''
+#     return ((timezero)*86400.+spectime)/86400.
 
 
-# stixr[1].header
-# tresp_lo=stixr[1].data['ENERG_LO']
-# tresp_hi=stixr[1].data['ENERG_HI']
-# trmatrix=stixr[1].data['MATRIX']
+# reftime = stixf[1].header['MJDREF']
+# timezero = stixf[1].header['TIMEZERO'] #this is 1-jan-1979 in MJD, so no need to add MJDREF to it as in COMMENT
+
+# rate=stixf[1].data['RATE']
+# #stat_err=stixf[1].data['STAT_ERR']
+# #exp=stixf[1].data['EXPOSURE']
+# #livetime=stixf[1].data['LIVETIME']
+# spectime=stixf[1].data['TIME'] #COMMENT absTime[i] = mjd2any(MJDREF + TIMEZERO) + TIME[i]
+# timedel=stixf[1].data['TIMEDEL'] #seconds
+# rate.shape,spectime.shape
+
+# tt=Time(mjd2any(timezero,spectime)+reftime,format='mjd')
+# timevec=tt.to_value('datetime')
+
+# #for plotting - get the energy bins from ENEBAND data (index 2)
+# emin=stixf[2].data['E_MIN']
+# emax=stixf[2].data['E_MAX']
+# ylabels=[f"{n:.0f}-{x:.0f}" for n,x in zip(emin,emax)]
+
+# np.empty(rate.T.shape).shape
+# #matplotlib for nbviewer...
 # fig,ax=plt.subplots(figsize=[9,5])
-# for i,chan in enumerate(ylabels):
-#     ax.plot(tresp_lo,trmatrix[:,i],label=f"{chan} keV")
-# ax.legend(loc=1, prop={'size': 6})
-# ax.set_title('STIX response matrix')
-# ax.set_xlabel('Lower Energy Bound (keV)')
-# plt.show()
+# cbar=ax.imshow(np.log10(rate.T),origin='lower')
+# im_ratio=29./77.
+# #plt.colorbar(cbar, label='Count Rate',fraction=0.046*im_ratio, pad=0.04)
+# # ax.set_yticks(np.arange(len(ylabels)))
+# # ax.set_yticklabels(ylabels)
+# # ax.set_ylabel('Energy Bin (keV)')
+# # ax.set_xlabel('Index')
+# # ax.set_title(f"Spectrogram {timevec[0]:%Y-%m-%d %H:%M:%S}")
+# # plt.close()
+
+
+# # stixr[1].header
+# # tresp_lo=stixr[1].data['ENERG_LO']
+# # tresp_hi=stixr[1].data['ENERG_HI']
+# # trmatrix=stixr[1].data['MATRIX']
+# # fig,ax=plt.subplots(figsize=[9,5])
+# # for i,chan in enumerate(ylabels):
+# #     ax.plot(tresp_lo,trmatrix[:,i],label=f"{chan} keV")
+# # ax.legend(loc=1, prop={'size': 6})
+# # ax.set_title('STIX response matrix')
+# # ax.set_xlabel('Lower Energy Bound (keV)')
+# # plt.show()
 
 print('1')
 xspec.AllData.clear()
-xspec.AllData("1:1 stx_spectrum_2410315184.fits{13}") #the row index (from 1) in curly braces tells Xspec which row to load
+xspec.AllData("1:1 stix_012230_012300.pha") #the row index (from 1) in curly braces tells Xspec which row to load
 xspec.AllData.nGroups, xspec.AllData.nSpectra #number of data groups and spectra
 
 xspec.Plot.setGroup("1") #("1 2 3") if using 3 rows, for example
@@ -99,8 +99,8 @@ y1=xspec.Plot.y()
 y1err=xspec.Plot.yErr()
 
 fig,ax=plt.subplots()
-ax.errorbar(x1,y=y1,yerr=y1err,label=f'{timevec[12]:%Y-%m-%d %H:%M:%S}',marker='+',linestyle='none')
-ax.set_title(f'STIX spectrum at {timevec[12]:%Y-%m-%d %H:%M:%S}')
+# ax.errorbar(x1,y=y1,yerr=y1err,label=f'{timevec[12]:%Y-%m-%d %H:%M:%S}',marker='+',linestyle='none')
+# ax.set_title(f'STIX spectrum at {timevec[12]:%Y-%m-%d %H:%M:%S}')
 ax.set_xlabel('Energy (keV)')
 ax.set_ylabel('Counts')
 ax.set_ylim([.01,20000])

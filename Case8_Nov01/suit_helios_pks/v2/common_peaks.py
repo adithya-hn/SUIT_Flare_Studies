@@ -59,4 +59,5 @@ hcounts, scounts = get_corresponding_counts(matches, helios_peak_times,suit_coun
 print(hcounts,scounts)
 # print(type(matches))
 
-np.savetxt('suit_helios_time_count_c8.csv',np.c_[scounts,hcounts],delimiter=',')
+suit_dt_arr = np.array([(t1.iso) for t1, t2 in matches])
+np.savetxt('suit_helios_time_count_c8.csv',np.c_[suit_dt_arr,scounts,hcounts],header='date_time,suit_counts,helios_counts',comments='',delimiter=',',fmt='%s')

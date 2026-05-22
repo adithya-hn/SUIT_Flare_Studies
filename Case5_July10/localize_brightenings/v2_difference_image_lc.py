@@ -13,7 +13,7 @@ import v2_diff_img
 
 p1,p2,p3,p4=40,670,40,680
 flt='NB04' #NB04,NB08
-data_folder=f'/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case5_July10/data/aligned_crop_fits/*{flt}.fits'
+data_folder=f'/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case5_July10/data/aligned_crop/*{flt}.fits'
 clip_bar=False
 get_histograms=False
 v2_diff_img.diff_img(data_folder,flt,thresh_sig=5)

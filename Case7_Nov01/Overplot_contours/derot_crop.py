@@ -113,6 +113,7 @@ for i in tqdm(range(len(fltr_fl))): #
     SuitMap.meta['CUNIT2'] = suit_map.meta['CUNIT2']
     SuitMap.meta['CDELT1'] = suit_map.meta['CDELT1']
     SuitMap.meta['CDELT2'] = suit_map.meta['CDELT2']
+    SuitMap.meta['FTR_NAME']=suit_map.meta['FTR_NAME']
     data=SuitMap.data
     nonzero = np.argwhere(data > 100)  # Find nonzero pixels
     ymin, xmin = nonzero.min(axis=0) # Get bounding box
@@ -162,7 +163,7 @@ for m in maps:
     cropped = m.submap(bottom_left = [x1,y1]*u.pix,top_right = [x2,y2]*u.pix)
     fig=plt.figure()
     ax=fig.add_subplot(111,projection=cropped)
-    cropped.plot()
+    cropped.plot(vmin=1000,vmax=33000)
     plt.savefig(f'../data/aligned_crop_pngs/{str(cropped.meta["F_NAME"])[:-4]}jpg',dpi=200)
     plt.close()
     cropped.save(f'../data/aligned_crop_fits/{str(cropped.meta["F_NAME"])}',overwrite=True)

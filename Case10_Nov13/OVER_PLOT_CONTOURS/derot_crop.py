@@ -100,8 +100,20 @@ for i in tqdm(range(len(fltr_fl))): #
     SuitMap.meta['WAVEUNIT'] = suit_map.meta['WAVEUNIT']
     SuitMap.meta['DATE-OBS'] = suit_map.meta['DATE-OBS']
     SuitMap.meta['R_SUN'] = suit_map.meta['R_SUN']
+    SuitMap.meta['RSUN_OBS'] = suit_map.meta['RSUN_OBS']
     SuitMap.meta['P_ANGLE'] = suit_map.meta['P_ANGLE']
-    SuitMap.meta['DATE-AVG'] = suit_map.meta['DATE-OBS']
+    SuitMap.meta['CRLT_OBS'] = suit_map.meta['CRLT_OBS']
+    SuitMap.meta['RSUN_REF'] = suit_map.meta['RSUN_REF']
+    SuitMap.meta['grt_dt'] = suit_map.meta['grt_dt']
+    SuitMap.meta['t_obs'] = suit_map.meta['t_obs']
+    SuitMap.meta['mfgdate'] = suit_map.meta['mfgdate']
+    SuitMap.meta['dhobt_dt'] = suit_map.meta['dhobt_dt']
+    SuitMap.meta['TIMEUNIT'] = suit_map.meta['TIMEUNIT']
+    SuitMap.meta['CUNIT1'] = suit_map.meta['CUNIT1']
+    SuitMap.meta['CUNIT2'] = suit_map.meta['CUNIT2']
+    SuitMap.meta['CDELT1'] = suit_map.meta['CDELT1']
+    SuitMap.meta['CDELT2'] = suit_map.meta['CDELT2']
+    SuitMap.meta['FTR_NAME']=suit_map.meta['FTR_NAME']
     data=SuitMap.data
     nonzero = np.argwhere(data > 100)  # Find nonzero pixels
     ymin, xmin = nonzero.min(axis=0) # Get bounding box

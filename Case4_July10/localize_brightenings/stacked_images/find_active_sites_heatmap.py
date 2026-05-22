@@ -16,7 +16,7 @@ from sunpy.map import Map
 from sunpy.map import MapSequence
 from sunpy.net import Fido
 import glob
-import datetime
+from datetime import datetime
 from datetime import timedelta
 import timeit
 import pathlib
@@ -36,8 +36,6 @@ import matplotlib.patches as patches
 import seaborn as sns
 from skimage.morphology import disk, closing,opening,dilation
 import numpy.ma as ma
-import matplotlib.colors as colors
-from astropy.visualization import ImageNormalize, AsinhStretch
 import sys
 sys.path.append('/home/adithya/Adithya_repos/pil_detection/utils')
 sys.path.append('/home/adithya/Adithya_repos')
@@ -109,22 +107,23 @@ def draw_suit_contours_on_sdo(suitMap,base_map,thresh_sig,heat,clr):
 #---------------------------------------------------------------------------------------------
 
 
-peak_time=datetime.datetime(2024, 7,10 ,6,0, 0)
-start_time=datetime.datetime(2024, 7,10 ,5,44, 0)
+peak_time=  (2024, 7,10 ,6,0, 0)
+start_time=datetime(2024, 7,10 ,5,44, 0)
 suit_aligned_files= '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case4_July10/data/aligned_crop_fits/'
 pk_img="/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case4_July10/data/aligned_crop_fits/SUT_T24_0956_000465_Lev1.0_2024-07-10T05.56.20.250_0973NB04.fits"
 base_image='SDO' #suit
 if base_image=='SDO':
-    aia_fl='/media/adithya/Adi_disk4/SUIT_flare_work/case4_jul10/data/HMI/HMI_cutouts/hmi.m_45s.20240710_040000_TAI.2.magnetogram.fits' #'/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case4_July10/data/aia/aia.lev1_euv_12s.2024-07-10T040010Z.171.image_lev1 (2).fits' #
-    hmi_imgs   = '/media/adithya/Adi_disk4/SUIT_flare_work/case4_jul10/data/HMI/HMI_cutouts/test_set/'
+    aia_fl='/media/adithya/Adi_disk4/SUIT_flare_work/case4_jul10/data/HMI/HMI_cutouts/hmi.m_45s.20240710_040000_TAI.2.magnetogram.fits'#'/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case4_July10/data/aia/aia.lev1_euv_12s.2024-07-10T040010Z.171.image_lev1.fits'
+    hmi_imgs  = '/media/adithya/Adi_disk4/SUIT_flare_work/case4_jul10/data/HMI/HMI_cutouts/test_set/'
 fltr='NB04'
 thresh_sig=5
 
-
+peak_time_list=np.loadtxt('suit_diff_peaks.csv',skiprows=1,dtype='str',delimiter=',')
 #---------------------------------------------------------------------------------------------
-
-
-
+transients=np.array(peak_time_list[:,0],dtype='datetime64').astype(datetime)
+# print(type(transients[0]))
+# os._exit(0)
+# sys.exit(0)
 fol_nm=os.getcwd() #Custom folder to save contour images
 jpg_fold=fol_nm+'/'+'Contour_imgs'
 suit_fls = glob.glob(suit_aligned_files + '*3'+f'{fltr}.fits')
@@ -152,15 +151,14 @@ if "CROTA2" in hmi_map_.meta:
     if map_rot_angl>5:
         hmi_map=hmi_map_.rotate(angle=-map_rot_angl*u.deg)
         pil_msk=pil_msk.rotate(angle=-map_rot_angl*u.deg)
-    #hmi_dt=hmi_map.date
-    
+
 else:
     aia_map_=hmi_map_
 
 
 for f in suit_fls:
-    timestamp = datetime.datetime.strptime(os.path.basename(f).split('_')[5], "%Y-%m-%dT%H.%M.%S.%f")
-    if (timestamp <= peak_time) :#& (timestamp>=start_time):
+    timestamp = datetime.strptime(os.path.basename(f).split('_')[5], "%Y-%m-%dT%H.%M.%S.%f")
+    if (timestamp <= start_time) :#& (timestamp>=start_time):
         nb4_fls.append(f)
 
 print('No of SUIT files:',len(nb4_fls))
@@ -179,59 +177,50 @@ base_drot=base_map.rotate(angle=(int(base_map.meta.get('p_angle')))*u.deg)
 
 peak_map_=Map(pk_img)
 peak_map=Map(peak_map_.data*1000/peak_map_.meta.get('CMD_EXPT'),peak_map_.meta)
-print(np.max(peak_map.data))
+# print(np.max(peak_map.data))
 
-aia_map_=Map(aia_fl)
+#aia_map_=Map(aia_fl)
 aia_map =rebin_suit_map(aia_map_,base_drot)
-fig=plt.figure(figsize=(16,8))
+fig=plt.figure(figsize=(14,10))
 ax = fig.add_subplot(111, projection=base_map)
-norm = ImageNormalize( base_map.data/1e3,stretch=AsinhStretch(a=0.2))
-#sdo_norm=
 if base_image=='SDO':
-    mp=aia_map.reproject_to(peak_map.wcs)
-    #im2=mp.plot(axes=ax)
-    im2=aia_map.plot(axes=ax)
-    #im2=ax.imshow(aia_map.data/1e3,cmap='sdoaia171',alpha=1,vmin=-2,vmax=2,transform=ax.get_transform(aia_map.wcs))
-    #im2=ax.imshow(aia_map.data/1e3,cmap='sdoaia171',alpha=1,transform=ax.get_transform(aia_map.wcs))
-    # im2=base_map.plot(axes=ax)
-    #im2=ax.imshow(base_map.data/1e3,cmap='suit_nb04',norm=norm)
+    #im1=aia_map.plot(axes=ax)#,cmap=sns_cl)
+    im1=ax.imshow(aia_map.data,cmap='gray',alpha=1,vmin=-2000,vmax=2000,)
+    #base_map.plot(axes=ax)
 else:
-    base_map.plot(axes=ax,cmap='suit_nb04')
-peak_map.draw_contours(axes=ax,levels=[np.max(peak_map.data)*.6],colors='magenta',linewidth=.4)
-sns_cl = sns.color_palette("bwr",as_cmap=True)
+    base_map.plot(axes=ax)
+peak_map.draw_contours(axes=ax,levels=[np.max(peak_map.data)*.6],colors='k',linewidth=.4)
+sns_cl = sns.color_palette("coolwarm",as_cmap=True)
 mask = np.isnan(pil_msk.data) | (pil_msk.data < 0.08)
 masked_pil = np.ma.array(pil_msk.data, mask=mask)
 masked_pil.data[~masked_pil.mask] = 1.0
 mask_pil_map=Map(masked_pil,pil_msk.meta)
 
-#aia_map.plot(axes=ax)
-#   print(ax.get_xlim,ax.get_ylim)
-
-from matplotlib.colors import ListedColormap
-
-pil_cmap = ListedColormap(['yellow'])
 
 
 for i in range(len(nb4_fls)): #nb4_fls
     suit_map=suit_sq[i]
+    # print(suit_map.date.datetime,print(type(suit_map.date.datetime)))
+    mt=transients-suit_map.date.datetime
+    closest = min(transients, key=lambda x: abs(x -suit_map.date.datetime))
+    print(closest)
+    if abs((closest - suit_map.date.datetime).total_seconds()) < 2:
+    # continue processing
+        print("Within 2 seconds:", closest)
+    else:
+        # continue
+        print('')
     #pos.append(draw_suit_contours_on_sdo(suit_map,base_map,thresh_sig,'red'))
     heat=draw_suit_contours_on_sdo(suit_map,base_map,thresh_sig,heat,'red')
 heat_masked = ma.masked_where(heat == 0, heat)
-im=ax.imshow(heat_masked/1000, origin='lower', cmap='rainbow', alpha=0.4)
-#ax.imshow(masked_thinned_MPIL,'spring',transform=ax.get_transform(hmi_map_.wcs)) #cmap=pil_cmap,Wistia'
-mask_pil_map.plot(axes=ax,cmap=pil_cmap)
-#print(ax.get_xlim)
+im=ax.imshow(heat_masked, origin='lower', cmap='rainbow', alpha=0.45)
+#ax.imshow(masked_thinned_MPIL,cmap='spring')
+mask_pil_map.plot(axes=ax,cmap='inferno')
 
-plt.colorbar(im,label=r'Excess Intensity ($\times 10^3$)')
-#plt.colorbar(im2,label=r'Mg II h Intensity ($\times 10^3$ DN)')
-plt.colorbar(im2,label=r'LOS Magnetic field ($\times 10^3$ Gauss)')
-#plt.colorbar(im2,label=r'Intensity ')
-ax.set_xlabel("Solar X (arcsec)")
-ax.set_ylabel("Solar Y (arcsec)")
-ax.set_xlim(0,600)
-ax.set_ylim(0,600) #hmi
-# ax.set_xlim(20,550)
-# ax.set_ylim(150,500)
-plt.savefig(f'HMI_{fltr}_stacked_contours.png',dpi=400)
+
+plt.colorbar(im,label='Excess Intensity')
+ax.set_xlim(100,600)
+ax.set_ylim(100,600)
+plt.savefig(f'{fltr}_stacked_contours.png',dpi=300)
 plt.show()
 

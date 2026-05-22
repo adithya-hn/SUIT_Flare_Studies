@@ -10,7 +10,7 @@ Purpose: co align SUIT Mg II h  image to image align with AIA1600
 
 import os
 import matplotlib
-matplotlib.use('Agg')
+# matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import astropy.units as u
 from sunpy.map import Map
@@ -54,6 +54,9 @@ log_ = logging.getLogger('sunpy')
 log_.setLevel('WARNING')
 logging.getLogger('reproject').setLevel(logging.WARNING)
 
+fwhm = 8
+sigma = fwhm / 2.355
+
 #------------------------------------------------------------------------------#
 
 def tracked_sunspot(first_map,tx,ty,current_map):
@@ -64,19 +67,22 @@ def tracked_sunspot(first_map,tx,ty,current_map):
     durations = (t2 - t1).to('min')
     diffrot_point = SkyCoord(RotatedSunFrame(base=coord, duration=durations))
     diff_rotated=diffrot_point.transform_to(current_map.coordinate_frame)
-    blo = SkyCoord((diff_rotated.Tx.value-50)*u.arcsec, (diff_rotated.Ty.value-50)*u.arcsec, frame=current_map.coordinate_frame)
-    tro = SkyCoord((diff_rotated.Tx.value+50)*u.arcsec, (diff_rotated.Ty.value+50)*u.arcsec, frame=current_map.coordinate_frame)
+    blo = SkyCoord((diff_rotated.Tx.value-25)*u.arcsec, (diff_rotated.Ty.value-25)*u.arcsec, frame=current_map.coordinate_frame)
+    tro = SkyCoord((diff_rotated.Tx.value+25)*u.arcsec, (diff_rotated.Ty.value+25)*u.arcsec, frame=current_map.coordinate_frame)
     return current_map.submap(blo,top_right=tro)  
 
 
 
-def get_rebinned_crop_map(ref_fd_1600,ref_mg_rot):
+
+def get_rebinned_crop_map(ref_fd_1600,ref_mg_rot,sigma):
     scale=ref_fd_1600.scale[0].value/ref_mg_rot.scale[0].value
     fd_new_dem=[ref_fd_1600.data.shape[1]*scale,ref_fd_1600.data.shape[0]*scale]*u.pixel
     ref_aia_resmp=ref_fd_1600.resample(fd_new_dem)
     blo = SkyCoord(ref_mg_rot.bottom_left_coord.Tx, ref_mg_rot.bottom_left_coord.Ty, frame=ref_aia_resmp.coordinate_frame)
     tro = SkyCoord(ref_mg_rot.top_right_coord.Tx, ref_mg_rot.top_right_coord.Ty, frame=ref_aia_resmp.coordinate_frame)
-    return ref_aia_resmp.submap(blo,top_right=tro)  
+    rebin_map=ref_aia_resmp.submap(blo,top_right=tro)
+    smoothed_aia=gaussian_filter(rebin_map.data, sigma=sigma)
+    return   Map(smoothed_aia,rebin_map.meta)
 
 def get_mg_threshold(ref_mg_rot):
     valid = ref_mg_rot.data[(ref_mg_rot.data > 100)]
@@ -132,6 +138,9 @@ aia_map_=Map(aia1600s[0])
 for i in tqdm(range(len(fltr_fl))):
     suit_map=Map(fltr_fl[i])
     suit_map_rot=suit_map.rotate(angle=suit_map.meta["CROTA2"] * u.deg,missing=0)
+    bl=SkyCoord(-550*u.arcsec,10*u.arcsec,frame=suit_map.coordinate_frame)
+    tr=SkyCoord(-165*u.arcsec,395*u.arcsec,frame=suit_map.coordinate_frame)
+    # suit_map_rot=suit_map_rot.submap(bl,top_right=tr)
     base_time=Time(parse_time(suit_map_rot.date))
     idx=np.argmin(np.abs(datetime_array - base_time))
     dt = np.array([(t - base_time).to_value('s')  for t in datetime_array])
@@ -140,24 +149,29 @@ for i in tqdm(range(len(fltr_fl))):
     idx = np.argmax(dt)   # largest negative (or zero) offset
     #print(idx,i)
     aia_map=Map(aia1600s[idx])
-    aia_rebin_map=get_rebinned_crop_map(aia_map,suit_map_rot)
+    aia_rebin_map=get_rebinned_crop_map(aia_map,suit_map_rot,sigma)
     sq=MapSequence([aia_rebin_map,suit_map_rot])
+    # aia_rebin_map.peek()
+    template= tracked_sunspot(aia_map_,-260,260,aia_rebin_map)
+    # template.peek()
+    # for l in range (2):
+    #     print(sq[l].scale,(sq[l].data).shape)
+    #     sq[l].peek()
 
-    template= tracked_sunspot(aia_map_,-444,208,aia_rebin_map)
-
-    # mg_aln_maps=mc_coalign(sq,template=template,clip=False,func=np.sinh)# layer_index=0
-    # mg_aln_maps=mc_coalign(sq,layer_index=0,clip=False,func=np.exp)# 
-    mg_aln_maps=mc_coalign(sq,layer_index=0,clip=False)# 
+    # mg_aln_maps=mc_coalign(sq,layer_index=0,template=template,clip=False)##,func=np.square)# 
+    mg_aln_maps=mc_coalign(sq,layer_index=0,clip=False,func=np.asinh)# 
+    # mg_aln_maps=mc_coalign(sq,layer_index=0,clip=False)# 
 
     thresh_lvs=get_mg_threshold(suit_map_rot)
     save_path='../data/aln_1600_conts'
     fits_path='../data/aligned_fits/'
     png_path ='../data/aligned_png/'
-    draw_contours_and_save(aia_rebin_map,mg_aln_maps[1],thresh_lvs[1],save_path)
+    
 
     alnMap=Map(mg_aln_maps[1].data,mg_aln_maps[1].meta)
     alnMap.meta['CRPIX1']=mg_aln_maps[0].meta['CRPIX1']
     alnMap.meta['CRPIX2']=mg_aln_maps[0].meta['CRPIX2']
+    draw_contours_and_save(aia_rebin_map,alnMap,thresh_lvs[1],save_path)
     pathlib.Path(fits_path).mkdir(parents=True, exist_ok=True)
     pathlib.Path(png_path).mkdir(parents=True, exist_ok=True)
     try:

@@ -20,5 +20,5 @@ thresh_sig=5
 get_histograms=True
 #suit_difference_image.diff_img(data_folder,flt,c1,c2,thresh_sig,clip_bar,get_histograms,save_fits=True)
 
-suit_difference_image.diff_img(data_folder,flt,thresh_sig=thresh_sig,get_histograms=True,text_col='k')
+suit_difference_image.diff_img(data_folder,flt,thresh_sig=thresh_sig,get_histograms=False,save_fits=False,text_col='k')
 

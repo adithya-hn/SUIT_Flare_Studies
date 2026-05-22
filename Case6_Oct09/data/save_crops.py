@@ -16,7 +16,7 @@ import numpy as np
 
 #-------------in put path------------------------
 
-files = sorted(glob.glob("/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case6_Oct09/data/1600_aligned/*.fits"))
+files = sorted(glob.glob("/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case6_Oct09/data/1600_aligned/*NB04.fits"))
 
 #-------------------------------------------------
 os.makedirs("aligned_crop", exist_ok=True)
