@@ -22,7 +22,7 @@ plt.style.use('science')
 
 #---------------Input parameters----------------
 
-Start_t = "2024-11-13T00:05:00"
+Start_t = "2024-11-13T00:00:00"
 End_t   = "2024-11-13T00:19:00"
 
 spec_file="stx_spectrum_2411125825.fits"
@@ -58,7 +58,7 @@ plt.xlabel('Time (UT)')
 plt.legend(loc='upper left')
 plt.ylim(1,1e5)
 plt.savefig(f"stix_{case}_onest_lc.pdf", dpi=300)
-plt.close()
+plt.show()
 
 
 energy_ranges = [[4, 8], [9, 12], [13, 22], [22, 30]]

@@ -9,8 +9,8 @@ from sunkit_spex.legacy.fitting.fitter import Fitter, load
 from datetime import datetime, timedelta
 import astropy.time as atime
 
-flare_start = Time("2024-11-01T14:15:00")
-flare_end   = Time("2024-11-01T14:40:00")
+flare_start = Time("2024-11-01T14:12:00")
+flare_end   = Time("2024-11-01T14:20:00")
 #---------------Input parameters----------------
 
 spec_file="../stx_spectrum_2411012243.fits"
@@ -45,8 +45,8 @@ for i,(t0,t1) in enumerate(time_bins):
     stix_spec = STIXLoader(spectrum_file=spec_file, srm_file=srm_file)
 
     stix_spec.update_event_times(start=t0,end=t1)
-    end_background_time   = "2024-11-01T13:31:40"
-    start_background_time = "2024-11-01T13:31:00"
+    end_background_time   = "2024-11-01T13:35:00"
+    start_background_time = "2024-11-01T13:31:00" 
     stix_spec.update_background_times(atime.Time(start_background_time), atime.Time(end_background_time))
 
 

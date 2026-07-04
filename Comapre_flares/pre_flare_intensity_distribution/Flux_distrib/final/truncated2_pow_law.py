@@ -82,7 +82,7 @@ for f in files:
 
     elif case_id=='c05':
         t_start =  np.datetime64("2024-07-10T13:37:00")
-        t_end   =  np.datetime64("2024-07-10T15:25:00")
+        t_end   =  np.datetime64("2024-07-10T15:26:00")# start time is increased to add one peak at 15:24
         m=1.87e3
         c=3.39e6
 
@@ -95,7 +95,7 @@ for f in files:
 
     elif case_id=='c07':
         t_start =  np.datetime64("2024-11-01T00:16:00")
-        t_end   =  np.datetime64("2024-11-01T02:05:00")
+        t_end   =  np.datetime64("2024-11-01T02:07:00")# start time is increased to add one peak at 02:04
         m=2.84e3
         c=-4.78e6
         
@@ -357,10 +357,10 @@ ax.axvline(xb, color='#BA7517', lw=1.4, ls='--', zorder=3,
 ax.set_xscale('log'); ax.set_yscale('log')
 plt.scatter(matched_ints, y_matched,  facecolors='none', edgecolors='red',s=70, linewidth=1.5,  label='Co-temporal HEL1OS')
 # ax.set_xlim(0.28, 4.0); ax.set_ylim(0.008, 1.8)
-ax.set_xlabel(r'Peak flux (erg s$^{-1}$ cm$^{-2}$)')
-ax.set_ylabel('CCDF', fontsize=12)
+ax.set_xlabel(r'Peak flux (erg s$^{-1}$ cm$^{-2}$)',fontsize=16)
+ax.set_ylabel('CCDF',fontsize=16)
 ax.set_title('CCDF of Mg II h pre-flare transients')
-ax.legend(fontsize=10, frameon=True, framealpha=0.9,edgecolor='#D3D1C7', loc='lower left')
+ax.legend(fontsize=14, frameon=True, framealpha=0.9,edgecolor='#D3D1C7', loc='lower left')
 ax.tick_params(which='both', direction='in', top=True, right=True)
 ax.grid(True, which='both', alpha=0.25, lw=0.5)
 # ax.annotate(rf'$N={N}$,  $n_1={n1}$,  $n_2={n2}$', xy=(0.59, 0.06), xycoords='axes fraction', ha='right', va='bottom', fontsize=8.5, color='#5F5E5A')
@@ -369,6 +369,6 @@ plt.tight_layout()
 plt.savefig('ccdf_straight_lines.pdf', dpi=300, bbox_inches='tight')
 plt.savefig('ccdf_straight_lines.png', dpi=300, bbox_inches='tight')
 print("Saved.")
-plt.show()
+plt.close()
 
 

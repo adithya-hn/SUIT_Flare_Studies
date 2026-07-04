@@ -40,7 +40,7 @@ all_ints = []
 
 data = np.genfromtxt(suit_fl, delimiter=',', names=True, dtype=None)
 flux=np.array(data['diff_count'])   
-t = np.array(data['DateTime'], dtype='datetime64[ms]')
+t = np.array(data['date_time'], dtype='datetime64[ms]')
 area=np.array(data['area'],dtype=float)
 
 x = np.array(data['diff_count'], dtype=float)#/area
@@ -64,8 +64,8 @@ def find_peaks_min_rise(flux, min_rise_points=3):
 
     return np.array(peaks)
 print('cadence :', np.median(np.diff(t)))
-kernel = Gaussian1DKernel(1)
-flux_smooth = convolve(flux, kernel, boundary='extend')
+# kernel = Gaussian1DKernel(1)
+# flux_smooth = convolve(flux, kernel, boundary='extend')
 #peaks = find_peaks_min_rise(flux, 2)
 peaks,p=find_peaks(flux)
 print(peaks)

@@ -22,7 +22,7 @@ plt.style.use('science')
 
 #---------------Input parameters----------------
 
-Start_t = "2024-11-13T16:50:00"
+Start_t = "2024-11-13T15:20:00"
 End_t   = "2024-11-13T17:08:00"
 
 
@@ -59,7 +59,7 @@ plt.xlabel('Time (UT)')
 plt.legend(loc='upper left')
 plt.ylim(1e-2,1e5)
 plt.savefig(f"stix_{case}_onest_lc.pdf", dpi=300)
-plt.close()
+plt.show()
 
 
 energy_ranges = [[4, 8], [9, 12], [13, 22], [22, 30]]

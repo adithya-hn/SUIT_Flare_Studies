@@ -5,9 +5,8 @@ Created on 7 Feb 2026
 @author: adithya-hn
 purpose: find strong peaks in th suit peaks
 
+
 '''
-
-
 
 from astropy.convolution import convolve, Gaussian1DKernel
 import numpy as np

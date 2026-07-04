@@ -116,7 +116,7 @@ combined_df = pd.merge_asof(aia_binned.sort_values("time"),
                    on="time", direction="nearest")
 
 ax1 = fig.add_subplot(gs[0,1])
-ax1.plot(combined_df["time"], combined_df["helios_rate"], label="HELIOS", color="black", lw=2)
+ax1.plot(combined_df["time"], combined_df["helios_rate"], label="HEL1OS", color="black", lw=2)
 ax2=ax1.twinx()
 
 for col in cols_to_plot:
@@ -132,7 +132,7 @@ ax1.set_ylabel("HEL1OS Count rate (counts/s)")
 ax2.set_ylabel("AIA 131 Region counts (DN/s)")
 ax1.set_yscale("log")
 ax2.set_yscale("log")
-plt.title("HELIOS vs AIA Region Light Curves (2024-Nov-01)")
+plt.title("HEL1OS vs AIA Region Light Curves (2024-Nov-01)")
 
 time_formatter = mdates.DateFormatter('%H:%M')  # Format as HH:MM
 plt.gca().xaxis.set_major_formatter(time_formatter)

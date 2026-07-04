@@ -32,9 +32,9 @@ Start_t = "2024-11-01T14:13:00"
 End_t   = "2024-11-01T14:23:00"
 
 thermal_range    = [datetime.fromisoformat("2024-11-01T14:13:00"),
-                    datetime.fromisoformat("2024-11-01T14:19:40")]
+                    datetime.fromisoformat("2024-11-01T14:19:20")]
 
-nonthermal_range = [datetime.fromisoformat("2024-11-01T14:19:40"),
+nonthermal_range = [datetime.fromisoformat("2024-11-01T14:19:20"),
                     datetime.fromisoformat("2024-11-01T14:24:00")]
 
 hot_onset_time   =  datetime.fromisoformat("2024-11-01T14:18:00")

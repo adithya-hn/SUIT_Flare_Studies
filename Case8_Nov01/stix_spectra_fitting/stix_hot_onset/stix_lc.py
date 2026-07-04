@@ -18,22 +18,22 @@ import matplotlib.dates as mdates
 from sys import path as sys_path
 import pandas as pd
 
-sys_path.append('/home/adithya/Adithya_repos')
-from plots_styl import set_pub_style
-set_pub_style()
+# sys_path.append('/home/adithya/Adithya_repos')
+# from plots_styl import set_pub_style
+# set_pub_style()
 import scienceplots
 plt.style.use('science')
 
 #---------------Input parameters----------------
 
-Start_t = "2024-11-01T14:10:00"
+Start_t = "2024-11-01T13:20:00"
 End_t   = "2024-11-01T14:31:00"
 
 spec_file="stx_spectrum_2411012243.fits"
 srm_file="stx_srm_2411012243.fits"
 case='8_Nov01'
-start_background_time = "2024-11-01T13:31:00"
-end_background_time   = "2024-11-01T13:35:00"
+start_background_time = "2024-11-01T14:12:00"
+end_background_time   = "2024-11-01T14:16:00"
 #-----------------------------------------------
 
 time_profile_size = (9, 6)
@@ -46,8 +46,8 @@ spec_font_size = 18
 plt.rcParams["font.size"] = spec_font_size
 plt.figure(layout="tight",figsize=(12,8))
 stix_spec = STIXLoader(spectrum_file=spec_file, srm_file=srm_file)
-stix_spec.update_event_times(start=Time("2024-11-01T13:20:00"), end=Time("2024-11-01T13:21:00"))
-# stix_spec.update_background_times(start=Time(start_background_time), end=Time(end_background_time))
+stix_spec.update_event_times(start=Time(Start_t), end=Time(End_t))
+stix_spec.update_background_times(start=Time(start_background_time), end=Time(end_background_time))
 
 plot_range=[datetime.fromisoformat(Start_t)- timedelta(minutes=0),datetime.fromisoformat(End_t)+ timedelta(minutes=1)]
 lc=stix_spec.lightcurve(energy_ranges=[[4, 8],[9,12],[13,22], [22, 30]])
@@ -61,7 +61,7 @@ plt.xlabel('Time (UT)')
 plt.legend(loc='upper left')
 plt.ylim(1,1e5)
 plt.savefig(f"stix_{case}_onest_lc.pdf", dpi=300)
-plt.close()
+plt.show()
 
 
 energy_ranges = [[4, 8], [9, 12], [13, 22], [22, 30]]

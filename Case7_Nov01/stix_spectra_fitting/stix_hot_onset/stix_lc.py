@@ -22,14 +22,16 @@ plt.style.use('science')
 
 #---------------Input parameters----------------
 
-Start_t = "2024-11-01T01:58:20"
+# Start_t = "2024-11-01T01:58:20"
+
+Start_t = "2024-11-01T01:00:20"
 End_t   = "2024-11-01T02:16:00"
 
 spec_file="stx_spectrum_2410315184.fits"
 srm_file="stx_srm_2410315184.fits"
 case='7_Nov01'
-start_background_time = "2024-11-01T01:07:30"
-end_background_time   = "2024-11-01T01:10:00"
+start_background_time = "2024-11-01T01:59:30"
+end_background_time   = "2024-11-01T02:03:30"
 #-----------------------------------------------
 
 time_profile_size = (9, 6)
@@ -42,7 +44,8 @@ spec_font_size = 18
 plt.rcParams["font.size"] = spec_font_size
 plt.figure(layout="tight",figsize=(12,8))
 stix_spec = STIXLoader(spectrum_file=spec_file, srm_file=srm_file)
-stix_spec.update_event_times(start=Time("2024-11-01T01:20:00"), end=Time("2024-11-01T01:21:00"))
+stix_spec.update_event_times(start=Time(start_background_time), end=Time(end_background_time))
+# stix_spec.update_event_times(start=Time("2024-11-01T01:20:00"), end=Time("2024-11-01T01:21:00"))
 # stix_spec.update_background_times(start=Time(start_background_time), end=Time(end_background_time))
 
 plot_range=[datetime.fromisoformat(Start_t)- timedelta(minutes=0),datetime.fromisoformat(End_t)+ timedelta(minutes=1)]
@@ -57,7 +60,7 @@ plt.xlabel('Time (UT)')
 plt.legend(loc='upper left')
 plt.ylim(1,1e5)
 plt.savefig(f"stix_{case}_onest_lc.pdf", dpi=300)
-plt.close()
+plt.show()
 
 
 energy_ranges = [[4, 8], [9, 12], [13, 22], [22, 30]]

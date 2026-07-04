@@ -45,7 +45,7 @@ from region_detection import pos_neg_detection
 from pil_detection import detection
 from video_loading import video_loader
 from astropy.visualization import ImageNormalize, AsinhStretch
-
+from sunpy.coordinates import Helioprojective, SphericalScreen, propagate_with_solar_surface
 sns_cl = sns.color_palette("coolwarm",as_cmap=True)
 
 def select_roi_with_mouse(sunpy_map, cmap=None, norm=None):
@@ -114,7 +114,7 @@ suit_aligned_files= '/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case6
 pk_img="/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case6_Oct09/data/aligned_crop/SUT_T24_1472_000592_Lev1.0_2024-10-09T01.49.20.214_0983NB04.fits"
 base_image='SDO' #suit
 if base_image=='SDO':
-    aia_fl='/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case6_Oct09/data/aia/aia.lev1_euv_12s.2024-10-08T235610Z.171.image_lev1.fits'#'/media/adithya/Adi_disk4/SUIT_flare_work/case6_oct09/data/HMI/HMI_cutouts/1/hmi.m_45s.20241008_235615_TAI.2.magnetogram.fits'#'/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case4_July10/data/aia/aia.lev1_euv_12s.2024-07-10T040010Z.171.image_lev1.fits'
+    aia_fl='/media/adithya/Adi_disk4/SUIT_flare_work/case6_oct09/data/aia/aia_fd/aia.lev1_euv_12s.2024-10-09T014922Z.171.image_lev1.fits'#'/media/adithya/Adi_disk4/SUIT_flare_work/case6_oct09/data/HMI/HMI_cutouts/1/hmi.m_45s.20241008_235615_TAI.2.magnetogram.fits'#'/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case4_July10/data/aia/aia.lev1_euv_12s.2024-07-10T040010Z.171.image_lev1.fits'
     hmi_imgs   = '/media/adithya/Adi_disk4/SUIT_flare_work/case6_oct09/data/HMI/HMI_cutouts/1/'
 fltr='NB04'
 thresh_sig=5
@@ -177,20 +177,25 @@ base_drot=base_map.rotate(angle=(int(base_map.meta.get('p_angle')))*u.deg)
 
 peak_map_=Map(pk_img)
 peak_map=Map(peak_map_.data*1000/peak_map_.meta.get('CMD_EXPT'),peak_map_.meta)
-print(np.max(peak_map.data))
+# peak_map.reproject_to(base_map.wcs)
+# print(np.max(peak_map.data))
 
 aia_map_=Map(aia_fl)
-aia_map =rebin_suit_map(aia_map_,base_drot)
+AIA_map =rebin_suit_map(aia_map_,base_drot)
+with propagate_with_solar_surface():
+    aia_map=(AIA_map.reproject_to(base_map.wcs,dask_method='none'))
 fig=plt.figure(figsize=(16,8))
 ax = fig.add_subplot(111, projection=base_map)
 norm = ImageNormalize( base_map.data/1e3,stretch=AsinhStretch(a=0.2))
+norm_aia = ImageNormalize( aia_map.data/1e3,stretch=AsinhStretch(a=0.2))
 #sdo_norm=
 if base_image=='SDO':
-    mp=aia_map.reproject_to(peak_map.wcs)
-    #im2=mp.plot(axes=ax)
-    im2=aia_map.plot(axes=ax)
+    mp=aia_map.reproject_to(base_map.wcs)
+    im2=mp.plot(axes=ax)
+    # im2=aia_map.plot(axes=ax)
     #im2=ax.imshow(aia_map.data/1e3,cmap='sdoaia171',alpha=1,vmin=-2,vmax=2,transform=ax.get_transform(aia_map.wcs))
-    #im2=ax.imshow(aia_map.data/1e3,cmap='sdoaia171',alpha=1,transform=ax.get_transform(aia_map.wcs))
+    # im2=ax.imshow(aia_map.data/1e3,cmap='sdoaia171',alpha=1,transform=ax.get_transform(aia_map.wcs))
+    # im2=ax.imshow(aia_map.data/1e3,cmap='sdoaia171',norm=norm_aia,transform=ax.get_transform(aia_map.wcs))
     # im2=base_map.plot(axes=ax)
     #im2=ax.imshow(base_map.data/1e3,cmap='suit_nb04',norm=norm)
 else:
@@ -232,13 +237,13 @@ im=ax.imshow(heat_masked, origin='lower', cmap='rainbow', alpha=0.4)
 plt.colorbar(im,label=r'Number of transients')
 # plt.colorbar(im,label=r'Excess intensity of transients')
 #plt.colorbar(im2,label=r'Mg II h Intensity ($\times 10^3$ DN)')
-plt.colorbar(im2,label=r'LOS Magnetic field ($\times 10^3$ Gauss)')
-#plt.colorbar(im2,label=r'Intensity ')
+# plt.colorbar(im2,label=r'LOS Magnetic field ($\times 10^3$ Gauss)')
+plt.colorbar(im2,label=r'Intensity ')
 ax.set_xlabel("Solar X (arcsec)")
 ax.set_ylabel("Solar Y (arcsec)")
-ax.set_xlim(10,450)
+ax.set_xlim(0,450)
 ax.set_ylim(80,500)
-plt.savefig(f'{wkdir}/HMI_{fltr}_stacked_contours.png',dpi=400)
+plt.savefig(f'{wkdir}/AIA_{fltr}_stacked_contours.pdf',dpi=400)
 plt.show()
 
 

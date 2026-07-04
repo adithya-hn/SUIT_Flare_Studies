@@ -71,13 +71,13 @@ for label, color in zip(band_labels, colors):
     ax.step(pd.to_datetime(df["time"]), df[label], where="mid", color=color, lw=1.2, label=label)
 
 ax.axvline(datetime.fromisoformat("2024-10-09T01:25:00"),ls='--',lw=1,color='b',label='GOES flare start time',alpha=0.7)
-ax.axvline(datetime.fromisoformat("2024-10-09T01:31:00"),ls='-',lw=1,color='b',label='Impuslive phase start time',alpha=0.7)
+ax.axvline(datetime.fromisoformat("2024-10-09T01:31:00"),ls='-',lw=1,color='b',label='Impulsive phase start time',alpha=0.7)
 plot_range=[datetime.fromisoformat(Start_t),datetime.fromisoformat(End_t)+timedelta(minutes=1)]
 ax.set_xlim(plot_range)
 ax.xaxis.set_major_formatter(mdates.DateFormatter("%H:%M"))
 ax.xaxis.set_major_locator(mdates.AutoDateLocator())
-ax.set_ylabel(r"Counts $s^{-1}$")
-ax.set_title(f"Hot onset phase (SOL2024-11-13T00:22)")
+ax.set_ylabel(r"Count rate (s$^{-1}$)")
+ax.set_title(f"Flare onset phase (SOL2024-11-13T00:22)")
 ax.legend(fontsize=9, framealpha=0.6)
 ax.grid(alpha=0.3, ls="--")
 ax.set_ylim(5,1e6)
@@ -93,7 +93,7 @@ ax11.errorbar(pd.to_datetime(t_dt),em,xerr=timedelta(seconds=10),yerr=[em_er_h,e
 ax.axvspan(1.25, 1.55, facecolor='g', alpha=0.5)
 ax11.set_yscale('log')
 ax1.set_ylabel('Temperature (MK)')
-ax11.set_ylabel(r'EM ($\times 10^{46}~cm^{-3}$)')
+ax11.set_ylabel(r'EM ($\times 10^{46}$ cm$^{-3}$)')
 
 # Shaded fit ranges
 # ax1.axvspan(*thermal_range1,    alpha=0.1, color="mediumpurple",      zorder=0)#, label="Thermal fit range")
@@ -115,24 +115,33 @@ ax1.annotate("Hot onset", xy=(hot_onset_time, ax1.get_ylim()[1]),
             fontsize=8, color="black", fontstyle="italic")
 ln1, lbl1 = ax1.get_legend_handles_labels()
 ln2, lbl2 = ax11.get_legend_handles_labels()
-ax1.legend(ln1 + ln2, lbl1 + lbl2, loc='lower right',frameon=True, framealpha=0.8, facecolor='white', edgecolor='none')
+ax11.legend(ln1 + ln2, lbl1 + lbl2, loc='lower right',frameon=True, framealpha=0.8, facecolor='white', edgecolor='none')
 ax11.set_ylim(3e-1,1e2)
 ax1.set_ylim(0,30)
 #----------------------------------------------------
 
-ax21.plot(suit_dt,excess_int,color='k',marker='o',markersize=3,label='Excess intensity')
-ax2.plot(suit_dt,intensity/1e8,color='tab:blue',marker='o',markersize=3,label='Mg II h counts')
-ax2.set_ylabel(r'Mg II h counts $\times 10^{8}$ DN/s ')
-ax21.set_ylabel(r'Excess intensity DN/s')
-ax21.set_xlabel("Time (UT)")
+exposure= np.array(suit_int['Exposure'],dtype=float)
+nb3_counts_er=np.sqrt(intensity*(exposure/1000))/(exposure/1000)
+lc1_mean_er= np.sqrt(excess_int*(exposure/1000))/(exposure/1000)
+
+ax21.errorbar(suit_dt,excess_int,yerr=lc1_mean_er,color='tab:blue',marker='o',markersize=3,label='Excess intensity')
+ax21.set_ylabel(r'Excess intensity (DN/s)')
+ax2.set_xlabel("Time (UT)")
+
+ax2.errorbar(suit_dt,intensity/1e8,yerr=nb3_counts_er/1e8,color='k',marker='o',markersize=3,label='Mg II h counts')
+ax2.set_ylabel(r'Mg II h counts ($\times 10^{8}$ DN/s)')
+
 ln3, lbl3 = ax2.get_legend_handles_labels()
 ln4, lbl4 = ax21.get_legend_handles_labels()
-ax21.set_yscale('log')
-# ax21.set_yscale('log')
 
 ax2.legend(ln3 + ln4, lbl3 + lbl4, loc='upper left')
+ax21.set_yscale('log')
+
+# ax21.set_yscale('log')
+
+# ax2.legend(ln3 + ln4, lbl3 + lbl4, loc='upper left')
 # ax1.legend(loc='lower right')
 plt.tight_layout()
-plt.savefig("stix_onest_lc.pdf", dpi=300)
+plt.savefig("c6_stix_onest_lc.pdf", dpi=300)
 plt.show()
 

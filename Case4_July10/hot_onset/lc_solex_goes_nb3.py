@@ -126,5 +126,8 @@ plt.title(f'Light curves ({date})')
 plt.figlegend(bbox_to_anchor=(0.001, 0.38, 0.4, 0.5))
 time_formatter = mdates.DateFormatter('%H:%M')  # Format as HH:MM
 plt.gca().xaxis.set_major_formatter(time_formatter)
+hst=datetime.fromisoformat('2024-07-10T05:40:00.000')
+# hed=datetime.fromisoformat('2024-07-10T05:44:00.000')
+plt.xlim(hst,m_cls_p)
 plt.savefig(img_nm,dpi=300)
 plt.close() 

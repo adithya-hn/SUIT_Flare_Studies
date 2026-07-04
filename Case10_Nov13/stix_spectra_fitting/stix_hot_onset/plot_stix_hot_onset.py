@@ -32,13 +32,13 @@ Start_t = "2024-11-13T16:52:00"
 End_t   = "2024-11-13T17:04:00"
 
 thermal_range    = [datetime.fromisoformat("2024-11-13T16:52:00"),
-                    datetime.fromisoformat("2024-11-13T16:59:40")]
+                    datetime.fromisoformat("2024-11-13T17:04:00")]
 
 
-nonthermal_range = [datetime.fromisoformat("2024-11-13T16:59:40"),
+nonthermal_range = [datetime.fromisoformat("2024-11-13T17:04:00"),
                     datetime.fromisoformat("2024-11-13T17:05:00")]
 
-hot_onset_time   =  datetime.fromisoformat("2024-11-13T16:56:30")
+hot_onset_time   =  datetime.fromisoformat("2024-11-13T16:55:30")
 
 df=pd.read_csv('stix_lightcurves.csv')
 band_labels=["4-8 keV", "9-12 keV", "13-22 keV", "22-30 keV"]

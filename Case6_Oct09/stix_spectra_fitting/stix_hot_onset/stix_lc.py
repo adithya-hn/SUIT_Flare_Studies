@@ -23,13 +23,24 @@ plt.style.use('science')
 
 spec_file="/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case6_Oct09/data/stix/with_bg/stx_spectrum_2410088145.fits"
 srm_file="/Analysis/Research_Projects/Flare_studies/SUIT_Flares/Case8_Nov01/data/stix/stx_srm_2411012243.fits"
-Start_t="2024-10-09T01:20:00"
-End_t="2024-10-09T01:56:00"
+Start_t="2024-10-09T01:00:00"
+End_t="2024-10-09T01:50:00"
 case='6_Oct9'
 
 
-start_background_time = "2024-10-08T23:33:30"
-end_background_time   = "2024-10-08T23:37:00"
+start_background_time = "2024-10-09T01:14:30"
+end_background_time   = "2024-10-09T01:19:00"
+
+thermal_range    = [datetime.fromisoformat("2024-10-09T01:20:00"),
+                    datetime.fromisoformat("2024-10-09T01:30:40")]
+
+nonthermal_range = [datetime.fromisoformat("2024-10-09T01:30:40"),
+                    datetime.fromisoformat("2024-10-09T01:33:00")]
+
+hot_onset_time   =  datetime.fromisoformat("2024-10-09T01:24:40")
+
+
+
 #-----------------------------------------------
 
 time_profile_size = (9, 6)
@@ -42,22 +53,23 @@ spec_font_size = 18
 plt.rcParams["font.size"] = spec_font_size
 plt.figure(layout="tight",figsize=(12,8))
 stix_spec = STIXLoader(spectrum_file=spec_file, srm_file=srm_file)
-stix_spec.update_event_times(start=Time("2024-10-09T00:20:00"), end=Time("2024-10-09T00:21:00"))
-# stix_spec.update_background_times(start=Time(start_background_time), end=Time(end_background_time))
-
+stix_spec.update_event_times(start=Time("2024-10-08T23:29:00"), end=Time("2024-10-08T23:29:30"))
+stix_spec.update_background_times(start=Time(start_background_time), end=Time(end_background_time))
+plt.axvspan(*thermal_range,    alpha=0.1, color="tomato",      zorder=0)#, label="Thermal fit range")
+plt.axvspan(*nonthermal_range, alpha=0.1, color="mediumpurple", zorder=0)#, label="Non-thermal fit range")
 plot_range=[datetime.fromisoformat(Start_t)- timedelta(minutes=0),datetime.fromisoformat(End_t)+ timedelta(minutes=1)]
 lc=stix_spec.lightcurve(energy_ranges=[[4, 8],[9,12],[13,25], [22, 30]])
-plt.axvline(datetime.fromisoformat("2024-10-09T01:31:10"),ls='--',lw=2,color='b',label='Impuslive phase start time')
+plt.axvline(datetime.fromisoformat("2024-10-09T01:31:10"),ls='-',lw=1,color='b',label='Impuslive phase start time')
 plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%H:%M'))
 plt.gca().xaxis.set_major_locator(mdates.MinuteLocator(interval=5))
 plt.xlim(plot_range[0],plot_range[1])
 plt.title ('STIX Lightcurve (2024-Oct-09)')
 plt.xlabel('Time (UT)')
-# plt.xticks(rotation=45)
+plt.xticks(rotation=45)
 plt.legend(loc='upper right')
 plt.ylim(5,1e6)
-plt.savefig(f"stix_{case}_onest_lc.pdf", dpi=300)
-plt.close()
+plt.savefig(f"stix_{case}_onest_lc.png", dpi=300)
+plt.show()
 
 
 energy_ranges = [[4, 8], [9, 12], [13, 22], [22, 30]]
