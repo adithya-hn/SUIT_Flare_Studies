@@ -32,7 +32,7 @@ plt.style.use('science')
 
 Start_t = "2024-11-01T02:00:00"
 End_t   = "2024-11-01T02:15:00"
-impulsive_phase_start = "2024-11-01T02:12:40"
+impulsive_phase_start = "2024-11-01T02:13:20"
 goes_flare_start = "2024-11-01T02:05:00"
 
 thermal_range    = [datetime.fromisoformat("2024-11-01T02:08:40"),
@@ -60,8 +60,8 @@ t_em=fits.open(fit_file)
 df=pd.read_csv('stix_lightcurves.csv')
 
 #-----------------------------------------------------
-band_labels=["4-8 keV", "9-12 keV"]
-colors = ["darkorange", "crimson"]
+band_labels=["4-8 keV", "9-12 keV", "22-30 keV"]
+colors = ["darkorange", "darkgreen", "crimson"]
 
 lc1_dt=np.array(lc1_data[1].data['TIME'],dtype='datetime64[s]')
 lc1_rate=np.array(lc1_data[1].data['COUNTS'],dtype='float')
@@ -91,7 +91,7 @@ em_er=t_em[1].data['EM_ERR'][1:]
 t_dt=[]
 for t in time_array:
     t_dt.append(datetime.fromtimestamp(t))#-timedelta(hours=5,minutes=30))
-# print(t_dt)
+print(t_dt)
 excess_int=suit_dif['diff_count']
 suit_dt=pd.to_datetime(suit_dif['Date'])
 intensity=suit_int['Total']
@@ -103,7 +103,7 @@ for label, color in zip(band_labels, colors):
     ax.step(pd.to_datetime(df["time"]), df[label], where="mid", color=color, lw=1.2, label='STIX '+label)
 ax.step(pd.to_datetime(lc1_dt), lc1_rate, where="mid", color='tab:blue', lw=1.2, label='SoLEXS 2-12 keV')
 # ax.step(pd.to_datetime(lc2_dt), lc2_rate, where="mid", color='tab:orange', lw=1.2, label='SoLEXS 12-22 keV')
-ax.step(pd.to_datetime(lc3_dt), lc3_rate, where="mid", color='tab:green', lw=1.2, label=r'HEL1OS $>$22 keV')
+# ax.step(pd.to_datetime(lc3_dt), lc3_rate, where="mid", color='tab:green', lw=1.2, label=r'HEL1OS $>$22 keV')
 ax.axvline(datetime.fromisoformat(goes_flare_start),ls='--',lw=1,color='b',label='GOES flare start time',alpha=0.7)
 ax.axvline(datetime.fromisoformat(impulsive_phase_start),ls='-',lw=1,color='b',label='Impulsive phase start time',alpha=0.7)
 plot_range=[datetime.fromisoformat(goes_flare_start)-timedelta(minutes=1),datetime.fromisoformat(impulsive_phase_start)+timedelta(minutes=1)]
@@ -175,7 +175,7 @@ ax21.set_yscale('log')
 # ax2.set_yscale('log')
 # ax1.legend(loc='lower right')
 plt.tight_layout()
-plt.savefig("c7_stix_onset_lc.pdf", dpi=300)
+plt.savefig("c7_stix_solex_onset_lc.pdf", dpi=300)
 plt.close()
 
 #--------------Emission measure Temperature plot-----------

@@ -1,7 +1,3 @@
-
-
-
-
 from astropy.time import Time, TimeDelta
 import pandas as pd
 import matplotlib
@@ -14,25 +10,39 @@ from sunkit_spex.extern.stix import STIXLoader
 from sunkit_spex.legacy.fitting.fitter import Fitter, load
 from datetime import datetime, timedelta
 import astropy.time as atime
+import scienceplots
+import re
+import matplotlib as mpl
+plt.style.use('science')
 
+mpl.rcParams.update({
+    'axes.linewidth'     : 1.5,
+    'axes.titleweight'   : 'bold',
+    'xtick.major.size'   : 7,
+    'xtick.minor.size'   : 4,
+    'ytick.major.size'   : 7,
+    'ytick.minor.size'   : 4,
+    'xtick.major.width'  : 1.8,
+    'xtick.minor.width'  : 1.2,
+    'ytick.major.width'  : 1.8,
+    'ytick.minor.width'  : 1.2,
+    'lines.linewidth'    : 1.5,
+})
 
-
-flare_start = Time("2024-11-13T00:15:30")
-flare_end   = Time("2024-11-13T00:22:00")
-
+flare_start = Time("2024-11-01T02:09:40")
+flare_end   = Time("2024-11-01T02:10:00")
 #---------------Input parameters----------------
 
+spec_file="../../stx_spectrum_2410315184.fits"
+srm_file="../../stx_srm_2410315184.fits"
 
-spec_file="../../stx_spectrum_2411125825.fits"
-srm_file="../../stx_srm_2411125825.fits"
+case='7_Nov01'
 
-case='9_Nov13'
 
-start_background_time = "2024-11-13T00:06:00"
-end_background_time   = "2024-11-13T00:10:00"
+start_background_time = "2024-11-01T01:59:00"
+end_background_time   = "2024-11-01T02:03:00"
 
 #-----------------------------------------------
-
 
 
 bin_size_20 = TimeDelta(20, format='sec')
@@ -84,8 +94,6 @@ while t < flare_end:
             continue
 
     log[bin_used].append(t0.isot)
-    
-
     stix_spec.update_background_times(atime.Time(start_background_time), atime.Time(end_background_time))
 
 
@@ -134,16 +142,18 @@ while t < flare_end:
         axes[0].set_xlim([5,30])
         axes[0].set_title(title_str)
 
-    plt.savefig(f'{case}_step_{i}_with_mcmc.png',dpi=300)
+    plt.savefig(f'fit_{case}_step_{i}_with_mcmc.png',dpi=300)
     plt.close()
     
     tab = fitter.mcmc_table
     th_param=fitter
+    # print(th_param.show_params)
     T,(T_er1,T_er2)=th_param.show_params[0]['Value'],th_param.show_params[0]['Error']
     EM,(EM_er1,EM_er2)=th_param.show_params[1]['Value'],th_param.show_params[1]['Error']
     L=th_param.show_params[2]['Value']
     row_th = [t0.isot,t1.isot,T,T_er1,T_er2,EM,EM_er1,EM_er2,L]
     df.loc[len(df)] = row_th
     i += 1
+   
 df.to_csv(f'{outfile}',index=False)
 

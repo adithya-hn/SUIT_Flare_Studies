@@ -57,8 +57,8 @@ lc1_data=fits.open(lc1_file)
 lc3_data=pd.read_csv(lc3_file)
 t_em=fits.open(fit_file)
 
-band_labels=["4-8 keV", "9-12 keV"]
-colors = ["darkorange",  "crimson","steelblue", ]
+band_labels=["4-8 keV", "9-12 keV","22-30 keV"]
+colors = ["darkorange", "darkgreen", "crimson" ]
 
 
 lc1_dt=np.array(lc1_data[1].data['TIME'],dtype='datetime64[s]')
@@ -96,7 +96,7 @@ for label, color in zip(band_labels, colors):
     ax.step(pd.to_datetime(df["time"]), df[label], where="mid", color=color, lw=1.2, label='STIX '+ label)
 ax.step(pd.to_datetime(lc1_dt), lc1_rate, where="mid", color='tab:blue', lw=1.2, label='SoLEXS 2-12 keV')
 # ax.step(pd.to_datetime(lc2_dt), lc2_rate, where="mid", color='tab:orange', lw=1.2, label='SoLEXS 12-22 keV')
-ax.step(pd.to_datetime(lc3_dt), lc3_rate, where="mid", color='tab:green', lw=1.2, label=r'HEL1OS $>$22 keV')
+# ax.step(pd.to_datetime(lc3_dt), lc3_rate, where="mid", color='tab:green', lw=1.2, label=r'HEL1OS $>$22 keV')
 ax.axvline(datetime.fromisoformat(goes_flare_start_time),ls='--',lw=1,color='b',label='GOES flare start time',alpha=0.7)
 ax.axvline(datetime.fromisoformat(impulsive_phase_start_time) ,ls='-',lw=1,color='b',label='Impulsive phase start time',alpha=0.7)
 plot_range=[datetime.fromisoformat(goes_flare_start_time)-timedelta(minutes=3),datetime.fromisoformat(impulsive_phase_start_time)+timedelta(minutes=1)]
@@ -167,7 +167,7 @@ ax21.set_yscale('log')
 # ax1.legend(loc='lower right')
 plt.tight_layout()
 plt.savefig("c6_solex_onset_lc.pdf", dpi=300)
-plt.close()
+plt.show()
 
 #--------------Emission measure Temperature plot-----------
 
